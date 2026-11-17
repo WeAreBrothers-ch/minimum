@@ -1,0 +1,119 @@
+/* Minimum : la barre de menu. Le nom à gauche, les rubriques en pastilles
+   (demande d'Eliott, 16.11.2026) : chaque monde à sa couleur (jaune le
+   cinéma, rose la nuit, bleu la radio), l'agenda et les infos cadrés d'un trait.
+   La page où l'on est porte un anneau noir, détaché de sa pastille. */
+
+.entete {
+  position: relative;
+  z-index: 5;
+  color: var(--encre);
+  background: var(--fond);
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-3);
+  min-height: var(--hauteur-entete);
+  padding-inline: var(--espace-3);
+}
+
+.menu a {
+  text-decoration: none;
+}
+
+.menu__nom,
+.menu__ouvrir,
+.menu__lien {
+  font-size: var(--taille-menu);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.menu__nom {
+  display: flex;
+  align-items: center;
+  min-height: var(--cible);
+  margin-right: auto;
+  font-weight: var(--graisse-nom);
+}
+
+.menu__lien {
+  font-weight: var(--graisse-moyenne);
+}
+
+.menu__lien[aria-current] {
+  font-weight: var(--graisse-nom);
+  box-shadow:
+    0 0 0 var(--anneau-ecart) var(--fond),
+    0 0 0 calc(var(--anneau-ecart) + var(--anneau)) var(--encre);
+}
+
+/* Téléphone : la liste s'ouvre sur tout l'écran, sous la barre. */
+.menu__liste {
+  position: fixed;
+  inset: calc(var(--hauteur-entete) + var(--trait)) 0 0;
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espace-2);
+  padding: var(--espace-4) var(--espace-3);
+  background: var(--fond);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.menu[data-ouvert="true"] .menu__liste {
+  display: flex;
+  opacity: 1;
+  transition: opacity var(--duree-menu) var(--ease-out);
+}
+
+@starting-style {
+  .menu[data-ouvert="true"] .menu__liste {
+    opacity: 0;
+  }
+}
+
+.menu__liste .menu__lien {
+  min-height: calc(var(--cible) + var(--espace-2));
+  padding-inline: var(--espace-4);
+  font-size: var(--taille-carte);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu__nom:hover {
+    text-decoration: underline;
+    text-decoration-thickness: var(--trait);
+    text-underline-offset: 0.25em;
+  }
+}
+
+/* Ordinateur : toutes les pastilles sur la barre, à droite du nom. */
+@media (min-width: 56rem) {
+  .menu {
+    padding-inline: var(--espace-4) var(--espace-3);
+  }
+
+  .menu__ouvrir {
+    display: none;
+  }
+
+  .menu__liste,
+  .menu[data-ouvert="true"] .menu__liste {
+    position: static;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0;
+    background: none;
+    overflow: visible;
+  }
+
+  .menu__liste .menu__lien {
+    min-height: calc(var(--cible) - var(--espace-1));
+    padding-inline: var(--espace-3);
+    font-size: var(--taille-menu);
+  }
+}

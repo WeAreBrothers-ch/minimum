@@ -1,0 +1,101 @@
+/* Minimum : les pastilles. Une couleur = un type d'info (jetons.css) :
+   vert pour l'argent, jaune pour le cinéma, bleu pour la radio, rose pour
+   la nuit, orange pour un problème. Les faits courts d'un film (genre,
+   durée, version, âge) sont cadrés d'un trait, sans couleur. Le menu est en
+   pastilles (entete.css) ; les liens de retour (« Tous les films »)
+   restent du texte souligné. */
+
+.pastilles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espace-1);
+}
+
+.pastille {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--hauteur-pastille);
+  padding: 0.125rem var(--espace-2);
+  font-size: var(--taille-petite);
+  font-weight: var(--graisse-moyenne);
+  line-height: 1.2;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--encre);
+  background: transparent;
+  border: var(--trait) solid var(--encre);
+}
+
+.pastille--argent {
+  --teinte: var(--pastille-argent);
+}
+
+.pastille--cinema {
+  --teinte: var(--pastille-cinema);
+}
+
+.pastille--radio {
+  --teinte: var(--pastille-radio);
+}
+
+.pastille--nuit {
+  --teinte: var(--pastille-nuit);
+}
+
+.pastille--argent,
+.pastille--cinema,
+.pastille--radio,
+.pastille--nuit {
+  color: var(--pastille-texte);
+  background: var(--teinte);
+  border-color: var(--teinte);
+}
+
+/* Une pastille qu'on presse : 44 px de haut, le texte plus gras. */
+.pastille--action {
+  min-height: var(--cible);
+  padding-inline: var(--espace-3);
+  font-size: var(--taille-texte);
+  font-weight: var(--graisse-nom);
+  cursor: pointer;
+}
+
+.pastille--action:focus-visible {
+  outline-color: var(--pastille-texte);
+}
+
+.pastille--action:active:not(:disabled) {
+  transform: scale(0.98);
+  transition: transform var(--duree-pression) var(--ease-out);
+}
+
+/* Pas encore disponible (pas de son à jouer) : la couleur ne reste qu'en
+   pointillé autour, le texte reste lisible. */
+.pastille--action:disabled {
+  cursor: not-allowed;
+  color: var(--encre);
+  background: transparent;
+  border-style: dashed;
+}
+
+/* Un problème : orange, et sur plusieurs lignes s'il le faut. */
+.message-probleme {
+  padding: var(--espace-2) var(--espace-3);
+  color: var(--pastille-texte);
+  background: var(--pastille-probleme);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pastille--action:not(:disabled):hover {
+    text-decoration: underline;
+    text-decoration-thickness: var(--trait);
+    text-underline-offset: 0.2em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pastille--action:active:not(:disabled) {
+    transform: none;
+  }
+}

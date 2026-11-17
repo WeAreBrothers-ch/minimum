@@ -1,0 +1,74 @@
+/* Minimum : socle commun à toutes les pages. */
+
+body {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  font-family: var(--police);
+  font-weight: var(--graisse-texte);
+  font-size: var(--taille-texte);
+  line-height: var(--interligne-texte);
+  color: var(--encre);
+  background: var(--fond);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* L'accueil tient dans l'écran : ce sont ses deux murs qui défilent. */
+body[data-page="accueil"] {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.visuellement-cache {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.evitement {
+  position: absolute;
+  z-index: 10;
+  top: var(--espace-2);
+  left: var(--espace-2);
+  padding: var(--espace-2) var(--espace-3);
+  color: var(--blanc);
+  background: var(--noir);
+  transform: translateY(-200%);
+}
+
+.evitement:focus-visible {
+  transform: none;
+}
+
+:focus-visible {
+  outline: var(--trait) solid var(--encre);
+  outline-offset: calc(var(--trait) * -3);
+}
+
+main:focus {
+  outline: none;
+}
+
+/* La ligne de tirets du programme de 2009 (D2) : de vrais caractères,
+   coupés à la largeur disponible. Assez de tirets pour un écran de 2500 px. */
+.tirets {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
+.tirets::before {
+  content: "------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
+}
+
+.capitales {
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}

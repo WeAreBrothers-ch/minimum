@@ -1,0 +1,57 @@
+/* Minimum : la page du billet, à l'écran et imprimée. */
+
+.billet {
+  max-width: 40rem;
+}
+
+.billet__reference {
+  margin-block: var(--espace-2) var(--espace-1);
+  font-size: var(--taille-titre);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.billet__reperes {
+  margin-top: var(--espace-3);
+  font-size: var(--taille-texte);
+}
+
+.billet__consigne {
+  margin-block: var(--espace-3);
+  max-width: var(--mesure);
+}
+
+.billet__imprimer,
+.billet__verifier {
+  min-height: var(--cible);
+  padding-inline: var(--espace-3);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  border: var(--trait) solid var(--encre);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .billet__imprimer:hover,
+  .billet__verifier:hover {
+    color: var(--fond);
+    background: var(--encre);
+  }
+}
+
+/* À l'impression, le billet seul. */
+@media print {
+  .entete,
+  .lecteur,
+  .evitement,
+  .avis,
+  .billet__imprimer {
+    display: none;
+  }
+
+  .page {
+    padding: 0;
+  }
+}

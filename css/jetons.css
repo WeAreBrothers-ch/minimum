@@ -1,0 +1,131 @@
+/* Minimum : toutes les valeurs du site. Aucune valeur en dur ailleurs.
+   Raisons écrites dans DIRECTION-ARTISTIQUE.md. */
+
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  src: url("../assets/fonts/archivo-latin.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  src: url("../assets/fonts/archivo-latin-ext.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0,
+    U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  /* Couleur : le noir et le blanc du logo (D1). */
+  --noir: #000;
+  --blanc: #fff;
+  --encre: var(--noir);
+  --fond: var(--blanc);
+
+  /* Police */
+  --police: "Archivo", sans-serif;
+  --graisse-texte: 400;
+  --graisse-moyenne: 560;
+  --graisse-nom: 800;
+
+  /* Tailles : texte courant à 16 px au moins, titres fluides (max ≤ 2,5 × min). */
+  --taille-petite: 0.875rem;
+  --taille-texte: 1rem;
+  --taille-menu: 1rem;
+  --taille-carte: clamp(1.125rem, 0.9rem + 1.1vw, 1.75rem);
+  --taille-titre: clamp(1.75rem, 1.2rem + 2.6vw, 3.5rem);
+  --interligne-texte: 1.45;
+  --interligne-titre: 1.02;
+  --interlettre-capitales: 0.02em;
+  --mesure: 62ch;
+
+  /* Traits : un pixel partout (demande d'Eliott : plus fin que Zinéma). */
+  --trait: 1px;
+  --joint: 1px;
+
+  /* Espaces : plus d'air autour des textes, pas entre les affiches. */
+  --espace-1: 0.375rem;
+  --espace-2: 0.75rem;
+  --espace-3: 1.125rem;
+  --espace-4: 1.75rem;
+  --espace-5: 3rem;
+
+  /* Hauteurs fixes de la mise en page de l'accueil */
+  --hauteur-entete: 3.5rem;
+  --hauteur-tete-mur: 2.75rem;
+  --hauteur-lecteur: 3.25rem;
+  --cible: 2.75rem;
+
+  /* Proportion des cases du mur : celle d'une affiche de cinéma. */
+  --proportion-affiche: 2 / 3;
+
+  /* Un bouton éteint (pas encore de son à jouer). */
+  --opacite-eteint: 0.45;
+
+  /* Mouvement */
+  --duree-pression: 120ms;
+  --duree-menu: 180ms;
+  --duree-survol: 150ms;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* Code couleur des pastilles (demande d'Eliott, 16.11.2026) : une couleur
+     = un type d'info, le vert toujours pour l'argent. Tons doux sur le
+     Cinéma (fond blanc), vifs sur la Nuit (fond noir). Le texte d'une
+     pastille de couleur est toujours noir : contraste de 7:1 au moins.
+     Aucune teinte entre 250° et 300° (anti-slop CT-01). */
+  --vert-doux: #8fe5ac;
+  --vert-vif: #22d66b;
+  --jaune-doux: #f5ec8a;
+  --jaune-vif: #ffe23a;
+  --bleu-doux: #afcbff;
+  --bleu-vif: #5b97ff;
+  --rose-doux: #f8b9db;
+  --rose-vif: #ff62b4;
+  --orange-doux: #ffc394;
+  --orange-vif: #ff7a2f;
+
+  --pastille-texte: var(--noir);
+  --pastille-argent: var(--vert-doux);
+  --pastille-cinema: var(--jaune-doux);
+  --pastille-radio: var(--bleu-doux);
+  --pastille-nuit: var(--rose-doux);
+  --pastille-probleme: var(--orange-doux);
+
+  /* Aucun arrondi sur le site : les pastilles sont à angle droit, comme
+     les cases de la fiche (demande d'Eliott, 17.11.2026). */
+  --hauteur-pastille: 1.75rem;
+  /* L'anneau noir autour de la pastille de la page courante (menu). */
+  --anneau: 2px;
+  --anneau-ecart: 3px;
+}
+
+/* La nuit et le lecteur : surfaces inversées, pastilles vives. */
+.surface-nuit {
+  --encre: var(--blanc);
+  --fond: var(--noir);
+  --pastille-argent: var(--vert-vif);
+  --pastille-cinema: var(--jaune-vif);
+  --pastille-radio: var(--bleu-vif);
+  --pastille-nuit: var(--rose-vif);
+  --pastille-probleme: var(--orange-vif);
+}
+
+.surface-ecran {
+  --encre: var(--noir);
+  --fond: var(--blanc);
+  --pastille-argent: var(--vert-doux);
+  --pastille-cinema: var(--jaune-doux);
+  --pastille-radio: var(--bleu-doux);
+  --pastille-nuit: var(--rose-doux);
+  --pastille-probleme: var(--orange-doux);
+}

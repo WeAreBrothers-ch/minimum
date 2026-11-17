@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Nuit : les soirées du club, Minimum Neuchâtel</title>
+  <meta name="description" content="Les soirées du club Minimum, à La Case à Chocs, quai Philippe-Godet 20 à Neuchâtel." />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="canonical" href="https://www.cineminimum.ch/nuit/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Minimum" />
+  <meta property="og:locale" content="fr_CH" />
+  <meta property="og:title" content="Nuit : les soirées du club, Minimum Neuchâtel" />
+  <meta property="og:description" content="Les soirées du club Minimum, à La Case à Chocs, quai Philippe-Godet 20 à Neuchâtel." />
+  <meta property="og:url" content="https://www.cineminimum.ch/nuit/" />
+  <link rel="preload" href="../assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="../css/jetons.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/pastilles.css" />
+  <link rel="stylesheet" href="../css/entete.css" />
+  <link rel="stylesheet" href="../css/lecteur.css" />
+  <link rel="stylesheet" href="../css/mur.css" />
+  <link rel="stylesheet" href="../css/carte.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+  <link rel="stylesheet" href="../css/rubriques.css" />
+  <link rel="stylesheet" href="../css/detail.css" />
+  <link rel="stylesheet" href="../css/detail-grille.css" />
+  <link rel="stylesheet" href="../css/fiche-medias.css" />
+  <link rel="stylesheet" href="../css/line-up.css" />
+  <link rel="stylesheet" href="../css/billet.css" />
+  <link rel="stylesheet" href="../css/achat.css" />
+  <link rel="stylesheet" href="../css/achat-paiement.css" />
+</head>
+<body data-page="nuit" data-racine="../">
+  <a class="evitement" href="#contenu">Aller au contenu</a>
+  <header class="entete">
+    <nav class="menu" aria-label="Menu principal" data-ouvert="false">
+      <a class="menu__nom" href="../">Minimum</a>
+      <button class="menu__ouvrir pastille pastille--action" type="button" aria-expanded="false" aria-controls="menu-liste">Menu</button>
+      <ul class="menu__liste" id="menu-liste">
+        <li><a class="menu__lien pastille pastille--action pastille--cinema" href="../cinema/">Cinéma</a></li>
+        <li><a class="menu__lien pastille pastille--action pastille--nuit" href="../nuit/" aria-current="page">Nuit</a></li>
+        <li><a class="menu__lien pastille pastille--action pastille--radio" href="../radio/">Radio</a></li>
+        <li><a class="menu__lien pastille pastille--action" href="../agenda/">Agenda</a></li>
+        <li><a class="menu__lien pastille pastille--action" href="../infos/">Infos</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="contenu" class="page surface-nuit" tabindex="-1">
+    <h1 class="page__titre">Nuit</h1>
+    <p class="page__intro">Les soirées du club, à La Case à Chocs.</p>
+    <div data-remplir></div>
+  </main>
+  <aside class="lecteur surface-nuit" aria-label="Lecteur de la radio">
+    <div class="lecteur__commande">
+      <button class="lecteur__bouton pastille pastille--radio pastille--action" type="button" aria-pressed="false" disabled>Écouter</button>
+    </div>
+    <p class="lecteur__infos" aria-live="polite">
+      <span class="lecteur__etat">Radio</span>
+      <span class="lecteur__tirets tirets" aria-hidden="true"></span>
+      <span class="lecteur__titre">Pas encore à l’antenne</span>
+    </p>
+  </aside>
+  <script type="module" src="../js/main.js"></script>
+</body>
+</html>

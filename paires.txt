@@ -1,0 +1,16 @@
+# texte | fond | rôle
+#000 | #fff | courant
+#fff | #000 | courant
+#fff | #000 | ui
+#000 | #fff | ui
+# Pastilles : texte noir sur chaque couleur, douce (Cinéma) et vive (Nuit)
+#000 | #8fe5ac | ui
+#000 | #22d66b | ui
+#000 | #f5ec8a | ui
+#000 | #ffe23a | ui
+#000 | #afcbff | ui
+#000 | #5b97ff | ui
+#000 | #f8b9db | ui
+#000 | #ff62b4 | ui
+#000 | #ffc394 | courant
+#000 | #ff7a2f | courant

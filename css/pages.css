@@ -1,0 +1,199 @@
+/* Minimum : les pages de contenu et les fiches de la liste (Cinéma, Nuit).
+   Plus d'air qu'à l'accueil, mêmes traits d'un pixel. */
+
+.page {
+  padding: var(--espace-4) var(--espace-3) var(--espace-5);
+  color: var(--encre);
+  background: var(--fond);
+}
+
+.page__titre {
+  font-size: var(--taille-titre);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.page__intro {
+  max-width: var(--mesure);
+  margin-top: var(--espace-3);
+}
+
+.page__intro + .page__intro {
+  margin-top: var(--espace-2);
+}
+
+.page__section,
+.jour {
+  margin-top: var(--espace-5);
+}
+
+.page__sous-titre {
+  font-size: var(--taille-carte);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.page__sous-titre + .tirets {
+  margin-top: var(--espace-1);
+}
+
+.page__vide {
+  margin-top: var(--espace-4);
+  max-width: var(--mesure);
+}
+
+.avis {
+  max-width: var(--mesure);
+  margin-top: var(--espace-4);
+}
+
+/* Une fiche : film ou soirée. */
+.fiche {
+  display: grid;
+  grid-template-columns: minmax(0, 7.5rem) minmax(0, 1fr);
+  gap: var(--espace-3);
+  padding-block: var(--espace-4);
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.fiche__affiche {
+  aspect-ratio: var(--proportion-affiche);
+  overflow: hidden;
+}
+
+.fiche__affiche img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fiche__affiche--typo {
+  display: flex;
+  align-items: flex-start;
+  padding: var(--espace-2);
+  font-size: var(--taille-petite);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  border: var(--trait) solid var(--encre);
+}
+
+.fiche__texte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espace-2);
+  min-width: 0;
+  max-width: var(--mesure);
+}
+
+.fiche__titre {
+  font-size: var(--taille-carte);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+/* Les faits courts en pastilles, puis les noms, comme sur un programme. */
+.fiche__infos {
+  display: grid;
+  gap: var(--espace-2);
+  align-content: start;
+}
+
+.fiche__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espace-1) var(--espace-3);
+}
+
+.fiche__reperes {
+  display: grid;
+  gap: 0.125rem;
+  font-size: var(--taille-petite);
+}
+
+/* Téléphone : « Réalisation Elsa Amiel » sur une ligne, le terme en gras. */
+.fiche__reperes dt,
+.fiche__reperes dd {
+  display: inline;
+}
+
+.fiche__reperes dt {
+  font-weight: var(--graisse-moyenne);
+  margin-right: 0.35em;
+}
+
+.fiche__seances {
+  font-weight: var(--graisse-moyenne);
+}
+
+.fiche__sortie,
+.fiche__mention {
+  font-weight: var(--graisse-moyenne);
+}
+
+.fiche__titre a,
+.fiche__seances a {
+  text-decoration: none;
+}
+
+.fiche__action {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--cible);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  text-decoration: underline;
+  text-decoration-thickness: var(--trait);
+  text-underline-offset: 0.25em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .page a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: var(--trait);
+    text-underline-offset: 0.25em;
+  }
+}
+
+@media (min-width: 40rem) {
+  .page {
+    padding-inline: var(--espace-4);
+  }
+
+  .fiche {
+    grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
+    gap: var(--espace-4);
+  }
+
+  /* Plus de place : les termes en colonne, comme un programme imprimé. */
+  .fiche__reperes div {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: var(--espace-2);
+  }
+
+  .fiche__reperes dt {
+    margin-right: 0;
+  }
+}
+
+@media (min-width: 56rem) {
+  .page {
+    padding: var(--espace-5) var(--espace-5) calc(var(--espace-5) * 1.5);
+  }
+
+  .fiche {
+    grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+  }
+}
+

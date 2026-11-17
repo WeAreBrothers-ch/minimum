@@ -1,0 +1,13 @@
+{
+  "name": "minimum",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Site de Minimum, cinéma, club et radio à La Case à Chocs, Neuchâtel.",
+  "scripts": {
+    "servir": "python3 -m http.server 8000",
+    "verifier": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

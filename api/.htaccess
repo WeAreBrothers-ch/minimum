@@ -1,0 +1,10 @@
+# Minimum : seuls les deux points d'entrée de la billetterie répondent.
+# Les fichiers qui commencent par « _ » sont des morceaux internes :
+# jamais appelés directement depuis Internet.
+<FilesMatch "^_">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+  Header always set Cache-Control "no-store"
+</IfModule>

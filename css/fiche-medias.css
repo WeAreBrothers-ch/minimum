@@ -1,0 +1,116 @@
+/* Minimum : la bande-annonce et les images d'un film, sur sa fiche. */
+
+/* Avant le clic : une barre inversée, comme celle de la radio, rien de
+   chargé, d'un bord à l'autre de sa case. Elle prend la hauteur d'une
+   vidéo une fois lancée. */
+.bande-annonce--ouverte {
+  aspect-ratio: 16 / 9;
+}
+
+.bande-annonce__lancer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espace-1);
+  width: 100%;
+  min-height: calc(var(--cible) + var(--espace-3));
+  padding: var(--espace-2) var(--marge-case, var(--espace-3));
+  text-align: left;
+  color: var(--fond);
+  background: var(--encre);
+}
+
+.bande-annonce__lancer:focus-visible {
+  outline-color: var(--fond);
+}
+
+.bande-annonce__lancer:active {
+  transform: scale(0.98);
+  transition: transform var(--duree-pression) var(--ease-out);
+}
+
+.bande-annonce__titre {
+  font-size: var(--taille-carte);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.bande-annonce__tirets {
+  display: none;
+}
+
+.bande-annonce__note {
+  font-size: var(--taille-petite);
+}
+
+.bande-annonce__lecteur {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Les images du film, dans une case de toute la largeur : jointes d'un
+   trait, comme les affiches du mur. */
+.detail__photos {
+  padding: var(--marge-case, var(--espace-3));
+}
+
+.photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr));
+  gap: var(--joint);
+  margin-top: var(--espace-3);
+}
+
+.photos__case {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.photos__case img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bande-annonce__lancer:hover .bande-annonce__titre {
+    text-decoration: underline;
+    text-decoration-thickness: var(--trait);
+    text-underline-offset: 0.2em;
+  }
+}
+
+/* Assez de place : titre, tirets et note sur une seule ligne. */
+@media (min-width: 30rem) {
+  .bande-annonce__lancer {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--espace-2);
+  }
+
+  .bande-annonce__tirets {
+    display: block;
+    flex: 1 1 var(--espace-3);
+    min-width: var(--espace-3);
+  }
+
+  .bande-annonce__note {
+    flex: none;
+  }
+}
+
+@media (min-width: 56rem) {
+  .photos {
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bande-annonce__lancer:active {
+    transform: none;
+  }
+}

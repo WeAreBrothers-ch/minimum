@@ -1,0 +1,161 @@
+/* Minimum : le panneau d'achat. Des lignes d'un trait, comme un
+   programme imprimé ; seul le bouton Payer est plein. */
+
+.achat {
+  display: grid;
+  gap: var(--espace-4);
+  max-width: 44rem;
+  margin-top: var(--espace-3);
+}
+
+/* Tout ce qui suit le choix de la date : billets, e-mail, total, paiement. */
+.achat__suite {
+  display: grid;
+  gap: var(--espace-4);
+  min-width: 0;
+}
+
+.achat__groupe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espace-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.achat__legende {
+  padding: 0;
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+/* Les séances : une ligne chacune, la choisie s'inverse. */
+.achat__dates {
+  display: grid;
+  border-top: var(--trait) solid var(--encre);
+}
+
+.achat__date {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--espace-2);
+  min-height: var(--cible);
+  padding: var(--espace-1) var(--espace-2);
+  cursor: pointer;
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.achat__date input {
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: 0;
+  accent-color: currentColor;
+}
+
+.achat__date:has(input:checked) {
+  color: var(--fond);
+  background: var(--encre);
+}
+
+/* Complet ou annulée : la ligne reste lisible, mais ne se choisit plus. */
+.achat__date--off {
+  cursor: default;
+}
+
+/* Sans caisse, les séances se lisent seulement : pas de case à cocher. */
+.achat__dates--liste .achat__date {
+  grid-template-columns: minmax(0, 1fr) auto;
+  cursor: default;
+}
+
+.achat__jour {
+  display: flex;
+  flex-direction: column;
+}
+
+.achat__mention {
+  font-size: var(--taille-petite);
+  font-weight: var(--graisse-moyenne);
+}
+
+.achat__date:has(input:focus-visible) {
+  outline: var(--trait) solid var(--encre);
+  outline-offset: var(--trait);
+}
+
+.achat__heure,
+.achat__prix,
+.achat__nombre,
+.achat__montant {
+  font-variant-numeric: tabular-nums;
+}
+
+.achat__heure,
+.achat__prix,
+.achat__nom {
+  font-weight: var(--graisse-moyenne);
+}
+
+/* Les tarifs : le libellé, puis le prix et le compteur. */
+.achat__tarifs {
+  border-top: var(--trait) solid var(--encre);
+}
+
+.achat__tarif {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--espace-1) var(--espace-3);
+  padding-block: var(--espace-2);
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.achat__libelle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+/* Colonne étroite : le libellé et le prix l'un sur l'autre, le compteur à côté. */
+.achat__compteur {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+.achat__detail,
+.achat__aide {
+  font-size: var(--taille-petite);
+}
+
+.achat__compteur {
+  display: grid;
+  grid-template-columns: var(--cible) 2.75rem var(--cible);
+  border: var(--trait) solid var(--encre);
+}
+
+.achat__pas {
+  height: var(--cible);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.achat__pas[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: var(--opacite-eteint);
+}
+
+.achat__pas:active:not([aria-disabled="true"]) {
+  transform: scale(0.98);
+  transition: transform var(--duree-pression) var(--ease-out);
+}
+
+.achat__nombre {
+  display: grid;
+  place-items: center;
+  font-weight: var(--graisse-nom);
+  border-inline: var(--trait) solid var(--encre);
+}

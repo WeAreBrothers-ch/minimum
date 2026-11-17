@@ -1,0 +1,100 @@
+/* Minimum : l'agenda, la radio et la page Infos. */
+
+/* L'agenda : une ligne par rendez-vous. */
+.jour__liste {
+  margin-top: var(--espace-2);
+}
+
+.jour__ligne {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0 var(--espace-2);
+  padding-block: var(--espace-2);
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.jour__heure {
+  font-weight: var(--graisse-moyenne);
+}
+
+.jour__titre {
+  text-decoration: none;
+  font-weight: var(--graisse-moyenne);
+}
+
+.jour__monde {
+  grid-column: 2;
+  font-size: var(--taille-petite);
+}
+
+/* La radio. */
+.direct__ligne,
+.emission {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-3);
+  padding-block: var(--espace-3);
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+/* Écouter : la pastille bleue de la radio. */
+.emission__bouton {
+  flex: none;
+  min-width: 6.5rem;
+}
+
+.emission__titre {
+  font-size: var(--taille-texte);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+/* Infos : des blocs de texte, une adresse, des tarifs. */
+.infos__bloc {
+  max-width: var(--mesure);
+}
+
+.infos__bloc p + p,
+.infos__bloc p + ul,
+.infos__bloc ul + p {
+  margin-top: var(--espace-2);
+}
+
+.infos__tarifs li {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  align-items: start;
+  gap: var(--espace-2);
+  padding-block: var(--espace-1);
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.infos__prix {
+  justify-self: start;
+  font-variant-numeric: tabular-nums;
+}
+
+.infos__noms {
+  font-size: var(--taille-petite);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .jour__titre:hover {
+    text-decoration: underline;
+    text-decoration-thickness: var(--trait);
+    text-underline-offset: 0.25em;
+  }
+}
+
+@media (min-width: 40rem) {
+  .jour__ligne {
+    grid-template-columns: 5.5rem minmax(0, 1fr) 6.5rem;
+  }
+
+  .jour__monde {
+    grid-column: auto;
+    text-align: right;
+  }
+}

@@ -1,0 +1,76 @@
+/* Minimum : la barre de la radio, toujours en bas, qui ne s'arrête pas
+   quand on change de page. La ligne de tirets (D2) la traverse. */
+
+.lecteur {
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  display: flex;
+  align-items: stretch;
+  min-height: var(--hauteur-lecteur);
+  padding-bottom: env(safe-area-inset-bottom);
+  color: var(--encre);
+  background: var(--fond);
+  border-top: var(--trait) solid var(--encre);
+}
+
+/* La case du bouton garde son trait ; Écouter est la pastille bleue de la radio. */
+.lecteur__commande {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--espace-2);
+  border-right: var(--trait) solid var(--encre);
+}
+
+.lecteur__bouton {
+  min-width: 6.5rem;
+}
+
+.lecteur__infos {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--espace-2);
+  padding-inline: var(--espace-3);
+}
+
+.lecteur__etat {
+  flex: none;
+  font-weight: var(--graisse-moyenne);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.lecteur__tirets {
+  flex: 1 1 2rem;
+  min-width: 1.5rem;
+}
+
+.lecteur__titre {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 30rem) {
+  .lecteur__infos {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .lecteur__tirets {
+    display: none;
+  }
+
+  .lecteur__etat,
+  .lecteur__titre {
+    font-size: var(--taille-petite);
+    max-width: 100%;
+  }
+}

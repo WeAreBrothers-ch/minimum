@@ -1,0 +1,124 @@
+/* Minimum : le bas du panneau d'achat (e-mail, total, paiement),
+   puis le survol et les grands écrans de tout le panneau. */
+
+/* 16 px au moins : sinon l'iPhone agrandit la page en touchant le champ. */
+.achat__champ {
+  width: 100%;
+  min-height: var(--cible);
+  padding-inline: var(--espace-2);
+  font: inherit;
+  font-size: max(1rem, 16px);
+  color: var(--encre);
+  background: var(--fond);
+  border: var(--trait) solid var(--encre);
+  border-radius: 0;
+}
+
+.achat__champ[aria-invalid="true"] {
+  box-shadow: inset 0 0 0 var(--trait) var(--encre);
+}
+
+.achat__erreur {
+  font-weight: var(--graisse-nom);
+}
+
+.achat__total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--espace-3);
+  padding-block: var(--espace-2);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  border-block: var(--trait) solid var(--encre);
+}
+
+.achat__montant {
+  font-size: var(--taille-carte);
+}
+
+/* Payer : la pastille verte de l'argent, en grand. */
+.achat__payer {
+  width: 100%;
+  min-height: calc(var(--cible) + var(--espace-2));
+  font-size: var(--taille-texte);
+}
+
+.achat[aria-busy="true"] .achat__payer {
+  cursor: progress;
+  opacity: var(--opacite-eteint);
+}
+
+.achat__retour:empty {
+  display: none;
+}
+
+.achat__retour {
+  font-weight: var(--graisse-nom);
+}
+
+.achat__note {
+  max-width: var(--mesure);
+  margin-top: var(--espace-3);
+  font-size: var(--taille-petite);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .achat__date:not(.achat__date--off):hover .achat__jour {
+    text-decoration: underline;
+    text-decoration-thickness: var(--trait);
+    text-underline-offset: 0.25em;
+  }
+
+  .achat__pas:not([aria-disabled="true"]):hover {
+    color: var(--fond);
+    background: var(--encre);
+  }
+}
+
+/* La caisse se règle sur sa propre largeur (le conteneur .detail__billets),
+   pas sur celle de l'écran : étroite à côté du texte sur un grand écran,
+   large sous le texte sur une tablette. */
+
+/* Plus de place : libellé, prix et compteur sur une ligne,
+   et les séances sur deux colonnes. */
+@container (min-width: 30rem) {
+  .achat__tarif {
+    grid-template-columns: minmax(0, 1fr) 6.5rem auto;
+  }
+
+  .achat__compteur {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .achat__prix {
+    text-align: right;
+  }
+
+  .achat__dates {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--espace-3);
+  }
+}
+
+/* Toute la largeur : les séances à gauche, les billets et le paiement à droite. */
+@container (min-width: 46rem) {
+  .achat {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    column-gap: var(--espace-5);
+    max-width: none;
+  }
+
+  .achat__dates {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .achat__pas:active:not([aria-disabled="true"]) {
+    transform: none;
+  }
+}

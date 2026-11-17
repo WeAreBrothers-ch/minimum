@@ -1,0 +1,42 @@
+/* Minimum : le line-up d'une soirée, une ligne par passage. */
+
+.passages {
+  border-top: var(--trait) solid var(--encre);
+}
+
+.passage {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0 var(--espace-2);
+  padding-block: var(--espace-2);
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.passage__heure {
+  font-weight: var(--graisse-moyenne);
+  font-variant-numeric: tabular-nums;
+}
+
+.passage__nom {
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.passage__precision {
+  grid-column: 2;
+  justify-self: start;
+  margin-top: var(--espace-1);
+}
+
+@media (min-width: 40rem) {
+  .passage {
+    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+  }
+
+  .passage__precision {
+    grid-column: auto;
+    margin-top: 0;
+  }
+}
