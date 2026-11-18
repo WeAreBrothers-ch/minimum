@@ -31,46 +31,55 @@
   flex: 1;
   min-width: 0;
   display: flex;
-  align-items: center;
-  gap: var(--espace-2);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
   padding-inline: var(--espace-3);
 }
 
 .lecteur__etat {
   flex: none;
+  font-size: var(--taille-petite);
   font-weight: var(--graisse-moyenne);
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
 }
 
+/* Téléphone : l'état au-dessus du titre, sans ligne de tirets. */
 .lecteur__tirets {
-  flex: 1 1 2rem;
-  min-width: 1.5rem;
+  display: none;
 }
 
 .lecteur__titre {
-  flex: 0 1 auto;
+  max-width: 100%;
   min-width: 0;
   overflow: hidden;
+  font-size: var(--taille-petite);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-@media (max-width: 30rem) {
+/* Plus large : tout sur une ligne, la ligne de tirets au milieu. */
+@media (min-width: 30rem) {
   .lecteur__infos {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 0;
-  }
-
-  .lecteur__tirets {
-    display: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--espace-2);
   }
 
   .lecteur__etat,
   .lecteur__titre {
-    font-size: var(--taille-petite);
-    max-width: 100%;
+    font-size: var(--taille-texte);
+  }
+
+  .lecteur__tirets {
+    display: block;
+    flex: 1 1 2rem;
+    min-width: 1.5rem;
+  }
+
+  .lecteur__titre {
+    flex: 0 1 auto;
   }
 }

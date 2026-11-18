@@ -145,6 +145,20 @@
   text-decoration: none;
 }
 
+/* Zones tactiles : tout lien pressé du doigt fait 44 px de haut au moins,
+   le texte restant à sa place. */
+.fiche__titre a,
+.fiche__seances a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--cible);
+}
+
+.fiche__seances {
+  display: flex;
+  flex-direction: column;
+}
+
 .fiche__action {
   display: inline-flex;
   align-items: center;

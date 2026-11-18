@@ -19,6 +19,9 @@
 }
 
 .jour__titre {
+  display: flex;
+  align-items: center;
+  min-height: var(--cible);
   text-decoration: none;
   font-weight: var(--graisse-moyenne);
 }
@@ -60,6 +63,13 @@
 .infos__bloc p + ul,
 .infos__bloc ul + p {
   margin-top: var(--espace-2);
+}
+
+/* Téléphone, adresse, courriel : des liens que l'on presse du doigt. */
+.infos__bloc a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--cible);
 }
 
 .infos__tarifs li {

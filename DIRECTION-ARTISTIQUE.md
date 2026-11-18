@@ -43,7 +43,9 @@ défile à son rythme : on lit la nuit d'un côté, l'écran de l'autre, sans un
 |---|---|---|---|
 | R1 | zinema.ch, projet WeAreBrothers, cinéma frère à Lausanne | Le mur d'affiches en boucle comme page d'accueil, la barre de menu en cases, l'absence de tout décor, la fiche film en cases (titre et « Acheter », rangée de repères, affiche, bande-annonce, séances) | Les traits épais (Eliott veut plus fin), le gris de fond, la police Aileron, les affiches qui grossissent au survol (MV-03), les blocs à trait épais à gauche (CO-06) |
 
-Une seule référence, et c'est un projet maison pour un lieu de la même famille :
+| R2 | sosoradio.co : un poste de radio rétro (cadre, écran à pixels, cadran, haut-parleurs), police pixel Press Start 2P | La page Radio est un poste : écran à pixels qui scintille, cadran et aiguille, touches, volume, égaliseur | Le cadre doré, l'écran vert, les angles arrondis, les lueurs et les ombres, le fond de bois : Minimum reste à angle droit, sans ombre, et le bleu est celui de la radio |
+
+Pour R1, une seule référence maison pour un lieu de la même famille :
 la parenté visible est voulue (réponse d'Eliott, 16.11.2026). Distance : la
 mécanique se reprend, la surface (police, couleurs, épaisseurs) vient de Minimum.
 
@@ -125,6 +127,27 @@ Une couleur ne sert qu'à ce sens-là, partout sur le site :
   À remplacer par la police du logo si le client la fournit sous licence web.
 - Capitales grasses pour le nom et les titres (D1, D2) ; texte courant en romain, 16 px minimum.
 - Jamais d'italique.
+
+### Le poste de radio (page Radio, demande d'Eliott, 18.11.2026)
+- Dans le style de soso radio (R2), mais avec les règles de Minimum : cadre
+  épais de 6 px et haut-parleurs rayés en bleu (la couleur de la radio), écran
+  sombre `--lcd-fond` à texte bleu, lignes d'écran et léger scintillement, angles
+  droits, aucune ombre ni lueur.
+- **Press Start 2P** (SIL OFL, `assets/fonts/`), réservée au poste : écran,
+  touches, marque. Tout le reste du site reste en Archivo.
+- Le poste ne produit pas de son : il pilote le lecteur de la barre du bas
+  (`js/lecteur.js`), qui ne s'arrête pas quand on change de page. Une plage sans
+  son (flux pas encore branché) désactive la lecture et l'écran dit « Hors antenne »
+  ou « Son à venir » : il ne fait jamais semblant de jouer.
+- Les touches ≥ 44 px, le volume est un vrai champ `range` ; le poste se lit et
+  se commande au clavier. Mouvement coupé avec `prefers-reduced-motion`.
+
+### Mobile d'abord
+- Tout le CSS part du téléphone et s'élargit avec `min-width` (40rem, 56rem, 75rem) ;
+  aucune règle `max-width` de mise en page.
+- Zones tactiles de 44 px au moins (`--cible`) pour tout lien ou bouton : liens des
+  fiches, séances, agenda, coordonnées, touches du poste.
+- Vérifié sans débordement horizontal à 320, 360 et 390 px sur toutes les pages.
 
 ### Mouvement
 - Le défilement des colonnes est le seul mouvement de la page : chacune défile

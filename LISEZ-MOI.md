@@ -45,6 +45,9 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
   sont prêts, à remplir quand les séances de Minimum seront dans Sanity.
 - Billetterie : le panneau d'achat est dans `js/billetterie/`, le serveur dans
   `api/` (PHP). Mode d'emploi et liste avant ouverture : `BILLETTERIE.md`.
+- Page Radio : un poste dans le style de soso radio (`js/pages/radio.js`,
+  `css/radio.css`). Il pilote le lecteur de la barre du bas ; voir
+  `DIRECTION-ARTISTIQUE.md`, « Le poste de radio ».
 - Toutes les valeurs de style sont dans `css/jetons.css`.
 
 ## État : démonstration

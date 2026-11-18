@@ -96,6 +96,20 @@ export function pisteQuiJoue() {
   return joue() ? pisteCourante.id : null;
 }
 
+/** @returns {number} Le volume du lecteur, de 0 à 1. */
+export function volumeDuLecteur() {
+  return audio ? audio.volume : 1;
+}
+
+/**
+ * Règle le volume du lecteur (sans effet sur les téléphones qui gardent
+ * la main sur le volume, comme l’iPhone).
+ * @param {number} volume  De 0 à 1.
+ */
+export function reglerVolume(volume) {
+  if (audio) audio.volume = Math.min(1, Math.max(0, volume));
+}
+
 /** Coupe la radio, par exemple quand une bande-annonce démarre. */
 export function mettreRadioEnPause() {
   audio?.pause();

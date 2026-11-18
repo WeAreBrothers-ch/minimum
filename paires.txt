@@ -14,3 +14,6 @@
 #000 | #ff62b4 | ui
 #000 | #ffc394 | courant
 #000 | #ff7a2f | courant
+# Poste de radio : texte bleu sur l'écran sombre
+#5b97ff | #06122b | courant
+#afcbff | #06122b | courant
