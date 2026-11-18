@@ -14,10 +14,8 @@
 #000 | #ff62b4 | ui
 #000 | #ffc394 | courant
 #000 | #ff7a2f | courant
-# Bureau de la radio : texte blanc sur la barre de titre, texte noir sur le gris
-#fff | #000080 | ui
-#fff | #800000 | ui
-#fff | #0b4d3a | ui
-#fff | #b3125f | ui
-#fff | #1a1a1a | ui
-#000 | #c0c0c0 | courant
+# Bureau de la radio : texte noir sur les couleurs d'accent (bleu, rose, jaune vifs), blanc sur noir
+#000 | #5b97ff | ui
+#000 | #ff62b4 | ui
+#000 | #ffe23a | ui
+#fff | #000 | ui

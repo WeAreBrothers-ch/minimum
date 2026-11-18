@@ -168,7 +168,7 @@ export function fenetreReglages({ ecran, bureau, racine }) {
     (f.genre === "couleur" ? `style="background:${f.valeur}"` : `style="background-image:url('${racine}${f.valeur}')"`) +
     `><span class="tuile__nom">${echapper(f.nom)}</span></button>`;
   const tuileCouleur = (/** @type {{id: string, nom: string, valeur: string}} */ c) =>
-    `<button type="button" class="tuile tuile--couleur" data-couleur="${c.id}" aria-pressed="false" style="background:${c.valeur}">` +
+    `<button type="button" class="tuile tuile--couleur" data-couleur="${c.id}" aria-pressed="false" title="${echapper(c.nom)}" style="background:${c.valeur}">` +
     `<span class="tuile__nom">${echapper(c.nom)}</span></button>`;
   return {
     id: "reglages",
@@ -188,7 +188,7 @@ export function fenetreReglages({ ecran, bureau, racine }) {
       `<input type="file" accept="image/*" class="visuellement-cache"></label></div>` +
       `<p class="os-note">L’image reste sur votre appareil : elle n’est envoyée nulle part.</p></div>` +
       `<div class="os-page" data-page="couleurs" role="tabpanel" hidden>` +
-      `<h3 class="os-page__titre">Barre de titre des fenêtres</h3><div class="tuiles">${COULEURS.map(tuileCouleur).join("")}</div></div>` +
+      `<h3 class="os-page__titre">Couleur des fenêtres</h3><div class="tuiles">${COULEURS.map(tuileCouleur).join("")}</div></div>` +
       `<p class="os-statut" role="status"><span class="os-statut__texte">Prêt</span></p>`,
     monter: (corps) => {
       const statut = trouver(corps, ".os-statut__texte", HTMLElement);
@@ -226,7 +226,7 @@ export function fenetreReglages({ ecran, bureau, racine }) {
         const couleur = cible.closest(".tuile[data-couleur]");
         if (couleur instanceof HTMLElement && couleur.dataset.couleur) {
           appliquerCouleur(bureau, couleur.dataset.couleur);
-          statut.textContent = "Couleur des fenêtres changée";
+          statut.textContent = `Couleur : ${couleur.title}`;
           marquer();
         }
       };

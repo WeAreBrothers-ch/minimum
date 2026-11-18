@@ -148,18 +148,20 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
   cases est dans `css/cases.css` et `css/entete.css`.
 
 ### Le bureau de la radio (page Radio, demande d'Eliott, 18.11.2026)
-La page Radio est un faux bureau d'ordinateur des années 90, dans le style de
-soso radio (R2). Une première version en « poste de radio » avec écran à pixels
-passait à côté de la référence : elle a été remplacée.
+La page Radio reprend le **principe** de soso radio (R2), un faux bureau
+d'ordinateur, mais pas son look des années 90 (gris biseauté, barres bleu marine,
+police à chasse fixe) : elle est habillée avec le design du site (demande d'Eliott,
+18.11.2026 : « adapter au site, pas reprendre le style exact »).
 - **Le bureau** : un fond d'écran, cinq icônes (Minimum radio, Photos, Écrire,
   À propos, Réglages), des fenêtres grises à barre de titre colorée, une barre des
   tâches avec « Start » (qui mène aussi aux pages du site), un onglet par fenêtre
   ouverte et l'horloge.
-- **Changer le décor** (Réglages) : trois fonds de couleur unie, quatre fonds
-  dessinés pour Minimum (Lac, Nuit, Écran, Coucher, en SVG dans
-  `assets/img/fonds/`), ou **sa propre image**, réduite à 1600 px et gardée sur
-  l'appareil seulement ; cinq couleurs de barre de titre. Le choix est mémorisé
-  (`js/bureau/memoire.js`) et le bureau marche sans ce stockage.
+- **Changer le décor** (Réglages) : trois fonds de couleur unie (noir par défaut,
+  blanc, bleu radio), quatre fonds dessinés pour Minimum (Lac, Nuit, Écran,
+  Coucher, en SVG dans `assets/img/fonds/`), ou **sa propre image**, réduite à
+  1600 px et gardée sur l'appareil seulement ; quatre couleurs d'accent, toutes
+  prises au code du site (bleu radio, rose nuit, jaune cinéma, noir). Le choix est
+  mémorisé (`js/bureau/memoire.js`) et le bureau marche sans ce stockage.
 - **Le lecteur** : titre, égaliseur, précédent / lecture / suivant, volume en
   blocs, playlist, barre d'état. Il pilote le lecteur de la barre du bas du site
   (`js/lecteur.js`), qui ne s'arrête pas quand on change de page ; sur cette
@@ -171,10 +173,13 @@ passait à côté de la référence : elle a été remplacée.
   des tâches) ; pas de volume (le téléphone règle le sien). À partir de 40rem :
   icônes en colonne, fenêtres qui se déplacent à la barre de titre, se
   superposent et se réduisent.
-- **Surface** : le gris, le blanc et le bleu marine d'un bureau d'époque, avec des
-  biseaux (`--os-*` dans `css/bureau.css`) ; c'est le seul endroit du site où les
-  couleurs ne suivent pas le code des pastilles, comme le veut la référence.
-  Archivo pour le texte, une chasse fixe pour les états.
+- **Surface** : celle du site. Des cases blanches jointes par le trait de 2 px
+  (`--trait`), Archivo en majuscules grasses, angles droits, ni ombre ni biseau.
+  Une fenêtre est une pile de cases : barre de titre (une case par bouton), menu,
+  contenu, barre d'état avec la ligne de tirets de 2009. La fenêtre ouverte, la
+  plage choisie, la touche de lecture et l'onglet de la barre des tâches se
+  remplissent de la couleur d'accent, comme la rubrique courante du menu
+  (`--os-accent` dans `css/bureau.css`). Aucune valeur de couleur propre au bureau.
 - Boutons et lignes d'au moins 44 px ; tout se commande au clavier (Échap ferme la
   fenêtre) ; mouvement coupé avec `prefers-reduced-motion`.
 - Le message d'envoi de « Écrire » ouvre la messagerie du visiteur (`MAIL_RADIO`

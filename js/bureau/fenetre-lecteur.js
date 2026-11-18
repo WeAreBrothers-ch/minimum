@@ -16,7 +16,7 @@ import { sonDisponible } from "./plages.js";
 /** @typedef {import("./plages.js").Plage} Plage */
 /** @typedef {import("./fenetres.js").Definition} Definition */
 
-const BARRES = 18;
+const BARRES = 10;
 const BLOCS = 10;
 
 const PRECEDENT = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="3" width="2.5" height="10"/><path d="M13 3v10L6.5 8z"/></svg>';
@@ -44,18 +44,18 @@ function contenuHTML(liste) {
     `<button type="button" class="os-menu__item" data-ouvrir="ecrire">Écrire à la radio</button>` +
     `<button type="button" class="os-menu__item" data-ouvrir="apropos">À propos</button></div>` +
     `<div class="lecteur-os">` +
-    `<div class="lcd"><div class="lcd__texte"><p class="lcd__titre"></p><p class="lcd__sous"></p><span class="lcd__progres" aria-hidden="true"></span></div>` +
+    `<div class="lcd"><div class="lcd__texte"><p class="lcd__rang"></p><p class="lcd__titre"></p><p class="lcd__sous"></p><span class="lcd__progres" aria-hidden="true"></span></div>` +
     `<div class="lcd__egaliseur" aria-hidden="true">${barres}</div></div>` +
     `<div class="commandes"><div class="commandes__touches">` +
     `<button type="button" class="os-bouton" data-sens="-1" aria-label="Plage précédente">${PRECEDENT}</button>` +
     `<button type="button" class="os-bouton os-bouton--lecture" data-lecture aria-label="Écouter">${LECTURE}</button>` +
     `<button type="button" class="os-bouton" data-sens="1" aria-label="Plage suivante">${SUIVANT}</button></div>` +
-    `<div class="volume"><span class="volume__nom">Volume :</span>` +
+    `<div class="volume"><span class="volume__nom">Volume</span>` +
     `<button type="button" class="os-bouton os-bouton--petit" data-volume="-1" aria-label="Baisser le volume">-</button>` +
     `<span class="volume__blocs" role="img">${blocs}</span>` +
     `<button type="button" class="os-bouton os-bouton--petit" data-volume="1" aria-label="Monter le volume">+</button></div></div>` +
     `<section class="playlist" aria-label="Playlist"><h3 class="playlist__titre">Playlist</h3><ol class="playlist__liste">${lignes}</ol></section></div>` +
-    `<p class="os-statut" role="status"><span class="os-statut__texte"></span></p>`
+    `<p class="os-statut" role="status"><span class="os-statut__texte"></span><span class="tirets" aria-hidden="true"></span><span class="os-statut__fin"></span></p>`
   );
 }
 
@@ -83,10 +83,12 @@ export function fenetreLecteur(liste, ouvrir) {
  * @returns {() => void}
  */
 function brancher(corps, liste, ouvrir) {
+  const lcdRang = trouver(corps, ".lcd__rang", HTMLElement);
   const lcdTitre = trouver(corps, ".lcd__titre", HTMLElement);
   const lcdSous = trouver(corps, ".lcd__sous", HTMLElement);
   const lecture = trouver(corps, "[data-lecture]", HTMLButtonElement);
   const statut = trouver(corps, ".os-statut__texte", HTMLElement);
+  const statutFin = trouver(corps, ".os-statut__fin", HTMLElement);
   const volumeBlocs = trouver(corps, ".volume__blocs", HTMLElement);
   const lecteur = trouver(corps, ".lecteur-os", HTMLElement);
 
@@ -103,6 +105,7 @@ function brancher(corps, liste, ouvrir) {
     const plage = liste[rang];
     if (!plage) return;
     const joue = pisteQuiJoue() === plage.piste.id;
+    lcdRang.textContent = `${String(rang + 1).padStart(2, "0")} / ${String(liste.length).padStart(2, "0")}`;
     lcdTitre.textContent = plage.ecran;
     lcdSous.textContent = plage.quand;
     lecteur.dataset.joue = String(joue);
@@ -110,7 +113,8 @@ function brancher(corps, liste, ouvrir) {
     lecture.setAttribute("aria-pressed", String(joue));
     lecture.innerHTML = joue ? PAUSE : LECTURE;
     const etat = joue ? (plage.direct ? "En direct" : "Lecture") : sonDisponible(plage) ? "Pause" : "Son à venir";
-    statut.textContent = message || `${etat} - Plage ${rang + 1} sur ${liste.length}`;
+    statut.textContent = message || etat;
+    statutFin.textContent = message ? "" : `Plage ${rang + 1} sur ${liste.length}`;
     volumeBlocs.setAttribute("aria-label", `Volume ${niveau} sur ${BLOCS}`);
     [...volumeBlocs.children].forEach((bloc, i) => bloc instanceof HTMLElement && (bloc.dataset.plein = String(i < niveau)));
     for (const ligne of corps.querySelectorAll(".playlist__ligne")) {

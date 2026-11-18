@@ -1,7 +1,8 @@
 // @ts-check
-/* Minimum Radio : les fonds d'écran et les couleurs des fenêtres, que le
-   visiteur change dans Réglages. Des fonds de couleur unie, quatre fonds
-   dessinés pour Minimum, et une image à soi. */
+/* Minimum Radio : les fonds d'écran et la couleur d'accent des fenêtres, que
+   le visiteur change dans Réglages. Des fonds de couleur unie, quatre fonds
+   dessinés pour Minimum, et une image à soi. Les couleurs sont celles du site
+   (jetons.css) : le bleu est celui de la radio, le rose celui de la nuit. */
 
 import { ecrire, lire } from "./memoire.js";
 
@@ -15,9 +16,9 @@ import { ecrire, lire } from "./memoire.js";
 
 /** @type {Fond[]} */
 export const FONDS_SYSTEME = [
-  { id: "vert", nom: "Vert bureau", genre: "couleur", valeur: "#008080" },
-  { id: "marine", nom: "Bleu marine", genre: "couleur", valeur: "#000080" },
   { id: "noir", nom: "Noir", genre: "couleur", valeur: "#000000" },
+  { id: "blanc", nom: "Blanc", genre: "couleur", valeur: "#ffffff" },
+  { id: "bleu", nom: "Bleu radio", genre: "couleur", valeur: "var(--bleu-vif)" },
 ];
 
 /** @type {Fond[]} */
@@ -28,13 +29,13 @@ export const FONDS_IMAGES = [
   { id: "coucher", nom: "Coucher", genre: "image", valeur: "assets/img/fonds/coucher.svg" },
 ];
 
-/** La couleur de la barre de titre des fenêtres. */
+/** La couleur d'accent : barre de titre de la fenêtre ouverte, plage choisie,
+    touche de lecture. « texte » est la couleur lisible dessus. */
 export const COULEURS = [
-  { id: "marine", nom: "Marine", valeur: "#000080" },
-  { id: "bordeaux", nom: "Bordeaux", valeur: "#800000" },
-  { id: "sapin", nom: "Sapin", valeur: "#0b4d3a" },
-  { id: "rose", nom: "Rose", valeur: "#b3125f" },
-  { id: "noir", nom: "Noir", valeur: "#1a1a1a" },
+  { id: "bleu", nom: "Bleu radio", valeur: "var(--bleu-vif)", texte: "#000000" },
+  { id: "rose", nom: "Rose nuit", valeur: "var(--rose-vif)", texte: "#000000" },
+  { id: "jaune", nom: "Jaune cinéma", valeur: "var(--jaune-vif)", texte: "#000000" },
+  { id: "noir", nom: "Noir", valeur: "#000000", texte: "#ffffff" },
 ];
 
 const CLE_FOND = "minimum:radio:fond";
@@ -50,7 +51,7 @@ export function fondChoisi() {
   const id = lire(CLE_FOND);
   const connu = [...FONDS_SYSTEME, ...FONDS_IMAGES].some((f) => f.id === id);
   if (id === FOND_PERSO && imageDeVisiteur()) return FOND_PERSO;
-  return connu && id ? id : "lac";
+  return connu && id ? id : "noir";
 }
 
 /** @returns {string | null} */
@@ -61,7 +62,7 @@ function imageDeVisiteur() {
 /** @returns {string} */
 export function couleurChoisie() {
   const id = lire(CLE_COULEUR);
-  return COULEURS.some((c) => c.id === id) && id ? id : "marine";
+  return COULEURS.some((c) => c.id === id) && id ? id : "bleu";
 }
 
 /**
@@ -76,25 +77,26 @@ export function appliquerFond(ecran, id, racine) {
     ecran.style.backgroundColor = "#000";
     ecran.style.backgroundImage = `url("${imageDeVisiteur()}")`;
   } else if (fond?.genre === "image") {
-    ecran.style.backgroundColor = "#808080";
+    ecran.style.backgroundColor = "#000";
     ecran.style.backgroundImage = `url("${racine}${fond.valeur}")`;
   } else {
     ecran.style.backgroundImage = "none";
-    ecran.style.backgroundColor = fond?.valeur ?? "#008080";
+    ecran.style.backgroundColor = fond?.valeur ?? "#000000";
   }
   ecran.dataset.fond = id;
   ecrire(CLE_FOND, id);
 }
 
 /**
- * Pose la couleur des barres de titre.
+ * Pose la couleur d'accent des fenêtres.
  * @param {HTMLElement} bureau
  * @param {string} id
  */
 export function appliquerCouleur(bureau, id) {
   const couleur = COULEURS.find((c) => c.id === id) ?? COULEURS[0];
   if (!couleur) return;
-  bureau.style.setProperty("--os-titre", couleur.valeur);
+  bureau.style.setProperty("--os-accent", couleur.valeur);
+  bureau.style.setProperty("--os-accent-texte", couleur.texte);
   ecrire(CLE_COULEUR, couleur.id);
 }
 
