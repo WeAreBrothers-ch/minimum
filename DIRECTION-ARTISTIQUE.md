@@ -181,6 +181,13 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
   journée choisie en rangées heure | titre | action, et le jour d'avant et
   d'après ; sur grand écran, la semaine en sept colonnes, chaque rendez-vous dans
   une case de la couleur de son monde ; puis « Plus tard ». Pas de vignettes.
+- **Accueil** : la tête de chaque mur est une case de la couleur de son monde
+  (rose la nuit, jaune le cinéma, comme le menu), son nom en capitales grasses,
+  ce qu'il contient (« 7 soirées · 3 émissions », « 8 films ») et une flèche ;
+  toute la case mène à la page.
+- **Jamais deux cases noires l'une contre l'autre** (elles se souderaient en un
+  bloc, règle de Zinéma) : le filtre « Tout » actif de l'agenda reste blanc,
+  souligné des trois couleurs des mondes.
 - **En-tête des pages** : le titre et une ligne de présentation dans la même
   case ; les infos pratiques (billets, paiement) en lignes sous les films.
 - **Films et soirées sur téléphone** : une carte par ligne, l'affiche à gauche

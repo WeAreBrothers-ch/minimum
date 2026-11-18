@@ -39,6 +39,24 @@ function remplir(moitie, cartes, vide, racine) {
 }
 
 /**
+ * Écrit dans la tête d’un mur ce qu’il contient : « 7 soirées · 3 émissions ».
+ * @param {HTMLElement | null} moitie
+ * @param {Carte[]} cartes
+ * @param {Array<[Carte["genre"], string, string]>} genres  Genre, singulier, pluriel.
+ */
+function compter(moitie, cartes, genres) {
+  const compte = moitie?.querySelector("[data-compte]");
+  if (!(compte instanceof HTMLElement)) return;
+  const parties = genres
+    .map(([genre, un, plusieurs]) => {
+      const n = cartes.filter((c) => c.genre === genre).length;
+      return n ? `${n}\u00a0${n > 1 ? plusieurs : un}` : "";
+    })
+    .filter(Boolean);
+  if (parties.length) compte.textContent = parties.join(" · ");
+}
+
+/**
  * Marque les cases de l’émission qui joue.
  * @param {string | null} id
  */
@@ -91,8 +109,15 @@ export function initAccueil() {
   chargerProgramme()
     .then((programme) => {
       if (!actif) return;
-      demontages.push(remplir(moitieNuit, cartesNuit(programme), "Aucune soirée ni émission annoncée pour l’instant.", racine));
-      demontages.push(remplir(moitieCinema, cartesCinema(programme), "Aucun film programmé pour l’instant.", racine));
+      const nuit = cartesNuit(programme);
+      const cinema = cartesCinema(programme);
+      compter(moitieNuit, nuit, [
+        ["soiree", "soirée", "soirées"],
+        ["emission", "émission", "émissions"],
+      ]);
+      compter(moitieCinema, cinema, [["film", "film", "films"]]);
+      demontages.push(remplir(moitieNuit, nuit, "Aucune soirée ni émission annoncée pour l’instant.", racine));
+      demontages.push(remplir(moitieCinema, cinema, "Aucun film programmé pour l’instant.", racine));
       const clic = auClicEmission(programme);
       moitieNuit?.addEventListener("click", clic);
       demontages.push(() => moitieNuit?.removeEventListener("click", clic));

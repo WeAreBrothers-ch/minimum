@@ -318,7 +318,11 @@
 
   .filtre:not([aria-pressed="true"]):hover,
   .jour:not([aria-pressed="true"]):hover {
-    background: var(--remplissage, var(--fond));
+    background-color: var(--remplissage, var(--fond));
+  }
+
+  .filtre--tout:not([aria-pressed="true"]):hover {
+    background-size: 100% 0.375rem;
   }
 
   .jour:not([aria-pressed="true"]):hover {

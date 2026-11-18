@@ -21,34 +21,72 @@
   border-left: var(--trait) solid var(--noir);
 }
 
+/* La tête d'un mur : une case de la couleur de son monde (rose la nuit,
+   jaune le cinéma, comme dans le menu), son nom en capitales grasses, ce
+   qu'il contient et une flèche. Toute la case mène à la page. */
 .moitie__tete {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--espace-2);
+  gap: var(--espace-3);
+  min-width: 0;
   padding-inline: var(--espace-3);
-  border-bottom: var(--trait) solid var(--encre);
+  color: var(--pastille-texte);
+  text-decoration: none;
+  background: var(--teinte-monde);
+  border-bottom: var(--trait) solid var(--noir);
+}
+
+[data-monde="nuit"] .moitie__tete {
+  --teinte-monde: var(--pastille-nuit);
+}
+
+[data-monde="cinema"] .moitie__tete {
+  --teinte-monde: var(--pastille-cinema);
+}
+
+.moitie__tete:focus-visible {
+  outline: var(--trait) solid var(--noir);
+  outline-offset: calc(var(--trait) * -3);
 }
 
 .moitie__nom {
-  font-size: var(--taille-menu);
+  font-size: var(--taille-texte);
   font-weight: var(--graisse-nom);
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
 }
 
-.moitie__nom a {
+.moitie__suite {
   display: flex;
-  align-items: center;
-  min-width: var(--cible);
-  min-height: var(--cible);
-  text-decoration: none;
+  align-items: baseline;
+  gap: var(--espace-3);
+  min-width: 0;
 }
 
-.moitie__sous-titre {
+/* Ce que contient le mur : seulement là où il y a la place. */
+.moitie__compte {
   display: none;
+  overflow: hidden;
   font-size: var(--taille-petite);
+  font-weight: var(--graisse-nom);
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
   white-space: nowrap;
+}
+
+.moitie__fleche {
+  flex: none;
+  font-size: var(--taille-texte);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .moitie__tete:hover .moitie__nom {
+    text-decoration: underline;
+    text-decoration-thickness: var(--trait);
+    text-underline-offset: 0.2em;
+  }
 }
 
 /* Les colonnes d'une moitié, côte à côte : une sur téléphone, deux sur
@@ -92,7 +130,7 @@
 }
 
 @media (min-width: 40rem) {
-  .moitie__sous-titre {
+  .moitie__compte {
     display: block;
   }
 }

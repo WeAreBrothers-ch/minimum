@@ -161,6 +161,15 @@
       transition: translate 260ms var(--ease-entree);
     }
 
+    .moitie__fleche {
+      display: inline-block;
+      transition: translate 260ms var(--ease-entree);
+    }
+
+    .moitie__tete:hover .moitie__fleche {
+      translate: 0.3125rem 0;
+    }
+
     .carreau:hover a.carreau__action::after,
     a.carreau__action:hover::after,
     .info__action:hover span {
