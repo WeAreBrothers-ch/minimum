@@ -17,7 +17,11 @@
   background: var(--fond);
 }
 
-.moitie + .moitie {
+/* Le trait entre les deux murs est porté par la tête et la première colonne
+   de Cinéma, pas par le mur entier : toutes les colonnes ont ainsi la même
+   largeur, et leurs traits tombent sur ceux de la barre du haut (entete.css). */
+.moitie + .moitie .moitie__tete,
+.moitie + .moitie .moitie__colonne:first-child {
   border-left: var(--trait) solid var(--noir);
 }
 
@@ -99,8 +103,8 @@
   min-height: 0;
 }
 
-/* Le joint entre deux cases est un trait d'un pixel, de la couleur de
-   l'encre de la moitié : blanc côté Nuit, noir côté Cinéma. */
+/* Le joint entre deux cases est un trait noir, des deux côtés : jamais de
+   filet blanc entre une affiche et la suivante. */
 .moitie__colonne {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -112,11 +116,11 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: none;
-  background: var(--encre);
+  background: var(--noir);
 }
 
 .moitie__colonne + .moitie__colonne {
-  border-left: var(--trait) solid var(--encre);
+  border-left: var(--trait) solid var(--noir);
 }
 
 .moitie__colonne::-webkit-scrollbar {

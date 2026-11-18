@@ -65,7 +65,7 @@ function rendezVous(programme) {
       heure: s.heure,
       titre: s.titre,
       sous: `${heureCourte(s.heure)}${fin}${s.lineUp.length ? `, ${s.lineUp.length} passages` : ""}`,
-      lien: `soiree/?id=${encodeURIComponent(s.id)}`,
+      lien: `soiree/?id=${encodeURIComponent(s.id)}${s.tarifs.length ? "#billets" : ""}`,
       monde: "nuit",
       action: s.tarifs.length ? "Billets" : "Line-up",
     });

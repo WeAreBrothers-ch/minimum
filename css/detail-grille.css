@@ -1,9 +1,12 @@
-/* Minimum : la grille de la fiche d'un film ou d'une soirée.
-   Même mécanique que la fiche de Zinéma (R1) : le titre et la case
-   Billets, une rangée de repères, puis l'affiche, le texte et la caisse.
-   Les traits d'un pixel sont les joints de la grille : le fond d'encre
-   se voit entre les cases, comme entre les affiches du mur. Ce qu'il y a
-   dans chaque case est dans detail.css. */
+/* Minimum : la grille de la fiche d'un film ou d'une soirée. Des cases
+   jointes d'un trait (le fond d'encre se voit entre elles), alignées sur
+   la grille du site : deux colonnes sur téléphone, comme Cinéma ; quatre
+   sur ordinateur, comme les colonnes du mur et les huitièmes de la barre
+   du haut. Ce qu'il y a dans chaque case est dans detail.css.
+
+   Les cases se placent dans l'ordre du texte ; seules l'affiche et les
+   repères partagent une rangée sur téléphone. Une case absente (pas de
+   texte, pas d'images) ne laisse donc jamais de trou. */
 
 /* La fiche va d'un bord à l'autre de l'écran, comme le mur d'accueil, et
    le pied de page se pose directement dessous (un seul trait). */
@@ -11,18 +14,10 @@
   padding: 0;
 }
 
-/* Téléphone : le titre, la case Billets, l'affiche à côté des repères,
-   puis le texte et la caisse. */
 .detail {
   --marge-case: var(--espace-3);
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-  grid-template-areas:
-    "tete    tete"
-    "acheter acheter"
-    "affiche faits"
-    "texte   texte"
-    "billets billets";
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--joint);
   background: var(--encre);
   border-bottom: var(--trait) solid var(--encre);
@@ -30,110 +25,72 @@
 
 /* Sans poids : la couleur propre d'une case (detail.css) l'emporte. */
 :where(.detail) > * {
+  grid-column: 1 / -1;
   min-width: 0;
   background: var(--fond);
 }
 
-.detail__tete {
-  grid-area: tete;
+/* L'affiche dans la moitié gauche, les repères dans la droite. */
+.detail > .detail__affiche {
+  grid-column: 1;
 }
 
-.detail__acheter {
-  grid-area: acheter;
+.detail > .detail__faits {
+  grid-column: 2;
 }
 
-.detail__faits {
-  grid-area: faits;
-}
-
-.detail__affiche {
-  grid-area: affiche;
-}
-
-.detail__texte {
-  grid-area: texte;
-}
-
-.detail__billets {
-  grid-area: billets;
-}
-
-.detail__photos {
-  grid-column: 1 / -1;
-}
-
-/* Tablette : la case Billets à côté du titre. */
-@media (min-width: 40rem) {
-  .detail {
-    grid-template-columns: minmax(0, 14rem) minmax(0, 1fr) minmax(0, 14rem);
-    grid-template-areas:
-      "tete    tete    acheter"
-      "affiche faits   faits"
-      "texte   texte   texte"
-      "billets billets billets";
-  }
-
-  .detail__acheter {
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: flex-start;
-    justify-content: center;
-  }
-}
-
-/* Ordinateur : les repères en une rangée sous le titre, comme chez
-   Zinéma ; l'affiche et le texte côte à côte, la caisse dessous. */
+/* Ordinateur : quatre colonnes. Le retour et le titre sur trois, la case
+   Billets sur la quatrième ; puis l'affiche et ses repères, le texte sur
+   deux colonnes, les séances à droite, sous Billets. La rangée des
+   repères absorbe la hauteur du texte : l'affiche garde sa taille exacte. */
 @media (min-width: 56rem) {
   .detail {
     --marge-case: var(--espace-4);
-    grid-template-columns:
-      minmax(0, clamp(16rem, 28vw, 44rem))
-      minmax(0, 1fr)
-      minmax(0, clamp(18rem, 26vw, 34rem));
-    grid-template-areas:
-      "tete    tete    acheter"
-      "faits   faits   faits"
-      "affiche texte   texte"
-      "billets billets billets";
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: auto auto auto 1fr;
   }
 
-  .detail__faits {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--joint);
+  .detail > .detail__retour {
+    grid-column: 1 / 4;
+    grid-row: 1;
   }
 
-  .detail__fait {
-    display: flex;
-    flex: 1 1 8rem;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: 0.125rem;
-    padding-block: var(--espace-2);
+  .detail > .detail__tete {
+    grid-column: 1 / 4;
+    grid-row: 2;
   }
-}
 
-/* Grand écran : trois colonnes, la caisse à droite, sous la case Billets.
-   Le titre, les repères, l'affiche et les séances se voient sans défiler. */
-@media (min-width: 75rem) {
-  .detail {
-    grid-template-columns:
-      minmax(0, clamp(16rem, 28vw, 44rem))
-      minmax(0, 1fr)
-      minmax(0, clamp(22rem, 30vw, 36rem));
-    grid-template-areas:
-      "tete    tete    acheter"
-      "faits   faits   faits"
-      "affiche texte   billets";
+  .detail > .detail__acheter {
+    grid-column: 4;
+    grid-row: 1 / 3;
   }
-}
 
-/* Écran large et assez haut : en descendant vers le paiement, l'affiche
-   et le texte restent en vue dans leur case, à côté de la caisse. */
-@media (min-width: 75rem) and (min-height: 50rem) {
-  .detail__affiche .fiche__affiche,
-  .detail__colle {
-    position: sticky;
-    top: 0;
+  .detail > .detail__affiche {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .detail > .detail__faits {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .detail > .detail__texte {
+    grid-column: 2 / 4;
+    grid-row: 3 / 5;
+  }
+
+  .detail > .detail__seances {
+    grid-column: 4;
+    grid-row: 3 / 5;
+  }
+
+  /* Pas de texte (une soirée sans description) : les séances s'élargissent. */
+  .detail:not(:has(> .detail__texte)) > .detail__seances {
+    grid-column: 2 / -1;
+  }
+
+  .detail > .detail__photos {
+    grid-column: 1 / -1;
   }
 }

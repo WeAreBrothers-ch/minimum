@@ -1,9 +1,9 @@
 // @ts-check
 /* Minimum : les cases que partagent la fiche d’un film et celle d’une
-   soirée. La case Billets, en haut à droite, et la rangée de repères
-   (année, pays, durée…), chacun dans sa case. La grille est dans detail.css. */
+   soirée. La case Billets, verte, et les repères (année, pays, durée…),
+   chacun sur sa ligne. La grille est dans detail-grille.css. */
 
-import { BILLETTERIE } from "../config.js";
+import { premierChoix, venteOuverte } from "../billetterie/panneau-html.js";
 import { echapper, prix } from "../format.js";
 
 /** @typedef {import("../types.js").Tarif} Tarif */
@@ -22,16 +22,7 @@ function fourchette(tarifs) {
 }
 
 /**
- * Vrai si un billet peut s’acheter ici : vente ouverte, un tarif, une date libre.
- * @param {OptionsPanneau} options
- * @returns {boolean}
- */
-export function venteOuverte(options) {
-  return BILLETTERIE !== "fermee" && options.tarifs.length > 0 && options.choix.some((c) => c.indisponible === null);
-}
-
-/**
- * La case Billets. Verte (l’argent) et menant à la caisse quand on peut
+ * La case Billets. Verte (l’argent) et ouvrant la caisse quand on peut
  * acheter ; sinon blanche, avec ce qu’il faut savoir à la place.
  * @param {OptionsPanneau} options
  * @param {string} sansVente  « Pas encore en vente », « Complet »…
@@ -45,13 +36,14 @@ export function caseBilletsHTML(options, sansVente) {
     );
   }
   return (
-    `<a class="detail__acheter" href="#billets"><span class="detail__acheter-titre">Billets <span class="detail__fleche" aria-hidden="true">↓</span></span>` +
-    `<span class="detail__acheter-prix">${fourchette(options.tarifs)}</span></a>`
+    `<button type="button" class="detail__acheter" data-acheter="${echapper(premierChoix(options) ?? "")}">` +
+    `<span class="detail__acheter-titre">Billets <span class="detail__fleche" aria-hidden="true">→</span></span>` +
+    `<span class="detail__acheter-prix">${fourchette(options.tarifs)}</span></button>`
   );
 }
 
 /**
- * Les repères, une case chacun, le nom au-dessus de la valeur. Les vides sont sautés.
+ * Les repères, une ligne chacun, le nom devant la valeur. Les vides sont sautés.
  * @param {Array<[string, string | null]>} lignes
  * @returns {string}
  */
@@ -61,4 +53,14 @@ export function faitsHTML(lignes) {
     .map(([terme, valeur]) => `<div class="detail__fait"><dt>${echapper(terme)}</dt><dd>${echapper(valeur ?? "")}</dd></div>`)
     .join("");
   return `<dl class="detail__faits">${cases}</dl>`;
+}
+
+/**
+ * Le chemin de retour, en case au-dessus du titre.
+ * @param {string} href
+ * @param {string} texte
+ * @returns {string}
+ */
+export function retourHTML(href, texte) {
+  return `<p class="detail__retour"><a href="${echapper(href)}"><span aria-hidden="true">←</span> ${echapper(texte)}</a></p>`;
 }

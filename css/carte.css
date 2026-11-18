@@ -100,6 +100,13 @@
   background: var(--pastille-radio);
 }
 
+/* Une soirée sans affiche : rose, la couleur de la nuit. Noire, elle se
+   confondrait avec les joints noirs du mur. */
+.carte--typo.carte--soiree {
+  color: var(--pastille-texte);
+  background: var(--pastille-nuit);
+}
+
 .carte--emission .carte__etat {
   color: var(--blanc);
   background: var(--noir);

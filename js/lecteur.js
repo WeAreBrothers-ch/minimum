@@ -29,16 +29,15 @@ let pisteCourante = {
 };
 
 /**
- * @returns {{ bouton: HTMLButtonElement, etat: HTMLElement, titre: HTMLElement } | null}
+ * La case garde toujours le mot « Radio » : sa largeur ne bouge pas et rien
+ * ne s'y coupe. Ce qui joue s'écrit à côté, là où il y a la place.
+ * @returns {{ bouton: HTMLButtonElement, titre: HTMLElement } | null}
  */
 function elements() {
   const bouton = document.querySelector(".lecteur__bouton");
-  const etat = document.querySelector(".lecteur__etat");
   const titre = document.querySelector(".lecteur__titre");
-  if (!(bouton instanceof HTMLButtonElement) || !(etat instanceof HTMLElement) || !(titre instanceof HTMLElement)) {
-    return null;
-  }
-  return { bouton, etat, titre };
+  if (!(bouton instanceof HTMLButtonElement) || !(titre instanceof HTMLElement)) return null;
+  return { bouton, titre };
 }
 
 /** @returns {boolean} */
@@ -50,7 +49,6 @@ function joue() {
 function afficher() {
   const el = elements();
   if (el) {
-    el.etat.textContent = pisteCourante.etat;
     el.titre.textContent = pisteCourante.titre;
     el.bouton.disabled = pisteCourante.audio === null;
     el.bouton.setAttribute("aria-pressed", String(joue()));

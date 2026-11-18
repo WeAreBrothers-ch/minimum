@@ -3,12 +3,12 @@
    horaires, qui joue quand, et la caisse. Adresse : soiree/?id=…
    Même grille de cases que la fiche d’un film (film.js, detail.css). */
 
-import { panneauHTML } from "../billetterie/panneau-html.js";
+import { caisseHTML, seancesHTML } from "../billetterie/panneau-html.js";
 import { monterPanneau } from "../billetterie/panneau.js";
 import { chargerProgramme, soireeParId } from "../donnees.js";
-import { echapper, heureCourte, jourLongMajuscule } from "../format.js";
+import { echapper, heureCourte, jourCourt, jourLongMajuscule } from "../format.js";
 import { afficheHTML, afficherErreur, allerALAncre, nommerPage, zoneAremplir } from "./commun.js";
-import { caseBilletsHTML, faitsHTML } from "./detail-cases.js";
+import { caseBilletsHTML, faitsHTML, retourHTML } from "./detail-cases.js";
 
 /** @typedef {import("../types.js").Soiree} Soiree */
 /** @typedef {import("../billetterie/panneau-html.js").OptionsPanneau} OptionsPanneau */
@@ -29,9 +29,8 @@ function horaire(soiree) {
  * @returns {string}
  */
 function teteHTML(soiree) {
-  const racine = document.body.dataset.racine ?? "";
   return (
-    `<header class="detail__tete"><p class="detail__retour"><a href="${racine}nuit/">Toutes les soirées</a></p>` +
+    `<header class="detail__tete">` +
     `<h1 class="page__titre"><span class="masque"><span>${echapper(soiree.titre)}</span></span></h1>` +
     `<p class="detail__ligne">${echapper(horaire(soiree))}</p></header>`
   );
@@ -56,26 +55,27 @@ function lineUpHTML(soiree) {
 }
 
 /**
- * Titre et billets, repères, puis l’affiche, le line-up et la caisse.
+ * Le retour, le titre et la case Billets ; l’affiche et les repères ;
+ * l’entrée, le texte et le line-up ; puis la caisse.
  * @param {Soiree} soiree
  * @param {OptionsPanneau} options
  * @returns {string}
  */
 function ficheHTML(soiree, options) {
+  const racine = document.body.dataset.racine ?? "";
+  const texte = `${soiree.description ? `<p class="detail__bloc detail__resume">${echapper(soiree.description)}</p>` : ""}${lineUpHTML(soiree)}`;
   return (
-    `<article class="detail">${teteHTML(soiree)}${caseBilletsHTML(options, "Pas de vente en ligne")}` +
+    `<article class="detail">${retourHTML(`${racine}nuit/`, "Toutes les soirées")}` +
+    `${teteHTML(soiree)}${caseBilletsHTML(options, "Pas de vente en ligne")}` +
+    `<div class="detail__affiche">${afficheHTML(soiree.affiche, soiree.titre, { detail: true })}</div>` +
     faitsHTML([
       ["Ouverture", heureCourte(soiree.heure)],
       ["Fermeture", soiree.fin ? heureCourte(soiree.fin) : null],
       ["Âge", soiree.age],
     ]) +
-    `<div class="detail__affiche">${afficheHTML(soiree.affiche, soiree.titre, { detail: true })}</div>` +
-    `<div class="detail__texte"><div class="detail__colle">` +
-    `${soiree.description ? `<p class="detail__bloc detail__resume">${echapper(soiree.description)}</p>` : ""}` +
-    `${lineUpHTML(soiree)}</div></div>` +
-    `<section class="detail__billets" id="billets" aria-labelledby="titre-billets">` +
-    `<h2 class="page__sous-titre" id="titre-billets">Billets</h2><span class="tirets" aria-hidden="true"></span>` +
-    `${panneauHTML(options)}</section></article>`
+    seancesHTML(options, "") +
+    (texte ? `<div class="detail__texte"><div class="detail__colle">${texte}</div></div>` : "") +
+    `</article>${caisseHTML(options)}`
   );
 }
 
@@ -86,7 +86,17 @@ function ficheHTML(soiree, options) {
 function optionsAchat(soiree) {
   return {
     genre: "soiree",
-    choix: [{ id: soiree.id, jour: jourLongMajuscule(soiree.date), heure: heureCourte(soiree.heure), indisponible: null, mention: null }],
+    titre: soiree.titre,
+    choix: [
+      {
+        id: soiree.id,
+        jour: jourLongMajuscule(soiree.date),
+        court: jourCourt(soiree.date),
+        heure: heureCourte(soiree.heure),
+        indisponible: null,
+        mention: null,
+      },
+    ],
     choisi: soiree.id,
     tarifs: soiree.tarifs,
     notes: [],

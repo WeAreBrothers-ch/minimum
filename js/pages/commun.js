@@ -32,7 +32,7 @@ export function afficheHTML(image, titre, reglages = {}) {
   }
   const racine = document.body.dataset.racine ?? "";
   const tailles = detail
-    ? "(min-width: 56rem) 22rem, (min-width: 40rem) 14rem, 9rem"
+    ? "(min-width: 56rem) 25vw, 50vw"
     : "(min-width: 75rem) 25vw, (min-width: 40rem) 33vw, 38vw";
   const { src, srcset, sizes } = sourcesImage(image, racine, [240, 360, 480, 720], tailles);
   const variantes = srcset ? ` srcset="${echapper(srcset)}" sizes="${echapper(sizes)}"` : "";
@@ -40,7 +40,8 @@ export function afficheHTML(image, titre, reglages = {}) {
   const dimensions = naturelle ? `width="${image.largeur}" height="${image.hauteur}"` : 'width="360" height="540"';
   const chargement = detail || reglages.prioritaire === true ? 'fetchpriority="high"' : 'loading="lazy"';
   return (
-    `<div class="fiche__affiche${naturelle ? " fiche__affiche--naturelle" : ""}"><img src="${echapper(src)}"${variantes} ` +
+    `<div class="fiche__affiche${naturelle ? ` fiche__affiche--naturelle" style="--proportion: ${image.largeur} / ${image.hauteur}` : ""}">` +
+    `<img src="${echapper(src)}"${variantes} ` +
     `${dimensions} alt="${echapper(image.alt)}" ${chargement} decoding="async"></div>`
   );
 }

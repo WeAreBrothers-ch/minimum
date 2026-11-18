@@ -8,7 +8,7 @@
 .lecteur__bouton {
   order: 2;
   display: flex;
-  flex: 0 1 auto;
+  flex: 1 1 0;
   min-width: 0;
   align-items: center;
   gap: var(--espace-2);
@@ -47,14 +47,18 @@
   white-space: nowrap;
 }
 
-/* Le titre de ce qui joue : seulement là où il y a la place. */
+/* Le titre de ce qui joue : seulement là où il y a la place, sur deux
+   lignes au plus, sans couper de mot. */
 .lecteur__titre {
   display: none;
-  max-width: 14rem;
+  min-width: 0;
   overflow: hidden;
   font-size: var(--taille-petite);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.15;
+  overflow-wrap: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .lecteur__bouton[data-joue="true"] {
@@ -83,14 +87,17 @@
   }
 }
 
+/* Ordinateur : deux huitièmes de la barre (entete.css). */
 @media (min-width: 56rem) {
   .lecteur__bouton {
-    padding-inline: var(--espace-3) var(--espace-4);
+    flex: 0 0 25%;
+    padding-inline: var(--espace-3);
+    text-align: left;
   }
 }
 
 @media (min-width: 75rem) {
   .lecteur__titre {
-    display: block;
+    display: -webkit-box;
   }
 }

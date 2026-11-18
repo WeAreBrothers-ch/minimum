@@ -13,6 +13,7 @@ import { icone } from "./icones.js";
  * @typedef {Object} Definition
  * @property {string} id
  * @property {string} titre
+ * @property {string} court      Le nom dans la barre des tâches, en un ou deux mots.
  * @property {string} icone      Le nom d'une icône (icones.js).
  * @property {string} contenu    Le HTML du corps de la fenêtre.
  * @property {number} [largeur]  En pixels, sur grand écran.
@@ -172,8 +173,8 @@ export function creerFenetres({ fenetres: calque, onglets }) {
     el.innerHTML =
       `<header class="fenetre__titre"><h2 class="fenetre__nom" id="titre-${echapper(def.id)}">${echapper(def.titre)}</h2>` +
       `<div class="fenetre__boutons">` +
-      `<button type="button" class="fenetre__bouton" data-action="reduire" aria-label="Réduire">_</button>` +
-      `<button type="button" class="fenetre__bouton" data-action="fermer" aria-label="Fermer">×</button></div></header>` +
+      `<button type="button" class="fenetre__bouton" data-action="reduire" aria-label="Réduire"><span class="fenetre__signe fenetre__signe--reduire" aria-hidden="true"></span></button>` +
+      `<button type="button" class="fenetre__bouton" data-action="fermer" aria-label="Fermer"><span class="fenetre__signe fenetre__signe--fermer" aria-hidden="true"></span></button></div></header>` +
       `<div class="fenetre__corps">${def.contenu}</div>`;
     calque.append(el);
 
@@ -182,7 +183,8 @@ export function creerFenetres({ fenetres: calque, onglets }) {
     onglet.className = "barre__onglet";
     onglet.dataset.id = def.id;
     onglet.setAttribute("aria-pressed", "false");
-    onglet.innerHTML = `${icone(def.icone, "barre__icone")}<span>${echapper(def.titre)}</span>`;
+    onglet.setAttribute("aria-label", def.titre);
+    onglet.innerHTML = `<span class="barre__contenu">${icone(def.icone, "barre__icone")}<span class="barre__nom">${echapper(def.court)}</span></span>`;
     onglets.append(onglet);
 
     /** @type {Fenetre} */

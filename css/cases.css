@@ -439,6 +439,7 @@ a.carreau__action::after {
   background: var(--fond);
 }
 
+.filtres--1 { --n: 1; }
 .filtres--2 { --n: 2; }
 .filtres--3 { --n: 3; }
 .filtres--4 { --n: 4; }
@@ -558,8 +559,16 @@ a.carreau__action::after {
     --marge: var(--espace-4);
   }
 
+  /* Quatre cases : deux rangées de deux, puis une rangée de quatre, sur
+     les colonnes du site. Jamais une case seule sur sa rangée. */
   .pied {
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 56rem) {
+  .pied {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 

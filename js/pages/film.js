@@ -1,28 +1,30 @@
 // @ts-check
 /* Minimum : la fiche d’un film. Tout ce qu’on sait du film, ses séances,
-   et la caisse pour prendre un billet. Adresse : film/?id=…[&seance=…]
+   et la caisse pour prendre un billet. Adresse : film/?id=…[&seance=…][#billets]
 
-   Une grille de cases, comme la fiche de Zinéma, en traits d’un pixel.
-   Ordinateur large :
-     ┌───────────────────────────────────┬───────────────┐
-     │ TITRE, un film de…                │ BILLETS ↓     │
-     │ à l’affiche                       │ (vert)        │
-     ├───────────────────────────────────┴───────────────┤
-     │ ANNÉE │ PAYS │ DURÉE │ GENRE │ VERSION │ ÂGE      │
-     ├────────────┬──────────────────────┬───────────────┤
-     │ AFFICHE    │ synopsis             │ SÉANCES ET    │
-     │            │ ▬ BANDE-ANNONCE ▬    │ BILLETS       │
-     │            │ distribution, presse │ (la caisse)   │
-     └────────────┴──────────────────────┴───────────────┘
-   Plus étroit, la caisse passe sous le texte (detail.css). */
+   Une grille de cases jointes d’un trait, alignée sur celle du site.
+   Téléphone :                      Ordinateur (quatre colonnes) :
+     ┌───────────────┐                ┌─────────────────────┬────────┐
+     │ ← Tous films  │                │ ← Tous les films     │BILLETS │
+     ├───────────────┤                ├─────────────────────┤ (vert) │
+     │ TITRE         │                │ TITRE                │        │
+     ├───────────────┤                ├──────┬──────────────┼────────┤
+     │ BILLETS (vert)│                │AFFICHE│ synopsis    │SÉANCES │
+     ├───────┬───────┤                ├──────┤ bande-annonce│        │
+     │AFFICHE│repères│                │repères│ liens       │        │
+     ├───────┴───────┤                └──────┴──────────────┴────────┘
+     │ SÉANCES       │
+     │ synopsis…     │
+     └───────────────┘
+   Un clic sur Billets ou sur une séance ouvre la caisse (panneau.js). */
 
-import { panneauHTML } from "../billetterie/panneau-html.js";
+import { caisseHTML, seancesHTML } from "../billetterie/panneau-html.js";
 import { monterPanneau } from "../billetterie/panneau.js";
 import { chargerProgrammeComplet, filmParId, seancesAVenir } from "../donnees.js";
-import { duree, echapper, heureCourte, jourLong, jourLongMajuscule } from "../format.js";
+import { duree, echapper, heureCourte, jourCourt, jourLong, jourLongMajuscule } from "../format.js";
 import { bandeAnnonceHTML, monterBandesAnnonces } from "./bande-annonce.js";
 import { afficheHTML, afficherErreur, allerALAncre, nommerPage, zoneAremplir } from "./commun.js";
-import { caseBilletsHTML, faitsHTML } from "./detail-cases.js";
+import { caseBilletsHTML, faitsHTML, retourHTML } from "./detail-cases.js";
 import { liensHTML, photosHTML } from "./film-commun.js";
 
 /** @typedef {import("../types.js").Film} Film */
@@ -57,10 +59,9 @@ function presenceHTML(film) {
  * @returns {string}
  */
 function teteHTML(film, programme, options) {
-  const racine = document.body.dataset.racine ?? "";
   const annonce = film.sortie && film.sortie > programme.aujourdhui ? `Sortie le ${jourLong(film.sortie)}` : "Pas de séance prévue";
   return (
-    `<header class="detail__tete"><p class="detail__retour"><a href="${racine}cinema/">Tous les films</a></p>` +
+    `<header class="detail__tete">` +
     `<h1 class="page__titre"><span class="masque"><span>${echapper(film.titre)}</span></span></h1>` +
     (film.titreOriginal ? `<p class="detail__original">${echapper(film.titreOriginal)}</p>` : "") +
     `<p class="detail__ligne">Un film de ${echapper(film.realisation)}</p>` +
@@ -98,43 +99,28 @@ function texteHTML(film) {
 }
 
 /**
- * La caisse, puis le chemin vers toutes les séances de la semaine.
- * @param {Film} film
- * @param {OptionsPanneau} options
- * @returns {string}
- */
-function billetsHTML(film, options) {
-  const racine = document.body.dataset.racine ?? "";
-  const contenu = options.choix.length
-    ? panneauHTML(options)
-    : `<p class="page__vide">${film.sortie ? "Les séances seront annoncées ici." : "Pas de séance prévue pour l’instant."}</p>`;
-  return (
-    `<section class="detail__billets" id="billets" aria-labelledby="titre-billets">` +
-    `<h2 class="page__sous-titre" id="titre-billets">Séances et billets</h2>` +
-    `<span class="tirets" aria-hidden="true"></span>${contenu}` +
-    `<p class="detail__agenda"><a href="${racine}agenda/">Toutes les séances de la semaine, dans l’agenda</a></p></section>`
-  );
-}
-
-/**
  * @param {Film} film
  * @param {Programme} programme
  * @param {OptionsPanneau} options
  * @returns {string}
  */
 function ficheHTML(film, programme, options) {
+  const racine = document.body.dataset.racine ?? "";
+  const vide = film.sortie ? "Les séances seront annoncées ici." : "Pas de séance prévue pour l’instant.";
   return (
-    `<article class="detail">${teteHTML(film, programme, options)}${caseBilletsHTML(options, sansVente(options))}` +
+    `<article class="detail">${retourHTML(`${racine}cinema/`, "Tous les films")}` +
+    `${teteHTML(film, programme, options)}${caseBilletsHTML(options, sansVente(options))}` +
+    `<div class="detail__affiche">${afficheHTML(film.affiche, film.titre, { detail: true })}</div>` +
     faitsHTML([
-      ["Année", String(film.annee)],
-      ["Pays", film.pays],
       ["Durée", duree(film.duree)],
-      ["Genre", film.genre],
       ["Version", film.version],
       ["Âge", film.age],
+      ["Genre", film.genre],
+      ["Année", String(film.annee)],
+      ["Pays", film.pays],
     ]) +
-    `<div class="detail__affiche">${afficheHTML(film.affiche, film.titre, { detail: true })}</div>` +
-    `${texteHTML(film)}${billetsHTML(film, options)}${photosHTML(film.photos)}</article>`
+    `${seancesHTML(options, vide)}${texteHTML(film)}${photosHTML(film.photos)}</article>` +
+    caisseHTML(options)
   );
 }
 
@@ -147,9 +133,11 @@ function ficheHTML(film, programme, options) {
 function optionsAchat(film, seances, programme) {
   return {
     genre: "seance",
+    titre: film.titre,
     choix: seances.map((s) => ({
       id: s.id,
       jour: jourLongMajuscule(s.date),
+      court: jourCourt(s.date),
       heure: heureCourte(s.heure),
       indisponible: s.etat ? ETATS[s.etat] : null,
       mention: film.presence && film.presenceJour === s.date ? `En présence de ${film.presence}` : null,

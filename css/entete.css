@@ -23,13 +23,16 @@
   text-decoration: none;
 }
 
+/* Téléphone et tablette : le nom occupe la moitié gauche de la barre. Le
+   trait qui le suit tombe ainsi pile sur celui qui sépare Nuit et Cinéma
+   sur l'accueil (mur.css). */
 .menu__nom {
   display: flex;
-  flex: none;
+  flex: 0 0 50%;
   align-items: center;
+  min-width: 0;
   min-height: var(--hauteur-entete);
   padding-inline: var(--espace-3);
-  margin-right: auto;
   font-size: var(--taille-nav);
   font-weight: var(--graisse-nom);
   text-transform: uppercase;
@@ -210,12 +213,13 @@
   }
 }
 
-/* Ordinateur : toutes les cases sur la barre, à droite de celle du nom. */
+/* Ordinateur : toutes les cases sur la barre, à droite de celle du nom.
+   La barre est coupée en huitièmes : le nom et chaque rubrique en prennent
+   un, la radio deux. Ses traits tombent ainsi sur ceux des colonnes du mur
+   d'accueil (un quart, la moitié, trois quarts). */
 @media (min-width: 56rem) {
   .menu__nom {
-    margin-right: 0;
-    padding-inline: var(--espace-4);
-    border-right: var(--trait) solid var(--encre);
+    flex-basis: 12.5%;
   }
 
   .menu__ouvrir {
@@ -227,17 +231,15 @@
     order: 1;
     position: static;
     display: flex;
-    flex: 1;
+    flex: 0 0 62.5%;
     flex-direction: row;
     overflow: visible;
   }
 
   .menu__item {
-    flex: 1 1 auto;
+    flex: 1 1 0;
+    min-width: 0;
     border-bottom: 0;
-  }
-
-  .menu__item + .menu__item {
     border-left: var(--trait) solid var(--encre);
   }
 

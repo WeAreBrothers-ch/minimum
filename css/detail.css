@@ -1,27 +1,37 @@
 /* Minimum : ce qu'il y a dans les cases de la fiche d'un film ou d'une
-   soirée. La grille elle-même est dans detail-grille.css, la bande-annonce
-   et les images dans fiche-medias.css, le line-up dans line-up.css. */
+   soirée. La grille elle-même est dans detail-grille.css, la caisse dans
+   achat.css, la bande-annonce et les images dans fiche-medias.css, le
+   line-up dans line-up.css. */
 
-/* La case du titre. Le titre d'abord, l'état ensuite : pas de sur-titre. */
+/* ---------- Le retour : une case-lien au-dessus du titre ---------- */
+.detail__retour a {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-2);
+  min-height: var(--cible);
+  padding-inline: var(--marge-case);
+  font-size: 0.75rem;
+  font-weight: var(--graisse-nom);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  color: var(--encre);
+  transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out);
+}
+
+.detail__retour a:focus-visible {
+  outline: none;
+  color: var(--fond);
+  background: var(--encre);
+}
+
+/* ---------- Le titre ---------- */
 .detail__tete {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--espace-1);
   padding: var(--marge-case);
-}
-
-/* Le lien de retour garde 44 px de cible sans pousser le titre. */
-.detail__retour {
-  margin-top: calc(var(--espace-2) * -1);
-  font-size: var(--taille-petite);
-}
-
-.detail__retour a,
-.detail__agenda a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--cible);
 }
 
 .detail__original {
@@ -47,23 +57,31 @@
   font-weight: var(--graisse-moyenne);
 }
 
-/* La case Billets : verte, la couleur de l'argent, quand on peut acheter. */
+/* ---------- La case Billets : verte, la couleur de l'argent ---------- */
+/* Un bouton qui ouvre la caisse. Téléphone : une rangée, le mot à gauche,
+   les prix à droite. Ordinateur : le mot en haut, les prix en bas. */
 .detail__acheter {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  align-content: center;
   justify-content: space-between;
   gap: var(--espace-1) var(--espace-3);
-  padding: var(--marge-case);
+  width: 100%;
+  min-height: 4.5rem;
+  padding: var(--espace-3) var(--marge-case);
+  font: inherit;
+  text-align: left;
   color: var(--pastille-texte);
   background: var(--pastille-argent);
-  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+  transition: background-color 200ms var(--ease-out);
 }
 
 .detail__acheter--ferme {
   color: var(--encre);
   background: var(--fond);
+  cursor: default;
 }
 
 .detail__acheter-titre {
@@ -79,12 +97,45 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Les repères, une case chacun. Téléphone : une ligne par repère, les
-   noms alignés en colonne ; les lignes s'étirent à la hauteur de l'affiche. */
+.detail__acheter:focus-visible {
+  outline: var(--trait) solid var(--pastille-texte);
+  outline-offset: calc(var(--trait) * -3);
+}
+
+/* ---------- L'affiche : toujours pleine, jamais de vide autour ---------- */
+/* La case prend la hauteur de l'affiche ; si sa voisine est plus haute,
+   l'image la remplit quand même (recadrée de quelques pixels), sans
+   laisser de bande vide dessous. */
+.detail__affiche {
+  position: relative;
+  overflow: hidden;
+}
+
+.detail__affiche img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Sans image, l'affiche typographique remplit la case, sans cadre : la case en a un. */
+.detail__affiche .fiche__affiche--typo {
+  height: 100%;
+  border: 0;
+}
+
+/* Une affiche de soirée n'est pas recadrée à 2:3 : la case prend ses
+   proportions (afficheHTML les donne). */
+.fiche__affiche--naturelle {
+  aspect-ratio: var(--proportion, auto);
+}
+
+/* ---------- Les repères : une ligne chacun, le nom au-dessus ---------- */
+/* Les lignes s'étirent à la hauteur de l'affiche voisine. */
 .detail__faits {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--joint) 0;
+  gap: var(--joint);
   margin: 0;
   background: var(--encre);
 }
@@ -94,43 +145,134 @@
 }
 
 .detail__fait {
-  display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: subgrid;
-  align-items: baseline;
-  align-content: center;
-  column-gap: var(--espace-2);
-  padding: var(--espace-1) var(--marge-case);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.125rem;
+  padding: var(--espace-1) var(--espace-3);
   background: var(--fond);
 }
 
 .detail__fait dt {
-  font-size: var(--taille-petite);
+  font-size: 0.6875rem;
   font-weight: var(--graisse-nom);
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
 }
 
 .detail__fait dd {
+  font-size: var(--taille-petite);
   font-weight: var(--graisse-moyenne);
+  line-height: 1.3;
 }
 
-/* Sans image, l'affiche typographique n'a pas besoin de cadre : la case en a un. */
-.detail__affiche .fiche__affiche--typo {
+/* ---------- Les séances : une case par séance ---------- */
+/* Les séances en haut ; les infos pratiques en bas de la case. */
+.detail__seances {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail__notes {
+  margin-top: auto;
+}
+
+.detail__case-titre {
+  padding: var(--espace-2) var(--marge-case);
+  font-size: 0.75rem;
+  font-weight: var(--graisse-nom);
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.seances > li + li {
+  border-top: var(--trait) solid var(--encre);
+}
+
+/* Le trait sous la dernière séance : une ombre, qui ne prend pas de place
+   et se fond dans le joint quand la case s'arrête là (jamais doublé). */
+.seances > li:last-child {
+  box-shadow: 0 var(--trait) 0 var(--encre);
+}
+
+.seance {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--espace-2);
+  width: 100%;
+  min-height: 3.75rem;
+  padding: var(--espace-2) var(--marge-case);
+  font: inherit;
+  text-align: left;
+  color: var(--encre);
+  background: var(--fond);
   border: 0;
+  transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out);
 }
 
-/* Une affiche de soirée n'est pas recadrée : elle garde ses proportions. */
-.fiche__affiche--naturelle {
-  aspect-ratio: auto;
+button.seance {
+  cursor: pointer;
 }
 
-.fiche__affiche--naturelle img {
-  height: auto;
+.seance__quand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--espace-2);
+  min-width: 0;
 }
 
-/* La case du texte : des blocs avec marge ; la bande-annonce et les
-   liens vont d'un bord à l'autre de la case. */
+.seance__jour {
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.seance__heure {
+  font-weight: var(--graisse-moyenne);
+  font-variant-numeric: tabular-nums;
+}
+
+.seance__mention {
+  flex-basis: 100%;
+  font-size: var(--taille-petite);
+}
+
+.seance__action {
+  font-size: 0.75rem;
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  white-space: nowrap;
+}
+
+/* Complet ou annulée : la séance reste lisible, l'état à la place de « Billets ». */
+.seance--off .seance__quand {
+  opacity: var(--opacite-eteint);
+}
+
+button.seance:focus-visible {
+  outline: none;
+  color: var(--pastille-texte);
+  background: var(--pastille-argent);
+}
+
+.detail__notes {
+  display: grid;
+  gap: var(--espace-1);
+  padding: calc(var(--espace-3) + var(--trait)) var(--marge-case) var(--espace-3);
+  font-size: var(--taille-petite);
+}
+
+.detail__vide {
+  padding: var(--espace-3) var(--marge-case);
+}
+
+/* ---------- Le texte : des blocs avec marge ; la bande-annonce et les
+   liens vont d'un bord à l'autre de la case ---------- */
 .detail__colle {
   display: flex;
   flex-direction: column;
@@ -161,11 +303,7 @@
   margin-bottom: var(--espace-2);
 }
 
-.detail__liens {
-  border-top: var(--trait) solid var(--encre);
-}
-
-.detail__liens li + li {
+.detail__liens li {
   border-top: var(--trait) solid var(--encre);
 }
 
@@ -176,25 +314,34 @@
   padding: var(--espace-1) var(--marge-case);
 }
 
-/* La caisse règle ses colonnes sur sa propre largeur (achat-paiement.css). */
-.detail__billets {
-  padding: var(--marge-case);
-  container-type: inline-size;
-}
-
-.detail__agenda {
-  margin-top: var(--espace-2);
-  font-size: var(--taille-petite);
+/* Le dernier lien est fermé par un trait, sans le doubler (voir .seances). */
+.detail__liens li:last-child {
+  box-shadow: 0 var(--trait) 0 var(--encre);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .page .detail__acheter:hover {
-    text-decoration: none;
+  .detail__retour a:hover {
+    color: var(--fond);
+    background: var(--encre);
   }
 
-  .detail__acheter:hover .detail__acheter-titre {
-    text-decoration: underline;
-    text-decoration-thickness: var(--trait);
-    text-underline-offset: 0.2em;
+  .detail__acheter:not(.detail__acheter--ferme):hover {
+    background: var(--vert-vif);
+  }
+
+  button.seance:hover {
+    color: var(--pastille-texte);
+    background: var(--pastille-argent);
+  }
+}
+
+/* Ordinateur : dans la case Billets, le mot en haut et les prix en bas. */
+@media (min-width: 56rem) {
+  .detail__acheter {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-block: var(--espace-4);
   }
 }

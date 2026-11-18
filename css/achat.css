@@ -1,161 +1,279 @@
-/* Minimum : le panneau d'achat. Des lignes d'un trait, comme un
-   programme imprimé ; seul le bouton Payer est plein. */
+/* Minimum : la caisse. Une fenêtre par-dessus la page (<dialog>), faite de
+   cases jointes d'un trait comme le reste du site : le titre et la croix,
+   ce qu'on achète, la séance, les billets, l'e-mail, puis « Payer ». Sur
+   téléphone, elle monte du bas et prend toute la largeur ; sur un écran
+   plus large, elle se pose au centre. Le bas (tarifs, e-mail, paiement)
+   est dans achat-paiement.css. */
 
+/* La page ne défile pas derrière la caisse ouverte. */
+html:has(.caisse[open]) {
+  overflow: hidden;
+}
+
+.caisse {
+  --marge-case: var(--espace-3);
+  width: 100%;
+  max-width: 100%;
+  max-height: min(92dvh, 100% - var(--espace-4));
+  margin: auto 0 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: var(--encre);
+  background: var(--encre);
+  border: 0;
+  border-top: var(--trait) solid var(--encre);
+}
+
+.caisse::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+
+.caisse[open] {
+  animation: caisse-monte 280ms var(--ease-out);
+}
+
+.caisse[open]::backdrop {
+  animation: caisse-fond 280ms var(--ease-out);
+}
+
+@keyframes caisse-monte {
+  from { transform: translateY(100%); }
+}
+
+@keyframes caisse-fond {
+  from { opacity: 0; }
+}
+
+/* Les cases de la caisse, jointes d'un trait. */
 .achat {
   display: grid;
-  gap: var(--espace-4);
-  max-width: 44rem;
-  margin-top: var(--espace-3);
+  gap: var(--trait);
+  background: var(--encre);
 }
 
-/* Tout ce qui suit le choix de la date : billets, e-mail, total, paiement. */
-.achat__suite {
-  display: grid;
-  gap: var(--espace-4);
-  min-width: 0;
-}
-
-.achat__groupe {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espace-2);
+.achat > * {
   min-width: 0;
   margin: 0;
+  background: var(--fond);
+}
+
+/* ---------- La tête : le titre, la croix ---------- */
+/* Elle reste en haut quand la caisse défile. */
+.caisse__tete {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  border-bottom: var(--trait) solid var(--encre);
+  margin-bottom: calc(var(--trait) * -1);
+}
+
+.caisse__titre {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-height: 3.5rem;
+  padding-inline: var(--marge-case);
+  font-size: var(--taille-carte);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  color: var(--pastille-texte);
+  background: var(--pastille-argent);
+}
+
+.caisse__fermer {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 3.5rem;
   padding: 0;
+  color: var(--encre);
+  background: var(--fond);
+  border: 0;
+  border-left: var(--trait) solid var(--encre);
+  cursor: pointer;
+}
+
+/* La croix reçoit le focus à l'ouverture : un cadre, pas un aplat noir,
+   pour qu'elle ne passe pas pour une case choisie. */
+.caisse__fermer:focus-visible {
+  outline: var(--trait) solid var(--encre);
+  outline-offset: calc(var(--trait) * -4);
+}
+
+/* Une croix dessinée, au centre exact de sa case. */
+.caisse__croix {
+  position: relative;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.caisse__croix::before,
+.caisse__croix::after {
+  content: "";
+  position: absolute;
+  top: calc(50% - var(--trait) / 2);
+  left: 0;
+  width: 100%;
+  height: var(--trait);
+  background: currentColor;
+  transform: rotate(45deg);
+}
+
+.caisse__croix::after {
+  transform: rotate(-45deg);
+}
+
+/* Ce qu'on achète : le film ou la soirée. */
+.caisse__quoi {
+  padding: var(--espace-3) var(--marge-case);
+  font-weight: var(--graisse-nom);
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+/* ---------- Un bloc : une légende, puis son contenu ---------- */
+.caisse__bloc {
+  display: grid;
+  gap: var(--espace-2);
+  min-width: 0;
+  padding: var(--espace-3) var(--marge-case);
   border: 0;
 }
 
-.achat__legende {
+.caisse__legende {
+  float: left;
+  width: 100%;
   padding: 0;
+  font-size: 0.75rem;
   font-weight: var(--graisse-nom);
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
 }
 
-/* Les séances : une ligne chacune, la choisie s'inverse. */
-.achat__dates {
-  display: grid;
-  border-top: var(--trait) solid var(--encre);
+.caisse__legende + * {
+  clear: both;
 }
 
-.achat__date {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--espace-2);
-  min-height: var(--cible);
-  padding: var(--espace-1) var(--espace-2);
-  cursor: pointer;
-  border-bottom: var(--trait) solid var(--encre);
-}
-
-.achat__date input {
-  width: 1.125rem;
-  height: 1.125rem;
-  margin: 0;
-  accent-color: currentColor;
-}
-
-.achat__date:has(input:checked) {
-  color: var(--fond);
-  background: var(--encre);
-}
-
-/* Complet ou annulée : la ligne reste lisible, mais ne se choisit plus. */
-.achat__date--off {
-  cursor: default;
-}
-
-/* Sans caisse, les séances se lisent seulement : pas de case à cocher. */
-.achat__dates--liste .achat__date {
-  grid-template-columns: minmax(0, 1fr) auto;
-  cursor: default;
-}
-
-.achat__jour {
-  display: flex;
-  flex-direction: column;
-}
-
-.achat__mention {
-  font-size: var(--taille-petite);
+.caisse__unique {
   font-weight: var(--graisse-moyenne);
 }
 
-.achat__date:has(input:focus-visible) {
-  outline: var(--trait) solid var(--encre);
-  outline-offset: var(--trait);
+/* Les blocs à cases (séances, billets) vont d'un bord à l'autre de la
+   caisse : seule leur légende garde la marge. */
+.caisse__bloc--cases {
+  padding: var(--espace-3) 0 0;
 }
 
-.achat__heure,
-.achat__prix,
-.achat__nombre,
-.achat__montant {
+.caisse__bloc--cases > .caisse__legende {
+  padding-inline: var(--marge-case);
+}
+
+/* ---------- La séance : une case par date, la choisie en vert ---------- */
+/* Des cases qui s'élargissent pour remplir leur rangée : jamais de trou. */
+.caisse__dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--trait);
+  background: var(--encre);
+  border-top: var(--trait) solid var(--encre);
+}
+
+.caisse__date {
+  position: relative;
+  flex: 1 1 7rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.125rem;
+  min-height: 3.75rem;
+  padding: var(--espace-2) var(--marge-case);
+  background: var(--fond);
+  cursor: pointer;
+  transition: background-color 160ms var(--ease-out);
+}
+
+/* Le bouton radio reste dans la page pour le clavier et les lecteurs
+   d'écran, mais c'est la case entière qui se voit et se presse. */
+.caisse__radio {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.caisse__jour {
+  font-size: var(--taille-petite);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.caisse__heure {
   font-variant-numeric: tabular-nums;
 }
 
-.achat__heure,
-.achat__prix,
-.achat__nom {
-  font-weight: var(--graisse-moyenne);
+.caisse__date:has(input:checked) {
+  color: var(--pastille-texte);
+  background: var(--pastille-argent);
 }
 
-/* Les tarifs : le libellé, puis le prix et le compteur. */
-.achat__tarifs {
-  border-top: var(--trait) solid var(--encre);
+.caisse__date:has(input:focus-visible) {
+  outline: var(--trait) solid var(--encre);
+  outline-offset: calc(var(--trait) * -4);
 }
 
-.achat__tarif {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--espace-1) var(--espace-3);
-  padding-block: var(--espace-2);
-  border-bottom: var(--trait) solid var(--encre);
+/* Complet ou annulée : la case se lit, ne se choisit pas. */
+.caisse__date--off {
+  cursor: default;
 }
 
-.achat__libelle {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-}
-
-/* Colonne étroite : le libellé et le prix l'un sur l'autre, le compteur à côté. */
-.achat__compteur {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-}
-
-.achat__detail,
-.achat__aide {
-  font-size: var(--taille-petite);
-}
-
-.achat__compteur {
-  display: grid;
-  grid-template-columns: var(--cible) 2.75rem var(--cible);
-  border: var(--trait) solid var(--encre);
-}
-
-.achat__pas {
-  height: var(--cible);
-  font-size: 1.25rem;
-  line-height: 1;
-}
-
-.achat__pas[aria-disabled="true"] {
-  cursor: not-allowed;
+.caisse__date--off > span {
   opacity: var(--opacite-eteint);
 }
 
-.achat__pas:active:not([aria-disabled="true"]) {
-  transform: scale(0.98);
-  transition: transform var(--duree-pression) var(--ease-out);
+@media (hover: hover) and (pointer: fine) {
+  .caisse__fermer:hover {
+    color: var(--fond);
+    background: var(--encre);
+  }
+
+  .caisse__date:not(.caisse__date--off):not(:has(input:checked)):hover {
+    background: color-mix(in srgb, var(--pastille-argent) 40%, var(--fond));
+  }
 }
 
-.achat__nombre {
-  display: grid;
-  place-items: center;
-  font-weight: var(--graisse-nom);
-  border-inline: var(--trait) solid var(--encre);
+/* Plus large : la caisse se pose au centre de l'écran. */
+@media (min-width: 40rem) {
+  .caisse {
+    --marge-case: var(--espace-4);
+    width: min(34rem, 100% - var(--espace-4) * 2);
+    max-height: min(52rem, 100% - var(--espace-4) * 2);
+    margin: auto;
+    border: var(--trait) solid var(--encre);
+  }
+
+  .caisse[open] {
+    animation-name: caisse-pose;
+  }
+
+  @keyframes caisse-pose {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caisse[open],
+  .caisse[open]::backdrop {
+    animation: none;
+  }
 }

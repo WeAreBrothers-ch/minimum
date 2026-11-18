@@ -44,10 +44,13 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
 - `js/donnees.js` charge le programme une seule fois pour tout le site.
 - Fiches détaillées : `film/?id=…` et `soiree/?id=…` (une seule page chacune,
   remplie selon l'adresse), en cases jointes d'un trait, sur le modèle de la
-  fiche Zinéma : le titre et la case Billets (verte, elle mène à la caisse),
-  la rangée des repères, puis l'affiche, le texte et la caisse. Sur grand
-  écran, la caisse est à droite ; ailleurs, dessous. La grille est dans
-  `css/detail-grille.css`, le contenu des cases dans `css/detail.css`.
+  fiche Zinéma : le retour, le titre et la case Billets verte ; l'affiche et
+  ses repères ; les séances (une case chacune) ; le texte. Deux colonnes sur
+  téléphone, quatre sur ordinateur, alignées sur la barre du haut. Un clic sur
+  Billets ou sur une séance ouvre la caisse, une fenêtre par-dessus la page
+  (`<dialog>`) ; l'adresse `…#billets` l'ouvre dès l'arrivée. La grille est
+  dans `css/detail-grille.css`, le contenu des cases dans `css/detail.css`,
+  la caisse dans `css/achat.css` et `css/achat-paiement.css`.
   Le billet : `billet/`.
 - Fiche film : toutes les infos de la fiche Zinéma (année, pays, durée, genre,
   version, âge, synopsis, bande-annonce, liens, séances), puis les images du
@@ -55,7 +58,8 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
   le titre original, les images du film et l'article de presse ; jamais l'invité·e
   d'une séance de Zinéma. « En présence de… » et les séances complètes ou annulées
   sont prêts, à remplir quand les séances de Minimum seront dans Sanity.
-- Billetterie : le panneau d'achat est dans `js/billetterie/`, le serveur dans
+- Billetterie : la liste des séances et la caisse sont dans `js/billetterie/`
+  (`panneau-html.js` pour le dessin, `panneau.js` pour la marche), le serveur dans
   `api/` (PHP). Mode d'emploi et liste avant ouverture : `BILLETTERIE.md`.
 - Page Radio : un faux bureau d'ordinateur dans le style de soso radio
   (`js/pages/radio.js`, `js/bureau/`, `css/bureau.css`) : fenêtres, lecteur,

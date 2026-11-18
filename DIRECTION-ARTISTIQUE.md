@@ -56,7 +56,7 @@ mécanique se reprend, la surface (police, couleurs, épaisseurs) vient de Minim
 | 2 | Chaque monde a sa surface | D1 | Savoir où l'on est sans lire | D1 | Nuit sur fond noir, Cinéma sur fond blanc |
 | 3 | Les séparations sont des traits, jamais des ombres ni des arrondis | R1 | Une page qui se lit comme un programme imprimé | D2 | Traits de 2 px partout (`--trait`), au lieu des 4 px de Zinéma (demande d'Eliott : plus fin, mais le même tableau de cases). Aucun arrondi, pastilles comprises (demande d'Eliott, 17.11.2026) |
 | 4 | La signature vient du lieu | D2 | Reconnaître Minimum, pas un gabarit | D2 | La ligne de tirets du programme de 2009 sépare les blocs et porte le lecteur radio |
-| 5 | La fiche d'un film se lit comme un tableau | R1 | Tout voir d'un coup, chaque info à sa place | D4 | Fiche film et fiche soirée en cases jointes d'un trait, d'un bord à l'autre de l'écran (demande d'Eliott, 16.11.2026) : titre et case Billets verte, rangée Année, Pays, Durée, Genre, Version, Âge, puis affiche, texte et caisse. La surface reste celle de Minimum : Archivo, noir et blanc, pastilles, tirets |
+| 5 | La fiche d'un film se lit comme un tableau | R1 | Tout voir d'un coup, chaque info à sa place | D4 | Fiche film et fiche soirée en cases jointes d'un trait, d'un bord à l'autre de l'écran (demande d'Eliott, 16.11.2026) : retour, titre et case Billets verte ; affiche et repères (Durée, Version, Âge, Genre, Année, Pays) ; séances ; texte. La caisse s'ouvre en fenêtre (18.11.2026). La surface reste celle de Minimum : Archivo, noir et blanc, pastilles, tirets |
 
 ### Tensions tranchées
 - Plus d'air, mais pas dans les colonnes : les affiches restent serrées
@@ -238,11 +238,19 @@ police à chasse fixe) : elle est habillée avec le design du site (demande d'El
   page. Une plage sans
   son (flux pas encore branché) le dit dans la barre d'état au lieu de faire
   semblant de jouer.
-- **Sur téléphone** : les icônes forment une rangée en haut, toujours à portée ;
-  une seule fenêtre est ouverte à la fois et occupe tout le bureau jusqu'à la
-  barre des tâches (les autres s'y réduisent, en cases carrées ; l'onglet ouvert
-  prend la place et écrit son nom) ; dans le lecteur, seule la playlist défile,
-  la barre d'état reste visible ; le volume est là comme sur ordinateur. À partir de 40rem :
+- **Sur téléphone** : les icônes forment une rangée en haut, toujours à portée,
+  leurs légendes jamais coupées dans un mot ; une seule fenêtre est ouverte à la
+  fois et occupe tout le bureau jusqu'à la barre des tâches (les autres s'y
+  réduisent, en cases carrées). Le contenu remplit la fenêtre, jamais de bande
+  noire : dans le lecteur, l'écran du haut grandit avec la place libre et la
+  playlist prend la hauteur de ses plages (elle défile si la place manque) ;
+  Écrire allonge la case du message ; À propos se centre. Le lecteur ne répète
+  pas Écrire et À propos, déjà en icônes. Le volume reste, sauf sur un petit
+  écran (moins de 45rem de haut), où la place va à la playlist.
+- **Barre des tâches** : chaque onglet porte un nom court (Radio, Photos,
+  Écrire, À propos, Réglages), écrit en entier ou pas du tout : trop étroit,
+  l'onglet ne garde que son icône. Les boutons des fenêtres (réduire, fermer)
+  sont des signes dessinés, au centre exact de leur case. À partir de 40rem :
   icônes en colonne, fenêtres qui se déplacent à la barre de titre, se
   superposent et se réduisent.
 - **Surface** : celle du site. Des cases blanches jointes par le trait de 2 px
@@ -284,6 +292,33 @@ Des entrées franches et courtes qui suivent le dessin du site, dans
   animations ne retardent pas l'affichage de l'affiche principale.
 - **Tout s'arrête** avec le réglage système « réduire les animations » : le site
   reste exactement le même, immobile.
+
+### Les traits s'alignent (revu le 18.11.2026 : demande d'Eliott)
+Une seule grille pour tout le site, pour que les traits verticaux tombent les
+uns sur les autres d'un bloc à l'autre :
+- **Téléphone et tablette** : la moitié. La case MINIMUM de la barre du haut
+  fait la moitié de la largeur ; son trait tombe sur celui entre Nuit et Cinéma
+  (accueil), et l'affiche des films sur Cinéma fait la largeur du filtre
+  « À l'affiche ».
+- **Ordinateur** : les huitièmes et les quarts. Le nom et chaque rubrique
+  prennent un huitième de la barre, la radio deux ; les colonnes du mur, de la
+  fiche d'un film et du pied de page sont des quarts. Sur Cinéma, chaque filtre
+  a la largeur d'une colonne de films.
+- **Jamais de filet blanc** entre deux affiches du mur : les joints sont noirs
+  des deux côtés.
+- **Jamais de mot coupé** ni de « … » : noms des réalisateurs, légendes des
+  icônes, onglets. La case radio de la barre du haut garde le mot « Radio » ; ce
+  qui joue s'écrit à côté, sur grand écran.
+
+### La caisse (revu le 18.11.2026 : « plus simple et plus clean, un pop-up »)
+Sur la fiche, les séances sont des cases (le jour, l'heure, « Billets → ») ;
+la case Billets verte et chaque séance ouvrent la caisse, une fenêtre
+par-dessus la page : elle monte du bas sur téléphone, se pose au centre sur
+ordinateur. Dedans, des cases d'un bord à l'autre : ce qu'on achète, la séance
+(la choisie en vert), une ligne par tarif avec son compteur, l'e-mail, puis
+« Payer CHF … », qui porte le total (pas de ligne Total à part). La tête et le
+bouton Payer restent en vue quand la caisse défile. Toujours blanche, même
+sur la fiche d'une soirée (fond noir).
 
 ### Signature
 La ligne de tirets du programme de 2009 (D2), tapée en vrais caractères.

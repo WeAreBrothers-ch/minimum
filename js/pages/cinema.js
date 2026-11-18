@@ -2,7 +2,8 @@
 /* Minimum : la page Cinéma, en tableau de cases (même mécanique que la
    page Films de Zinéma, surface de Minimum).
 
-   - Une rangée de filtres en cases : À l’affiche, Prochainement.
+   - Une rangée de filtres en cases : À l’affiche, Prochainement, chacun
+     de la largeur exacte d’une colonne de films.
    - Chaque film est une colonne de cases : l’affiche, une case avec sa
      prochaine séance (ou sa date de sortie), son titre et sa réalisation,
      puis une case avec ses faits sur une ligne. Toute la colonne mène à la
@@ -117,7 +118,7 @@ export function initCinema() {
       const dessiner = () => {
         const liste = films[active];
         zone.innerHTML =
-          `<div class="filtres filtres--${presentes.length}" role="group" aria-label="Films">` +
+          `<div class="cinema"><div class="filtres filtres--${presentes.length}" role="group" aria-label="Films">` +
           presentes
             .map(
               (r) =>
@@ -127,7 +128,7 @@ export function initCinema() {
             .join("") +
           `</div>` +
           `<div class="films">${liste.map((f, i) => filmHTML(f, programme, racine, i < 2)).join("")}` +
-          `<a class="films__agenda" href="${racine}agenda/"><span>Toutes les séances</span><span aria-hidden="true">→</span></a></div>` +
+          `<a class="films__agenda" href="${racine}agenda/"><span>Toutes les séances</span><span aria-hidden="true">→</span></a></div></div>` +
           PRATIQUE;
       };
 

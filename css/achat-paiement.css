@@ -1,8 +1,104 @@
-/* Minimum : le bas du panneau d'achat (e-mail, total, paiement),
-   puis le survol et les grands écrans de tout le panneau. */
+/* Minimum : le bas de la caisse. Les billets par tarif (le nom, le prix, un
+   compteur), l'e-mail, puis le bouton Payer, qui porte le total. */
 
+/* ---------- Les billets : une ligne par tarif ---------- */
+.caisse__tarifs {
+  display: grid;
+  border-top: var(--trait) solid var(--encre);
+}
+
+.caisse__tarif {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--espace-1) var(--espace-3);
+  padding: var(--espace-2) var(--marge-case);
+}
+
+.caisse__tarif + .caisse__tarif {
+  border-top: var(--trait) solid var(--encre);
+}
+
+.caisse__bloc--cases > .caisse__erreur:not([hidden]) {
+  padding: var(--espace-2) var(--marge-case);
+  border-top: var(--trait) solid var(--encre);
+}
+
+.caisse__libelle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.caisse__nom {
+  font-weight: var(--graisse-moyenne);
+}
+
+.caisse__detail {
+  font-size: 0.8125rem;
+  line-height: 1.3;
+}
+
+.caisse__prix {
+  font-weight: var(--graisse-moyenne);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Le compteur : moins, le nombre, plus ; trois cases jointes d'un trait. */
+.caisse__compteur {
+  display: grid;
+  grid-template-columns: var(--cible) 2.25rem var(--cible);
+  border: var(--trait) solid var(--encre);
+}
+
+.caisse__pas {
+  height: var(--cible);
+  padding: 0;
+  font: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--encre);
+  background: var(--fond);
+  border: 0;
+  cursor: pointer;
+}
+
+.caisse__pas[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: var(--opacite-eteint);
+}
+
+.caisse__pas:active:not([aria-disabled="true"]) {
+  transform: scale(0.94);
+  transition: transform var(--duree-pression) var(--ease-out);
+}
+
+.caisse__nombre {
+  display: grid;
+  place-items: center;
+  font-weight: var(--graisse-nom);
+  font-variant-numeric: tabular-nums;
+  border-inline: var(--trait) solid var(--encre);
+}
+
+/* Très étroit : le compteur passe sous le nom, le prix reste à droite. */
+@media (max-width: 22rem) {
+  .caisse__tarif {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .caisse__compteur {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}
+
+/* ---------- L'e-mail ---------- */
 /* 16 px au moins : sinon l'iPhone agrandit la page en touchant le champ. */
-.achat__champ {
+.caisse__champ {
   width: 100%;
   min-height: var(--cible);
   padding-inline: var(--espace-2);
@@ -14,111 +110,94 @@
   border-radius: 0;
 }
 
-.achat__champ[aria-invalid="true"] {
+.caisse__champ::placeholder {
+  color: var(--encre);
+  opacity: 0.45;
+}
+
+.caisse__champ:focus-visible {
+  outline: var(--trait) solid var(--encre);
+  outline-offset: 0;
+}
+
+.caisse__champ[aria-invalid="true"] {
   box-shadow: inset 0 0 0 var(--trait) var(--encre);
 }
 
-.achat__erreur {
+.caisse__aide {
+  font-size: 0.8125rem;
+}
+
+.caisse__erreur {
   font-weight: var(--graisse-nom);
 }
 
-.achat__total {
+/* ---------- Le paiement : toujours en vue, en bas de la caisse ---------- */
+.caisse__pied {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  gap: var(--espace-2);
+  padding: var(--espace-3) var(--marge-case) calc(var(--espace-3) + env(safe-area-inset-bottom));
+  border-top: var(--trait) solid var(--encre);
+  margin-top: calc(var(--trait) * -1);
+}
+
+.caisse__payer {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--espace-3);
-  padding-block: var(--espace-2);
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 3.5rem;
+  padding: 0 var(--espace-3);
+  font: inherit;
+  font-size: var(--taille-texte);
   font-weight: var(--graisse-nom);
+  font-variant-numeric: tabular-nums;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
-  border-block: var(--trait) solid var(--encre);
+  color: var(--pastille-texte);
+  background: var(--pastille-argent);
+  border: var(--trait) solid var(--encre);
+  cursor: pointer;
+  transition: background-color 200ms var(--ease-out);
 }
 
-.achat__montant {
-  font-size: var(--taille-carte);
+.caisse__payer:focus-visible {
+  outline: var(--trait) solid var(--encre);
+  outline-offset: var(--trait);
 }
 
-/* Payer : la pastille verte de l'argent, en grand. */
-.achat__payer {
-  width: 100%;
-  min-height: calc(var(--cible) + var(--espace-2));
-  font-size: var(--taille-texte);
-}
-
-.achat[aria-busy="true"] .achat__payer {
+.achat[aria-busy="true"] .caisse__payer {
   cursor: progress;
   opacity: var(--opacite-eteint);
 }
 
-.achat__retour:empty {
+.caisse__pied .caisse__aide {
+  text-align: center;
+}
+
+.caisse__retour:empty {
   display: none;
 }
 
-.achat__retour {
+.caisse__retour {
   font-weight: var(--graisse-nom);
 }
 
-.achat__note {
-  max-width: var(--mesure);
-  margin-top: var(--espace-3);
-  font-size: var(--taille-petite);
-}
-
 @media (hover: hover) and (pointer: fine) {
-  .achat__date:not(.achat__date--off):hover .achat__jour {
-    text-decoration: underline;
-    text-decoration-thickness: var(--trait);
-    text-underline-offset: 0.25em;
-  }
-
-  .achat__pas:not([aria-disabled="true"]):hover {
+  .caisse__pas:not([aria-disabled="true"]):hover {
     color: var(--fond);
     background: var(--encre);
   }
-}
 
-/* La caisse se règle sur sa propre largeur (le conteneur .detail__billets),
-   pas sur celle de l'écran : étroite à côté du texte sur un grand écran,
-   large sous le texte sur une tablette. */
-
-/* Plus de place : libellé, prix et compteur sur une ligne,
-   et les séances sur deux colonnes. */
-@container (min-width: 30rem) {
-  .achat__tarif {
-    grid-template-columns: minmax(0, 1fr) 6.5rem auto;
-  }
-
-  .achat__compteur {
-    grid-column: auto;
-    grid-row: auto;
-  }
-
-  .achat__prix {
-    text-align: right;
-  }
-
-  .achat__dates {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--espace-3);
-  }
-}
-
-/* Toute la largeur : les séances à gauche, les billets et le paiement à droite. */
-@container (min-width: 46rem) {
-  .achat {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: start;
-    column-gap: var(--espace-5);
-    max-width: none;
-  }
-
-  .achat__dates {
-    grid-template-columns: minmax(0, 1fr);
+  .caisse__payer:hover {
+    background: var(--vert-vif);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .achat__pas:active:not([aria-disabled="true"]) {
+  .caisse__pas:active:not([aria-disabled="true"]) {
     transform: none;
   }
 }

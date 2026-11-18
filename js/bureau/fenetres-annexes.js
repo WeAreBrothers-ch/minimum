@@ -49,6 +49,7 @@ export function fenetrePhotos(photos) {
   return {
     id: "photos",
     titre: "Visionneuse de photos",
+    court: "Photos",
     icone: "photos",
     largeur: 400,
     contenu,
@@ -97,6 +98,7 @@ export function fenetreEcrire() {
   return {
     id: "ecrire",
     titre: "Écrire à la radio",
+    court: "Écrire",
     icone: "lettre",
     largeur: 400,
     contenu:
@@ -141,6 +143,7 @@ export function fenetreApropos(racine) {
   return {
     id: "apropos",
     titre: "À propos de Minimum radio",
+    court: "À propos",
     icone: "info",
     largeur: 360,
     contenu:
@@ -173,6 +176,7 @@ export function fenetreReglages({ ecran, bureau, racine }) {
   return {
     id: "reglages",
     titre: "Réglages",
+    court: "Réglages",
     icone: "reglages",
     largeur: 540,
     contenu:

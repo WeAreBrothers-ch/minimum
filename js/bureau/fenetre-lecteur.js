@@ -69,6 +69,7 @@ export function fenetreLecteur(liste, ouvrir) {
   return {
     id: "lecteur",
     titre: "Minimum radio",
+    court: "Radio",
     icone: "cassette",
     largeur: 520,
     contenu: contenuHTML(liste),

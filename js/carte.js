@@ -116,7 +116,7 @@ export function cartesNuit(programme) {
 export function carteHTML(carte, racine, accessible, prioritaire) {
   const cache = accessible ? "" : ' aria-hidden="true" tabindex="-1"';
   const typo = carte.image === null;
-  const classes = `carte${typo ? " carte--typo" : ""}${carte.genre === "emission" ? " carte--emission" : ""}`;
+  const classes = `carte${typo ? " carte--typo" : ""}${carte.genre === "film" ? "" : ` carte--${carte.genre}`}`;
   const contenu = typo ? contenuTypographique(carte) : imageHTML(carte, racine, prioritaire);
 
   /* Une émission mène à la page Radio, où le lecteur se place sur elle. */
