@@ -81,6 +81,11 @@
   --duree-menu: 180ms;
   --duree-survol: 150ms;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  /* Les entrées (animations.css) : un départ franc, une arrivée très douce. */
+  --ease-entree: cubic-bezier(0.16, 1, 0.3, 1);
+  --duree-entree: 640ms;
+  --duree-page: 420ms;
+  --cascade: 70ms;
 
   /* Code couleur des pastilles (demande d'Eliott, 16.11.2026) : une couleur
      = un type d'info, le vert toujours pour l'argent. Tons doux sur le

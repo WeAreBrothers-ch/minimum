@@ -1,48 +1,84 @@
 // @ts-check
 /* Minimum : point d’entrée. Lance la page affichée, puis garde la main
-   sur la navigation pour que la radio ne s’arrête jamais. */
+   sur la navigation pour que la radio ne s’arrête jamais.
 
-import { initAccueil } from "./accueil.js";
+   Chaque page charge son propre code, et seulement le sien (import()) :
+   l’agenda n’attend pas la billetterie, l’accueil n’attend pas le bureau de
+   la radio. Les modules de la page sont annoncés en tête de son HTML
+   (npm run precharger), ils arrivent donc en même temps que main.js. */
+
+import { initAnimations } from "./animations.js";
 import { initEntete } from "./entete.js";
 import { initLecteur, rafraichirLecteur } from "./lecteur.js";
 import { initNavigation } from "./navigation.js";
-import { initAgenda } from "./pages/agenda.js";
-import { initBillet } from "./pages/billet.js";
-import { initCinema } from "./pages/cinema.js";
-import { initFilm } from "./pages/film.js";
-import { initNuit } from "./pages/nuit.js";
-import { initRadio } from "./pages/radio.js";
-import { initSoiree } from "./pages/soiree.js";
 
-/** @type {Record<string, () => (void | (() => void))>} */
+/** @typedef {() => (void | (() => void))} InitPage */
+
+/** @type {Record<string, () => Promise<InitPage>>} */
 const PAGES = {
-  accueil: initAccueil,
-  cinema: initCinema,
-  nuit: initNuit,
-  radio: initRadio,
-  agenda: initAgenda,
-  film: initFilm,
-  soiree: initSoiree,
-  billet: initBillet,
+  accueil: () => import("./accueil.js").then((m) => m.initAccueil),
+  cinema: () => import("./pages/cinema.js").then((m) => m.initCinema),
+  nuit: () => import("./pages/nuit.js").then((m) => m.initNuit),
+  radio: () => import("./pages/radio.js").then((m) => m.initRadio),
+  agenda: () => import("./pages/agenda.js").then((m) => m.initAgenda),
+  film: () => import("./pages/film.js").then((m) => m.initFilm),
+  soiree: () => import("./pages/soiree.js").then((m) => m.initSoiree),
+  billet: () => import("./pages/billet.js").then((m) => m.initBillet),
 };
 
 /** @type {Array<() => void>} */
 let demontages = [];
 
+/** Le numéro de la dernière page demandée : une page arrivée trop tard ne se lance pas. */
+let demande = 0;
+
 /**
  * Démonte la page précédente et lance la nouvelle.
  * @param {string} page
+ * @returns {Promise<void>}
  */
-function lancerPage(page) {
+async function lancerPage(page) {
   for (const demonter of demontages) demonter();
   demontages = [initEntete()];
   rafraichirLecteur();
-  const init = PAGES[page];
-  if (!init) return;
+  /* Numéroté avant tout : même une page sans code propre (Infos) rend
+     caduque une page précédente dont le code arrive encore. */
+  const numero = ++demande;
+  const charger = PAGES[page];
+  if (!charger) return;
+  /** @type {InitPage} */
+  let init;
+  try {
+    init = await charger();
+  } catch (erreur) {
+    /* Le code de la page n’a pas pu être chargé (réseau coupé) : on passe
+       par un chargement classique, qui le redemandera. Une seule fois : une
+       erreur dans le code de la page, elle, ne fait pas recharger. */
+    console.warn("Minimum : le code de la page n’a pas pu être chargé.", erreur);
+    if (numero === demande && !sessionStorageEssai()) location.reload();
+    return;
+  }
+  if (numero !== demande) return;
   const demonter = init();
   if (demonter) demontages.push(demonter);
 }
 
+/**
+ * Vrai si l’on vient déjà de recharger pour cette raison : on ne recharge pas
+ * en boucle (réseau coupé pour de bon).
+ * @returns {boolean}
+ */
+function sessionStorageEssai() {
+  try {
+    const deja = sessionStorage.getItem("minimum:rechargement") === location.href;
+    sessionStorage.setItem("minimum:rechargement", location.href);
+    return deja;
+  } catch {
+    return true;
+  }
+}
+
 initLecteur();
-lancerPage(document.body.dataset.page ?? "");
+initAnimations();
+void lancerPage(document.body.dataset.page ?? "");
 initNavigation(lancerPage);

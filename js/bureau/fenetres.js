@@ -29,6 +29,9 @@ import { icone } from "./icones.js";
  * @property {(() => void) | null} demonter
  */
 
+/** Le visiteur a demandé moins de mouvement : les fenêtres disparaissent d’un coup. */
+const MOINS_DE_MOUVEMENT = window.matchMedia("(prefers-reduced-motion: reduce)");
+
 /** Largeur à partir de laquelle on peut déplacer les fenêtres (40rem). */
 const GRAND_ECRAN = "(min-width: 40rem)";
 const DECALAGE = 28;
@@ -45,6 +48,35 @@ export function creerFenetres({ fenetres: calque, onglets }) {
   let devant = 10;
   let actif = "";
   let ouvertes = 0;
+
+  /**
+   * Cache une fenêtre, après sa petite sortie animée (css/animations.css).
+   * Si on la rouvre entre-temps, elle reste visible.
+   * @param {Fenetre} f
+   */
+  function cacher(f) {
+    if (MOINS_DE_MOUVEMENT.matches) {
+      f.el.hidden = true;
+      return;
+    }
+    const fin = () => {
+      f.el.classList.remove("fenetre--sort");
+      if (f.etat !== "ouverte") f.el.hidden = true;
+    };
+    f.el.classList.add("fenetre--sort");
+    /** @param {AnimationEvent} e */
+    const aLaFin = (e) => {
+      if (e.target !== f.el) return;
+      f.el.removeEventListener("animationend", aLaFin);
+      fin();
+    };
+    f.el.addEventListener("animationend", aLaFin);
+    /* Filet de sécurité, si l’animation ne se termine pas (onglet en fond). */
+    window.setTimeout(() => {
+      f.el.removeEventListener("animationend", aLaFin);
+      if (f.el.classList.contains("fenetre--sort")) fin();
+    }, 400);
+  }
 
   /** @param {string} id */
   function activer(id) {
@@ -64,14 +96,20 @@ export function creerFenetres({ fenetres: calque, onglets }) {
     const f = toutes.get(id);
     if (!f || f.etat === "fermee") return;
     f.etat = "fermee";
-    f.el.hidden = true;
+    cacher(f);
     f.onglet.hidden = true;
     if (actif === id) {
-      /* La fenêtre la plus haute encore ouverte reprend la main. */
-      const suivante = [...toutes.values()]
-        .filter((w) => w.etat === "ouverte")
-        .sort((a, b) => Number(b.el.style.zIndex) - Number(a.el.style.zIndex))[0];
-      activer(suivante ? suivante.def.id : "");
+      /* La fenêtre la plus haute encore ouverte reprend la main. Sur
+         téléphone, où une seule fenêtre est ouverte à la fois, celle qui
+         avait été mise de côté en dernier revient : on ne retombe pas sur
+         un bureau vide en fermant « À propos ». */
+      const parHauteur = (/** @type {Fenetre} */ a, /** @type {Fenetre} */ b) =>
+        Number(b.el.style.zIndex) - Number(a.el.style.zIndex);
+      const ouverte = [...toutes.values()].filter((w) => w.etat === "ouverte").sort(parHauteur)[0];
+      const reduite = [...toutes.values()].filter((w) => w.etat === "reduite").sort(parHauteur)[0];
+      if (ouverte) activer(ouverte.def.id);
+      else if (reduite && !grand.matches) montrer(reduite);
+      else activer("");
     }
   }
 
@@ -80,7 +118,7 @@ export function creerFenetres({ fenetres: calque, onglets }) {
     const f = toutes.get(id);
     if (!f || f.etat !== "ouverte") return;
     f.etat = "reduite";
-    f.el.hidden = true;
+    cacher(f);
     f.onglet.setAttribute("aria-pressed", "false");
     if (actif === id) activer("");
   }
@@ -93,6 +131,7 @@ export function creerFenetres({ fenetres: calque, onglets }) {
       for (const autre of toutes.values()) if (autre !== f && autre.etat === "ouverte") reduire(autre.def.id);
     }
     f.etat = "ouverte";
+    f.el.classList.remove("fenetre--sort");
     f.el.hidden = false;
     f.onglet.hidden = false;
     activer(f.def.id);

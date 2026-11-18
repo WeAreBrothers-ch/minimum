@@ -32,7 +32,7 @@ function teteHTML(soiree) {
   const racine = document.body.dataset.racine ?? "";
   return (
     `<header class="detail__tete"><p class="detail__retour"><a href="${racine}nuit/">Toutes les soirées</a></p>` +
-    `<h1 class="page__titre">${echapper(soiree.titre)}</h1>` +
+    `<h1 class="page__titre"><span class="masque"><span>${echapper(soiree.titre)}</span></span></h1>` +
     `<p class="detail__ligne">${echapper(horaire(soiree))}</p></header>`
   );
 }

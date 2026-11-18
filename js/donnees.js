@@ -16,24 +16,20 @@ import { EMISSIONS_DEMO, SOIREES_DEMO } from "./demo/nuit.js";
 /** @type {Promise<Programme> | null} */
 let enCours = null;
 
+/** Au-delà, la fiche d’un film s’affiche sans attendre le catalogue commun. */
+const ATTENTE_CATALOGUE = 2000;
+
+/** @type {Promise<Programme> | null} */
+let completEnCours = null;
+
 /**
- * Le programme de démonstration, complété par le catalogue commun :
- * affiches, titres originaux, images des films et presse, quand ils y sont.
- * Si Sanity ne répond pas, les films gardent leur affiche typographique :
- * rien n’est inventé à la place.
- * @returns {Promise<Programme>}
+ * Le programme de démonstration, tel quel : les affiches sont enregistrées
+ * avec le site, rien n’est à attendre.
+ * @returns {Programme}
  */
-async function programmeDeDemonstration() {
-  /** @type {Film[]} */
-  let films = FILMS_DEMO;
-  try {
-    const fiches = await fichesParTitre(FILMS_DEMO.map((f) => f.titre));
-    films = FILMS_DEMO.map((film) => completerFilm(film, fiches.get(film.titre.toLowerCase())));
-  } catch (erreur) {
-    console.warn("Minimum : affiches indisponibles, affiches typographiques à la place.", erreur);
-  }
+function programmeDeDemonstration() {
   return {
-    films,
+    films: FILMS_DEMO,
     seances: SEANCES_DEMO,
     tarifsCinema: TARIFS_CINEMA_DEMO,
     soirees: SOIREES_DEMO,
@@ -50,7 +46,7 @@ async function programmeDeDemonstration() {
 export function chargerProgramme() {
   if (!enCours) {
     enCours = DEMONSTRATION
-      ? programmeDeDemonstration()
+      ? Promise.resolve(programmeDeDemonstration())
       : Promise.reject(
           new Error(
             `Les séances de Minimum ne sont pas encore lues depuis Sanity (au ${isoLocal()}) : laisser DEMONSTRATION à true dans config.js.`
@@ -58,6 +54,35 @@ export function chargerProgramme() {
         );
   }
   return enCours;
+}
+
+/**
+ * Le programme, complété par le catalogue commun (saisi pour Zinéma) : titres
+ * originaux, images des films et presse. Seule la fiche d’un film s’en sert ;
+ * les autres pages n’attendent pas Sanity. Si le catalogue ne répond pas, ou
+ * pas assez vite, le programme reste tel quel : rien n’est inventé.
+ * @returns {Promise<Programme>}
+ */
+export function chargerProgrammeComplet() {
+  if (!completEnCours) {
+    completEnCours = chargerProgramme().then(async (programme) => {
+      try {
+        /** @type {Promise<never>} */
+        const delai = new Promise((_, refus) =>
+          setTimeout(() => refus(new Error("Le catalogue commun met trop de temps à répondre.")), ATTENTE_CATALOGUE)
+        );
+        const fiches = await Promise.race([fichesParTitre(programme.films.map((f) => f.titre)), delai]);
+        return {
+          ...programme,
+          films: programme.films.map((film) => completerFilm(film, fiches.get(film.titre.toLowerCase()))),
+        };
+      } catch (erreur) {
+        console.warn("Minimum : catalogue commun indisponible, fiches sans images ni presse.", erreur);
+        return programme;
+      }
+    });
+  }
+  return completEnCours;
 }
 
 /**

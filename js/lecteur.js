@@ -55,6 +55,7 @@ function afficher() {
     el.bouton.disabled = pisteCourante.audio === null;
     el.bouton.setAttribute("aria-pressed", String(joue()));
     el.bouton.dataset.joue = String(joue());
+    el.bouton.dataset.direct = String(pisteCourante.id === "direct" || pisteCourante.etat === "En direct");
     const action = pisteCourante.audio === null ? "" : joue() ? "Mettre en pause, " : "Écouter, ";
     el.bouton.setAttribute("aria-label", `${action}${pisteCourante.etat} : ${pisteCourante.titre}`);
   }

@@ -12,16 +12,17 @@ import { afficheHTML, afficherErreur, zoneAremplir } from "./commun.js";
 /**
  * @param {Soiree} soiree
  * @param {string} racine
+ * @param {boolean} prioritaire  Une des premières affiches, visible dès l’arrivée.
  * @returns {string}
  */
-function carreauHTML(soiree, racine) {
+function carreauHTML(soiree, racine, prioritaire) {
   const lien = echapper(`${racine}soiree/?id=${encodeURIComponent(soiree.id)}`);
   /* Insécable autour du tiret (et un liant invisible) : « 23 h – 4 h » ne se coupe pas. */
   const fin = soiree.fin ? ` –⁠ ${heureCourte(soiree.fin)}` : "";
   return (
     `<li class="carreau" id="${echapper(soiree.id)}">` +
-    `<a class="carreau__affiche" href="${lien}" tabindex="-1" aria-hidden="true">${afficheHTML(soiree.affiche, soiree.titre)}</a>` +
-    `<div class="carreau__texte"><h3 class="carreau__titre"><a href="${lien}">${echapper(soiree.titre)}</a></h3></div>` +
+    `<a class="carreau__affiche" href="${lien}" tabindex="-1" aria-hidden="true">${afficheHTML(soiree.affiche, soiree.titre, { prioritaire })}</a>` +
+    `<div class="carreau__texte"><h2 class="carreau__titre"><a href="${lien}">${echapper(soiree.titre)}</a></h2></div>` +
     `<p class="carreau__faits">${echapper(jourLongMajuscule(soiree.date))}<br />${heureCourte(soiree.heure)}${fin}</p>` +
     `<a class="carreau__action carreau__action--nuit" href="${lien}">Line-up</a>` +
     (soiree.tarifs.length
@@ -42,7 +43,7 @@ export function initNuit() {
         .filter((s) => s.date >= programme.aujourdhui)
         .sort((a, b) => (a.date + a.heure).localeCompare(b.date + b.heure));
       zone.innerHTML = aVenir.length
-        ? `<ul class="carreaux carreaux--nuit">${aVenir.map((s) => carreauHTML(s, racine)).join("")}</ul>`
+        ? `<ul class="carreaux carreaux--nuit">${aVenir.map((s, i) => carreauHTML(s, racine, i < 2)).join("")}</ul>`
         : '<p class="page__vide">Aucune soirée annoncée pour l’instant.</p>';
     })
     .catch((/** @type {unknown} */ erreur) => afficherErreur(zone, erreur));

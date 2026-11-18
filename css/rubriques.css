@@ -1,15 +1,5 @@
-/* Minimum : l'agenda, en cases jointes d'un trait comme le reste
-   (cases.css). */
-
-/* Le contenu rempli par script : ses blocs se touchent, le dernier
-   referme le tableau. */
-.page--cases > [data-remplir] {
-  border-bottom: 0;
-}
-
-.onglets {
-  border-bottom: var(--trait) solid var(--encre);
-}
+/* Minimum : la page Agenda, en cases jointes d'un trait comme le reste
+   (cases.css). Chargée seulement sur cette page. */
 
 /* ---------- L'agenda ---------- */
 .rdv__jour {

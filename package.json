@@ -5,7 +5,8 @@
   "description": "Site de Minimum, cinéma, club et radio à La Case à Chocs, Neuchâtel.",
   "scripts": {
     "servir": "python3 -m http.server 8000",
-    "verifier": "tsc --noEmit -p tsconfig.json"
+    "verifier": "tsc --noEmit -p tsconfig.json",
+    "precharger": "node outils/precharger.mjs"
   },
   "devDependencies": {
     "typescript": "5.9.3"

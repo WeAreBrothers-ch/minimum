@@ -12,6 +12,17 @@ npm run servir        # puis ouvrir http://localhost:8000
 
 En ouvrant le fichier directement (`file://`), rien ne se charge : il faut passer par ce serveur.
 
+## Après avoir ajouté ou retiré un module JavaScript
+
+```
+npm run precharger    # annonce en tête de chaque page les modules dont elle a besoin
+```
+
+Chaque page charge son propre code à la demande (`js/main.js`) ; ses modules
+sont annoncés dans son HTML pour arriver tous ensemble. Chaque page ne charge
+aussi que ses feuilles de style ; en changeant de page, `js/navigation.js`
+ajoute celles qui manquent.
+
 ## Vérifier
 
 ```

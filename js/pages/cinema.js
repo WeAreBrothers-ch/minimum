@@ -31,9 +31,10 @@ function faitsHTML(film, prochaine) {
  * @param {Film} film
  * @param {Programme} programme
  * @param {string} racine
+ * @param {boolean} prioritaire  Une des premières affiches, visible dès l’arrivée.
  * @returns {string}
  */
-function carreauHTML(film, programme, racine) {
+function carreauHTML(film, programme, racine, prioritaire) {
   const seances = seancesAVenir(programme, film.id);
   const premiere = seances[0];
   const lien = echapper(lienFilm(racine, film.id));
@@ -47,8 +48,8 @@ function carreauHTML(film, programme, racine) {
     : `<a class="carreau__action" href="${lien}">Voir la fiche</a>`;
   return (
     `<li class="carreau" id="film-${echapper(film.id)}">` +
-    `<a class="carreau__affiche" href="${lien}" tabindex="-1" aria-hidden="true">${afficheHTML(film.affiche, film.titre)}</a>` +
-    `<div class="carreau__texte"><h3 class="carreau__titre"><a href="${lien}">${echapper(film.titre)}</a></h3>` +
+    `<a class="carreau__affiche" href="${lien}" tabindex="-1" aria-hidden="true">${afficheHTML(film.affiche, film.titre, { prioritaire })}</a>` +
+    `<div class="carreau__texte"><h2 class="carreau__titre"><a href="${lien}">${echapper(film.titre)}</a></h2>` +
     `<p class="carreau__qui">${echapper(film.realisation)}</p>` +
     (film.mention ? `<p class="carreau__qui">${echapper(film.mention)}</p>` : "") +
     `</div>${faitsHTML(film, prochaine)}${action}</li>`
@@ -57,14 +58,15 @@ function carreauHTML(film, programme, racine) {
 
 /**
  * @param {string} id
+ * @param {string} titre
  * @param {Film[]} films
  * @param {Programme} programme
  * @param {string} racine
  * @returns {string}
  */
-function panneauHTML(id, films, programme, racine) {
-  return `<ul class="carreaux" id="${id}" role="tabpanel" aria-labelledby="onglet-${id}">${films
-    .map((f) => carreauHTML(f, programme, racine))
+function panneauHTML(id, titre, films, programme, racine) {
+  return `<ul class="carreaux" id="${id}" aria-label="${echapper(titre)}">${films
+    .map((f, i) => carreauHTML(f, programme, racine, id === "affiche" && i < 2))
     .join("")}</ul>`;
 }
 
@@ -109,7 +111,7 @@ export function initCinema() {
               )
               .join("")}</div>`
           : "";
-      zone.innerHTML = onglets + groupes.map((g) => panneauHTML(g.id, g.films, programme, racine)).join("");
+      zone.innerHTML = onglets + groupes.map((g) => panneauHTML(g.id, g.titre, g.films, programme, racine)).join("");
 
       /* L'adresse peut viser un film annoncé : on ouvre alors son onglet. */
       const viseAnnonce = location.hash && annonces.some((f) => `#film-${f.id}` === decodeURIComponent(location.hash));

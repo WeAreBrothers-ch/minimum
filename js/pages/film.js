@@ -18,7 +18,7 @@
 
 import { panneauHTML } from "../billetterie/panneau-html.js";
 import { monterPanneau } from "../billetterie/panneau.js";
-import { chargerProgramme, filmParId, seancesAVenir } from "../donnees.js";
+import { chargerProgrammeComplet, filmParId, seancesAVenir } from "../donnees.js";
 import { duree, echapper, heureCourte, jourLong, jourLongMajuscule } from "../format.js";
 import { bandeAnnonceHTML, monterBandesAnnonces } from "./bande-annonce.js";
 import { afficheHTML, afficherErreur, allerALAncre, nommerPage, zoneAremplir } from "./commun.js";
@@ -61,7 +61,7 @@ function teteHTML(film, programme, options) {
   const annonce = film.sortie && film.sortie > programme.aujourdhui ? `Sortie le ${jourLong(film.sortie)}` : "Pas de séance prévue";
   return (
     `<header class="detail__tete"><p class="detail__retour"><a href="${racine}cinema/">Tous les films</a></p>` +
-    `<h1 class="page__titre">${echapper(film.titre)}</h1>` +
+    `<h1 class="page__titre"><span class="masque"><span>${echapper(film.titre)}</span></span></h1>` +
     (film.titreOriginal ? `<p class="detail__original">${echapper(film.titreOriginal)}</p>` : "") +
     `<p class="detail__ligne">Un film de ${echapper(film.realisation)}</p>` +
     `<p class="detail__etat"><span class="pastille pastille--cinema">${echapper(options.choix.length ? "À l’affiche" : annonce)}</span>` +
@@ -178,7 +178,7 @@ export function initFilm() {
   const zone = zoneAremplir();
   if (!zone) return () => fin.abort();
   const id = new URLSearchParams(location.search).get("id") ?? "";
-  chargerProgramme()
+  chargerProgrammeComplet()
     .then((programme) => {
       if (fin.signal.aborted) return;
       const film = filmParId(programme, id);

@@ -10,8 +10,11 @@
 /**
  * @callback AuChangement
  * @param {string} page  La valeur de data-page de la nouvelle page.
- * @returns {void}
+ * @returns {void | Promise<void>}  Une promesse tenue quand la page a démarré.
  */
+
+/** Le visiteur a demandé moins de mouvement : on change de page sans transition. */
+const MOINS_DE_MOUVEMENT = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 /** La page actuellement affichée : chemin et paramètres (film/?id=…). */
 let cheminAffiche = location.pathname + location.search;
@@ -47,25 +50,37 @@ function estInterne(lien, e) {
  * @returns {Promise<void>}
  */
 async function chargerStyles(suivante, url) {
-  const presentes = new Set(
-    [...document.querySelectorAll('link[rel="stylesheet"]')].map((l) => (l instanceof HTMLLinkElement ? l.href : ""))
-  );
+  /** @type {Map<string, Element>} */
+  const presentes = new Map();
+  for (const l of document.querySelectorAll('link[rel="stylesheet"]')) {
+    if (l instanceof HTMLLinkElement) presentes.set(l.href, l);
+  }
   /** @type {Promise<void>[]} */
   const attentes = [];
+  /* Chaque feuille manquante se place juste après celle qui la précède
+     dans la page suivante : l’ordre des feuilles, donc la priorité des
+     règles, reste celui d’un chargement direct de la page. */
+  /** @type {Element | null} */
+  let precedente = null;
   for (const lien of suivante.querySelectorAll('link[rel="stylesheet"]')) {
     const href = new URL(lien.getAttribute("href") ?? "", url).href;
-    if (presentes.has(href)) continue;
-    const neuf = document.createElement("link");
-    neuf.rel = "stylesheet";
-    neuf.href = href;
-    attentes.push(
-      new Promise((fin) => {
-        neuf.addEventListener("load", () => fin(), { once: true });
-        neuf.addEventListener("error", () => fin(), { once: true });
-      })
-    );
-    document.head.append(neuf);
-    presentes.add(href);
+    let place = presentes.get(href) ?? null;
+    if (!place) {
+      const neuf = document.createElement("link");
+      neuf.rel = "stylesheet";
+      neuf.href = href;
+      attentes.push(
+        new Promise((fin) => {
+          neuf.addEventListener("load", () => fin(), { once: true });
+          neuf.addEventListener("error", () => fin(), { once: true });
+        })
+      );
+      if (precedente) precedente.after(neuf);
+      else document.head.append(neuf);
+      presentes.set(href, neuf);
+      place = neuf;
+    }
+    precedente = place;
   }
   await Promise.all(attentes);
 }
@@ -129,10 +144,33 @@ async function charger(url, ajouterAHistorique, auChangement) {
     const suivante = new DOMParser().parseFromString(await reponse.text(), "text/html");
     await chargerStyles(suivante, url);
     if (ajouterAHistorique) history.pushState(null, "", url);
-    const page = remplacer(suivante);
-    cheminAffiche = url.pathname + url.search;
-    auChangement(page);
-    placer(url);
+    /* Change de page, puis attend qu’elle ait démarré (son code chargé, son
+       contenu posé), sans jamais attendre plus d’une seconde. */
+    const changer = async () => {
+      const page = remplacer(suivante);
+      cheminAffiche = url.pathname + url.search;
+      const demarrage = auChangement(page);
+      placer(url);
+      await Promise.race([demarrage, new Promise((fin) => setTimeout(fin, 1000))]);
+    };
+    if (typeof document.startViewTransition === "function" && !MOINS_DE_MOUVEMENT.matches) {
+      /* L’en-tête reste en place, le contenu glisse (css/animations.css).
+         On attend que la page ait démarré, puis une tâche : le programme,
+         déjà chargé, a rempli la page. (Pas requestAnimationFrame :
+         l’affichage est suspendu pendant la transition, il n’arriverait
+         jamais.) */
+      const transition = document.startViewTransition(async () => {
+        await changer();
+        await new Promise((fin) => setTimeout(fin, 0));
+      });
+      /* Une transition interrompue (clic rapide sur un autre lien) n’est pas
+         une erreur : la page a changé quand même. */
+      transition.ready.catch(() => {});
+      transition.finished.catch(() => {});
+      await transition.updateCallbackDone;
+    } else {
+      await changer();
+    }
   } catch (erreur) {
     console.warn("Minimum : navigation classique à la place.", erreur);
     location.assign(url);

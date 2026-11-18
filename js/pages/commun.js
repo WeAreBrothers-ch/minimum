@@ -21,7 +21,8 @@ export function zoneAremplir() {
  * (une affiche de soirée n’est pas recadrée) et se charge en priorité.
  * @param {Image | null} image
  * @param {string} titre
- * @param {{ detail?: boolean }} [reglages]
+ * @param {{ detail?: boolean, prioritaire?: boolean }} [reglages]
+ *   `prioritaire` : une affiche visible dès l’arrivée, chargée tout de suite.
  * @returns {string}
  */
 export function afficheHTML(image, titre, reglages = {}) {
@@ -30,12 +31,14 @@ export function afficheHTML(image, titre, reglages = {}) {
     return `<div class="fiche__affiche fiche__affiche--typo" aria-hidden="true"><span>${echapper(titre)}</span></div>`;
   }
   const racine = document.body.dataset.racine ?? "";
-  const tailles = detail ? "(min-width: 56rem) 22rem, (min-width: 40rem) 14rem, 9rem" : "(min-width: 56rem) 16rem, 40vw";
+  const tailles = detail
+    ? "(min-width: 56rem) 22rem, (min-width: 40rem) 14rem, 9rem"
+    : "(min-width: 75rem) 25vw, (min-width: 40rem) 33vw, 38vw";
   const { src, srcset, sizes } = sourcesImage(image, racine, [240, 360, 480, 720], tailles);
   const variantes = srcset ? ` srcset="${echapper(srcset)}" sizes="${echapper(sizes)}"` : "";
   const naturelle = detail && image.largeur && image.hauteur;
   const dimensions = naturelle ? `width="${image.largeur}" height="${image.hauteur}"` : 'width="360" height="540"';
-  const chargement = detail ? 'fetchpriority="high"' : 'loading="lazy"';
+  const chargement = detail || reglages.prioritaire === true ? 'fetchpriority="high"' : 'loading="lazy"';
   return (
     `<div class="fiche__affiche${naturelle ? " fiche__affiche--naturelle" : ""}"><img src="${echapper(src)}"${variantes} ` +
     `${dimensions} alt="${echapper(image.alt)}" ${chargement} decoding="async"></div>`

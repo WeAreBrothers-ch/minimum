@@ -6,6 +6,10 @@
   <title>Cinéma : films à l’affiche, Minimum Neuchâtel</title>
   <meta name="description" content="Les films à l’affiche et les prochaines sorties du cinéma Minimum, salle Anaïs Emery, quai Philippe-Godet 20 à Neuchâtel." />
   <meta name="theme-color" content="#ffffff" />
+  <link rel="icon" href="../favicon.ico" sizes="any" />
+  <link rel="icon" href="../assets/img/favicon-32.png" type="image/png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png" />
+  <link rel="manifest" href="../site.webmanifest" />
   <link rel="canonical" href="https://www.cineminimum.ch/cinema/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Minimum" />
@@ -13,6 +17,11 @@
   <meta property="og:title" content="Cinéma : films à l’affiche, Minimum Neuchâtel" />
   <meta property="og:description" content="Les films à l’affiche et les prochaines sorties du cinéma Minimum, salle Anaïs Emery, quai Philippe-Godet 20 à Neuchâtel." />
   <meta property="og:url" content="https://www.cineminimum.ch/cinema/" />
+  <meta property="og:image" content="https://www.cineminimum.ch/assets/img/partage.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Minimum : cinéma, nuit et radio à La Case à Chocs, Neuchâtel" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="preload" href="../assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="../css/jetons.css" />
   <link rel="stylesheet" href="../css/reset.css" />
@@ -20,20 +29,27 @@
   <link rel="stylesheet" href="../css/pastilles.css" />
   <link rel="stylesheet" href="../css/entete.css" />
   <link rel="stylesheet" href="../css/lecteur.css" />
-  <link rel="stylesheet" href="../css/mur.css" />
-  <link rel="stylesheet" href="../css/carte.css" />
   <link rel="stylesheet" href="../css/pages.css" />
-  <link rel="stylesheet" href="../css/rubriques.css" />
-  <link rel="stylesheet" href="../css/detail.css" />
-  <link rel="stylesheet" href="../css/detail-grille.css" />
-  <link rel="stylesheet" href="../css/fiche-medias.css" />
-  <link rel="stylesheet" href="../css/line-up.css" />
-  <link rel="stylesheet" href="../css/billet.css" />
-  <link rel="stylesheet" href="../css/achat.css" />
-  <link rel="stylesheet" href="../css/achat-paiement.css" />
   <link rel="stylesheet" href="../css/cases.css" />
-  <link rel="stylesheet" href="../css/infos.css" />
-  <link rel="stylesheet" href="../css/bureau.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <!-- modules : npm run precharger -->
+  <link rel="modulepreload" href="../js/main.js" />
+  <link rel="modulepreload" href="../js/pages/cinema.js" />
+  <link rel="modulepreload" href="../js/animations.js" />
+  <link rel="modulepreload" href="../js/entete.js" />
+  <link rel="modulepreload" href="../js/lecteur.js" />
+  <link rel="modulepreload" href="../js/navigation.js" />
+  <link rel="modulepreload" href="../js/donnees.js" />
+  <link rel="modulepreload" href="../js/format.js" />
+  <link rel="modulepreload" href="../js/pages/commun.js" />
+  <link rel="modulepreload" href="../js/pages/film-commun.js" />
+  <link rel="modulepreload" href="../js/config.js" />
+  <link rel="modulepreload" href="../js/catalogue.js" />
+  <link rel="modulepreload" href="../js/sanity.js" />
+  <link rel="modulepreload" href="../js/demo/films.js" />
+  <link rel="modulepreload" href="../js/demo/nuit.js" />
+  <link rel="modulepreload" href="../js/images.js" />
+  <!-- /modules -->
 </head>
 <body data-page="cinema" data-racine="../">
   <a class="evitement" href="#contenu">Aller au contenu</a>
@@ -57,7 +73,7 @@
     </nav>
   </header>
   <main id="contenu" class="page page--cases surface-ecran" tabindex="-1">
-    <h1 class="page__titre">Cinéma</h1>
+    <h1 class="page__titre"><span class="masque"><span>Cinéma</span></span></h1>
     <p class="page__intro">Salle Anaïs Emery, à La Case à Chocs. Billets en ligne sur la fiche de chaque film, ou à la buvette, 15 minutes avant la séance, en espèces ou par TWINT.</p>
     <div data-remplir></div>
   </main>

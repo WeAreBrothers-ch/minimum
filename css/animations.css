@@ -1,0 +1,363 @@
+/* Minimum : le mouvement. Des entrées franches et courtes, qui suivent le
+   dessin du site (des cases qui se posent, des traits qui se tracent), et
+   rien qui ne tourne en boucle sans raison.
+
+   - changer de page : l'en-tête reste, le contenu glisse (View Transitions) ;
+   - le titre de la page sort de sous sa ligne ;
+   - les lignes de tirets se tapent, comme sur le programme de 2009 ;
+   - les cases apparaissent en cascade quand elles entrent dans l'écran
+     (animations.js pose .a-attente puis .a-entree) ;
+   - le menu s'ouvre rubrique après rubrique ; au survol, la case se remplit
+     de bas en haut ;
+   - les fenêtres de la radio s'ouvrent et se referment.
+
+   Seulement l'opacité et le déplacement : fluide sur un téléphone.
+   Tout s'arrête si le visiteur demande moins de mouvement (réglage du
+   système) : le site reste alors exactement le même, immobile. */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ---------- Changer de page ---------- */
+  .entete {
+    view-transition-name: entete;
+  }
+
+  main {
+    view-transition-name: contenu;
+  }
+
+  .pied {
+    view-transition-name: pied;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-new(entete) {
+    animation: none;
+  }
+
+  ::view-transition-old(entete) {
+    animation: none;
+    opacity: 0;
+  }
+
+  ::view-transition-old(contenu),
+  ::view-transition-old(pied) {
+    animation: 160ms var(--ease-out) both page-sort;
+  }
+
+  ::view-transition-new(contenu),
+  ::view-transition-new(pied) {
+    animation: var(--duree-page) var(--ease-entree) 60ms both page-entre;
+  }
+
+  /* ---------- Le titre sort de sous sa ligne ---------- */
+  .masque {
+    display: inline-block;
+    overflow: hidden;
+    /* Un peu d'air pour les accents et les jambages, rendu aussitôt. */
+    padding-block: 0.08em;
+    margin-block: -0.08em;
+    vertical-align: top;
+  }
+
+  .masque > span {
+    display: inline-block;
+    animation: 820ms var(--ease-entree) both titre-monte;
+  }
+
+  .page__titre + .page__intro {
+    animation: var(--duree-entree) var(--ease-entree) 180ms both apparaitre;
+  }
+
+  /* ---------- Les tirets se tapent ---------- */
+  .tirets::before {
+    animation: 900ms steps(36, end) 200ms both tirets-tapes;
+  }
+
+  /* ---------- Les cases en cascade ---------- */
+  .a-attente {
+    opacity: 0;
+    translate: 0 1.5rem;
+  }
+
+  .a-entree {
+    animation: var(--duree-entree) var(--ease-entree) both apparaitre;
+    animation-delay: calc(var(--i, 0) * var(--cascade));
+  }
+
+  /* L'affiche se dévoile de haut en bas, avec sa case. */
+  .a-entree .carreau__affiche img,
+  .a-entree.detail__affiche img {
+    animation: 760ms var(--ease-entree) both affiche-devoile;
+    animation-delay: calc(var(--i, 0) * var(--cascade));
+  }
+
+  /* Sur la fiche d'un film ou d'une soirée, l'affiche entre la première. */
+  .a-entree.detail__affiche {
+    --i: 0 !important;
+  }
+
+  /* ---------- Le menu ---------- */
+  .menu__lien,
+  .onglet,
+  .lecteur__bouton,
+  .playlist__ligne,
+  .icone-bureau,
+  .barre__onglet,
+  .tuile {
+    transition:
+      background-color 200ms var(--ease-out),
+      color 200ms var(--ease-out),
+      outline-offset 200ms var(--ease-out);
+  }
+
+  /* Téléphone : les rubriques arrivent l'une après l'autre. */
+  @media (max-width: 55.99rem) {
+    .menu[data-ouvert="true"] .menu__item,
+    .menu[data-ouvert="true"] .menu__pied {
+      animation: 520ms var(--ease-entree) both menu-entre;
+    }
+
+    .menu[data-ouvert="true"] .menu__item:nth-child(2) { animation-delay: 45ms; }
+    .menu[data-ouvert="true"] .menu__item:nth-child(3) { animation-delay: 90ms; }
+    .menu[data-ouvert="true"] .menu__item:nth-child(4) { animation-delay: 135ms; }
+    .menu[data-ouvert="true"] .menu__item:nth-child(5) { animation-delay: 180ms; }
+    .menu[data-ouvert="true"] .menu__pied { animation-delay: 240ms; }
+
+    .menu__liste .menu__lien::after {
+      transition: translate 260ms var(--ease-entree);
+    }
+
+    .menu__liste .menu__lien:active::after,
+    .menu__liste .menu__lien:focus-visible::after {
+      translate: 0.375rem 0;
+    }
+  }
+
+  /* Ordinateur : au survol, la case se remplit de bas en haut. */
+  @media (hover: hover) and (pointer: fine) {
+    .menu__lien:not([aria-current]) {
+      background-image: linear-gradient(var(--remplissage, var(--noir)), var(--remplissage, var(--noir)));
+      background-repeat: no-repeat;
+      background-position: bottom;
+      background-size: 100% 0;
+      transition:
+        background-size 320ms var(--ease-entree),
+        color 200ms var(--ease-out);
+    }
+
+    .menu__lien:not([aria-current]):hover {
+      background-color: var(--fond);
+      background-size: 100% 100%;
+    }
+
+    /* Les flèches avancent d'un pas. */
+    a.carreau__action::after,
+    .info__action span,
+    .detail__fleche {
+      display: inline-block;
+      transition: translate 260ms var(--ease-entree);
+    }
+
+    .carreau:hover a.carreau__action::after,
+    a.carreau__action:hover::after,
+    .info__action:hover span {
+      translate: 0.3125rem 0;
+    }
+
+    .detail__acheter:hover .detail__fleche {
+      animation: 900ms var(--ease-out) infinite fleche-descend;
+    }
+
+    /* Une affiche survolée : un cadre se pose dedans, rien ne grossit. */
+    .carreau__affiche {
+      position: relative;
+    }
+
+    .carreau__affiche::after {
+      content: "";
+      position: absolute;
+      inset: var(--espace-2);
+      border: var(--trait) solid var(--blanc);
+      mix-blend-mode: difference;
+      opacity: 0;
+      scale: 1.03;
+      transition:
+        opacity 220ms var(--ease-out),
+        scale 320ms var(--ease-entree);
+      pointer-events: none;
+    }
+
+    .carreau:hover .carreau__affiche::after {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+
+  /* ---------- L'accueil : les deux murs s'ouvrent ---------- */
+  .moitie {
+    animation: 900ms var(--ease-entree) both mur-ouvre;
+  }
+
+  .moitie + .moitie {
+    animation-delay: 140ms;
+  }
+
+  /* ---------- La radio ---------- */
+  .lecteur__bouton[data-joue="true"][data-direct="true"] .lecteur__etat::after {
+    content: "";
+    display: inline-block;
+    width: 0.4em;
+    height: 0.4em;
+    margin-left: 0.4em;
+    vertical-align: 0.15em;
+    background: currentColor;
+    animation: 1.4s steps(2, jump-none) infinite clignote;
+  }
+
+  .fenetre:not([hidden]) {
+    animation: 280ms var(--ease-entree) both fenetre-ouvre;
+  }
+
+  .fenetre.fenetre--sort {
+    animation: 170ms var(--ease-out) both fenetre-ferme;
+    pointer-events: none;
+  }
+
+  .demarrer:not([hidden]) {
+    animation: 260ms var(--ease-entree) both demarrer-ouvre;
+  }
+
+  .barre__onglet:not([hidden]) {
+    animation: 260ms var(--ease-entree) both onglet-entre;
+  }
+
+  .bureau__icones li {
+    animation: 520ms var(--ease-entree) both apparaitre;
+  }
+
+  .bureau__icones li:nth-child(2) { animation-delay: 50ms; }
+  .bureau__icones li:nth-child(3) { animation-delay: 100ms; }
+  .bureau__icones li:nth-child(4) { animation-delay: 150ms; }
+  .bureau__icones li:nth-child(5) { animation-delay: 200ms; }
+
+  .bureau__ecran {
+    transition: background-color 400ms var(--ease-out);
+  }
+}
+
+@keyframes page-sort {
+  to {
+    opacity: 0;
+    translate: 0 -0.5rem;
+  }
+}
+
+@keyframes page-entre {
+  from {
+    opacity: 0;
+    translate: 0 1.25rem;
+  }
+}
+
+@keyframes titre-monte {
+  from {
+    translate: 0 105%;
+  }
+}
+
+@keyframes apparaitre {
+  from {
+    opacity: 0;
+    translate: 0 1.5rem;
+  }
+}
+
+@keyframes tirets-tapes {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes affiche-devoile {
+  from {
+    clip-path: inset(0 0 100% 0);
+    scale: 1.08;
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+    scale: 1;
+  }
+}
+
+@keyframes menu-entre {
+  from {
+    opacity: 0;
+    translate: -1rem 0;
+  }
+}
+
+@keyframes fleche-descend {
+  50% {
+    translate: 0 0.25em;
+  }
+}
+
+@keyframes mur-ouvre {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes clignote {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes fenetre-ouvre {
+  from {
+    opacity: 0;
+    translate: 0 0.75rem;
+    scale: 0.97;
+  }
+}
+
+@keyframes fenetre-ferme {
+  to {
+    opacity: 0;
+    translate: 0 0.75rem;
+    scale: 0.97;
+  }
+}
+
+@keyframes demarrer-ouvre {
+  from {
+    opacity: 0;
+    translate: 0 0.75rem;
+  }
+}
+
+@keyframes onglet-entre {
+  from {
+    opacity: 0;
+    translate: 0 0.5rem;
+  }
+}
+
+/* À l'impression, ou sans mouvement : tout est visible tout de suite. */
+@media print, (prefers-reduced-motion: reduce) {
+  .a-attente {
+    opacity: 1;
+    translate: none;
+  }
+}

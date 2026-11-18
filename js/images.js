@@ -14,6 +14,21 @@ function vientDeSanity(url) {
   return url.startsWith("https://cdn.sanity.io/");
 }
 
+/** Les largeurs enregistrées à côté des images du site, en WebP. */
+const LARGEURS_LOCALES = [360, 720];
+
+/**
+ * Les affiches et visuels enregistrés avec le site ont des variantes WebP
+ * à 360 et 720 px (« nom-360.webp », « nom-720.webp »). Le chemin sans
+ * extension, ou null pour une autre image.
+ * @param {string} url
+ * @returns {string | null}
+ */
+function baseDesVariantes(url) {
+  const m = url.match(/^(assets\/img\/(?:affiches|exemples)\/[^/]+?)\.(?:jpe?g|png|webp)$/);
+  return m?.[1] ?? null;
+}
+
 /**
  * Les attributs src, srcset et sizes d’une image.
  * @param {Image} image
@@ -24,7 +39,13 @@ function vientDeSanity(url) {
  */
 export function sourcesImage(image, racine, largeurs, sizes) {
   if (!vientDeSanity(image.url)) {
-    return { src: racine + image.url, srcset: "", sizes: "" };
+    const base = baseDesVariantes(image.url);
+    if (!base) return { src: racine + image.url, srcset: "", sizes: "" };
+    return {
+      src: `${racine}${base}-720.webp`,
+      srcset: LARGEURS_LOCALES.map((l) => `${racine}${base}-${l}.webp ${l}w`).join(", "),
+      sizes,
+    };
   }
   const moyenne = largeurs[Math.floor(largeurs.length / 2)] ?? 480;
   return {

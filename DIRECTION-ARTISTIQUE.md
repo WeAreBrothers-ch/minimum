@@ -222,13 +222,26 @@ police à chasse fixe) : elle est habillée avec le design du site (demande d'El
   fiches, séances, agenda, coordonnées, boutons des fenêtres du bureau radio.
 - Vérifié sans débordement horizontal à 320, 360 et 390 px sur toutes les pages.
 
-### Mouvement
-- Le défilement des colonnes est le seul mouvement de la page : chacune défile
-  seule, sans fin (quatre sur ordinateur, deux sur téléphone).
-- Pression : `scale(0.98)` sur les boutons, 120 ms.
-- Survol (pointeur fin seulement) : un cadre d'un trait à l'intérieur de l'affiche, sans déplacement ;
-  sur une pastille d'action, le texte se souligne.
-- Menu mobile : apparition en opacité, 180 ms. Rien d'autre.
+### Mouvement (revu le 18.11.2026 : Eliott demande des animations)
+Des entrées franches et courtes qui suivent le dessin du site, dans
+`css/animations.css` (et `js/animations.js` pour la cascade) :
+- **Changer de page** : l'en-tête reste, l'ancien contenu s'efface, le nouveau
+  glisse en place (View Transitions, sans rechargement ; la radio continue).
+- **Titre de page** : il sort de sous sa ligne (masque).
+- **Lignes de tirets** : elles se tapent, comme sur le programme de 2009.
+- **Cases** (films, soirées, lignes d'agenda et d'infos, cases de la fiche) :
+  elles entrent en cascade quand elles arrivent à l'écran ; l'affiche se
+  dévoile de haut en bas.
+- **Menu** : sur téléphone, les rubriques arrivent l'une après l'autre ; sur
+  ordinateur, la case survolée se remplit de bas en haut. Les flèches avancent
+  d'un pas au survol ; une affiche survolée reçoit un cadre, rien ne grossit.
+- **Accueil** : les deux murs s'ouvrent l'un après l'autre.
+- **Radio** : les fenêtres s'ouvrent et se referment, le menu Start monte, la
+  case radio de la barre du haut clignote « en direct » pendant le direct.
+- Seulement l'opacité et le déplacement (fluide sur téléphone). Mesuré : les
+  animations ne retardent pas l'affichage de l'affiche principale.
+- **Tout s'arrête** avec le réglage système « réduire les animations » : le site
+  reste exactement le même, immobile.
 
 ### Signature
 La ligne de tirets du programme de 2009 (D2), tapée en vrais caractères.

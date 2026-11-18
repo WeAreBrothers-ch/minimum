@@ -19,6 +19,26 @@
   padding: 0;
 }
 
+/* Tant que le programme se charge, le pied de page attend, invisible : il
+   n'apparaît qu'une fois à sa place, sans sauter vers le bas ni remonter
+   (toutes les pages remplies par script, fiches comprises). */
+main:has([data-remplir]:empty) ~ .pied {
+  visibility: hidden;
+  animation: pied-visible 0s 3s forwards;
+}
+
+/* Filet de sécurité : si la page ne se remplit pas (script bloqué), le pied
+   de page apparaît quand même après trois secondes. */
+@keyframes pied-visible {
+  to {
+    visibility: visible;
+  }
+}
+
+main [data-remplir]:empty {
+  border-bottom: 0;
+}
+
 /* Chaque case est fermée par un trait en dessous, la dernière comprise :
    le tableau reste fermé même quand la page est courte. */
 .page--cases > * {
@@ -58,8 +78,15 @@
   padding: var(--espace-3) var(--marge);
 }
 
+/* Le contenu rempli par script : ses blocs se touchent, le dernier
+   referme le tableau. */
+.page--cases > [data-remplir] {
+  border-bottom: 0;
+}
+
 /* ---------- Les onglets : une rangée de cases, la choisie est pleine ---------- */
 .onglets {
+  border-bottom: var(--trait) solid var(--encre);
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);

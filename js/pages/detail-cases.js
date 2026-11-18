@@ -45,7 +45,7 @@ export function caseBilletsHTML(options, sansVente) {
     );
   }
   return (
-    `<a class="detail__acheter" href="#billets"><span class="detail__acheter-titre">Billets <span aria-hidden="true">↓</span></span>` +
+    `<a class="detail__acheter" href="#billets"><span class="detail__acheter-titre">Billets <span class="detail__fleche" aria-hidden="true">↓</span></span>` +
     `<span class="detail__acheter-prix">${fourchette(options.tarifs)}</span></a>`
   );
 }
