@@ -1,5 +1,5 @@
-/* Minimum : l'agenda et les petites suites de la page Infos,
-   en cases jointes d'un trait comme le reste (cases.css). */
+/* Minimum : l'agenda, en cases jointes d'un trait comme le reste
+   (cases.css). */
 
 /* Le contenu rempli par script : ses blocs se touchent, le dernier
    referme le tableau. */
@@ -76,44 +76,8 @@
   }
 }
 
-/* ---------- Infos ---------- */
-
-/* L'adresse et la photo de la salle : l'une sous l'autre, puis côte à côte. */
-.infos__tete {
-  display: grid;
-  gap: var(--joint);
-  background: var(--encre);
-}
-
-.infos__tete > * {
-  background: var(--fond);
-}
-
-.infos__photo img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  min-height: 12rem;
-  object-fit: cover;
-}
-.infos__prix {
-  justify-self: start;
-  font-variant-numeric: tabular-nums;
-}
-
-.infos__noms {
-  font-size: var(--taille-petite);
-}
-
-@media (min-width: 56rem) {
-  .infos__tete {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-  }
-}
-
 @media (min-width: 40rem) {
   .rdv {
     grid-template-columns: 6rem minmax(0, 1fr);
   }
-
 }

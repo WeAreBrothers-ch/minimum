@@ -32,6 +32,7 @@
   <link rel="stylesheet" href="../css/achat.css" />
   <link rel="stylesheet" href="../css/achat-paiement.css" />
   <link rel="stylesheet" href="../css/cases.css" />
+  <link rel="stylesheet" href="../css/infos.css" />
   <link rel="stylesheet" href="../css/bureau.css" />
 </head>
 <body data-page="infos" data-racine="../">
@@ -57,57 +58,79 @@
   <main id="contenu" class="page page--cases surface-ecran" tabindex="-1">
     <h1 class="page__titre">Infos</h1>
 
-    <div class="infos__tete">
-      <section class="bloc" aria-labelledby="titre-adresse">
-        <h2 class="bloc__etiquette" id="titre-adresse">Adresse</h2>
-        <p class="bloc__grand">Quai Philippe-Godet 20<br />2000 Neuchâtel</p>
-        <p class="bloc__note">Cinéma Minimum, salle Anaïs Emery<br />À La Case à Chocs, ancienne Brasserie Müller</p>
+    <div class="infos">
+      <section class="info" aria-labelledby="titre-adresse">
+        <h2 class="info__terme" id="titre-adresse">Adresse</h2>
+        <div class="info__contenu info__contenu--adresse">
+          <div class="info__texte">
+            <p class="info__grand">Quai <span>Philippe-Godet 20</span><br />2000 Neuchâtel</p>
+            <p>Cinéma Minimum, salle Anaïs Emery<br />À La Case à Chocs, ancienne Brasserie Müller</p>
+          </div>
+          <a class="info__action" href="https://www.openstreetmap.org/search?query=Quai%20Philippe-Godet%2020%2C%202000%20Neuch%C3%A2tel" rel="noopener">Ouvrir le plan <span aria-hidden="true">↗</span></a>
+          <figure class="info__photo"><img src="../assets/img/salle.jpg" width="603" height="401" alt="La salle Anaïs Emery : des rangées de fauteuils rouges face à l’écran" loading="lazy" decoding="async" /></figure>
+        </div>
       </section>
-      <figure class="infos__photo"><img src="../assets/img/salle.jpg" width="603" height="401" alt="La salle Anaïs Emery : des rangées de fauteuils rouges face à l’écran" loading="lazy" decoding="async" /></figure>
+
+      <section class="info" aria-labelledby="titre-contact">
+        <h2 class="info__terme" id="titre-contact">Contact</h2>
+        <dl class="info__contenu">
+          <div class="info__ligne"><dt>Bureau</dt><dd><a href="tel:+41765671291">076 567 12 91</a></dd></div>
+          <div class="info__ligne"><dt>Cinéma</dt><dd><a href="tel:+41325453737">032 545 37 37</a></dd></div>
+          <div class="info__ligne"><dt>E-mail</dt><dd><a href="mailto:cineminimum@gmail.com">cineminimum@gmail.com</a></dd></div>
+        </dl>
+      </section>
+
+      <section class="info" aria-labelledby="titre-tarifs">
+        <h2 class="info__terme" id="titre-tarifs">Tarifs du cinéma</h2>
+        <div class="info__contenu">
+          <dl class="info__lignes">
+            <div class="info__ligne"><dt><span class="pastille pastille--argent">CHF 16.–</span></dt><dd>Tarif ordinaire</dd></div>
+            <div class="info__ligne"><dt><span class="pastille pastille--argent">CHF 14.–</span></dt><dd>AVS, AI, chômeur.euse.s</dd></div>
+            <div class="info__ligne"><dt><span class="pastille pastille--argent">CHF 10.–</span></dt><dd>Membres de soutien, abonné.e.s au journal Le Courrier, étudiant.e.s, carte Culture Caritas</dd></div>
+            <div class="info__ligne"><dt><span class="pastille pastille--argent">CHF 0.–</span></dt><dd>AG culturel</dd></div>
+          </dl>
+          <div class="info__texte"><p>En ligne, par carte, sur la fiche de chaque film. À la buvette, 15 minutes avant chaque séance, en espèces ou par TWINT.</p></div>
+        </div>
+      </section>
+
+      <section class="info" aria-labelledby="titre-membre">
+        <h2 class="info__terme" id="titre-membre">Carte de membre de soutien</h2>
+        <dl class="info__contenu">
+          <div class="info__ligne"><dt><span class="pastille pastille--argent">CHF 60.–</span></dt><dd>Par an, avec une boisson sans alcool offerte à chaque projection.</dd></div>
+          <div class="info__ligne"><dt>IBAN</dt><dd class="info__chiffres">CH47&nbsp;0900&nbsp;0000 1439&nbsp;0316&nbsp;5</dd></div>
+        </dl>
+      </section>
+
+      <section class="info" aria-labelledby="titre-location">
+        <h2 class="info__terme" id="titre-location">Projections privées et location</h2>
+        <div class="info__contenu">
+          <dl class="info__lignes">
+            <div class="info__ligne"><dt><span class="pastille pastille--argent">Dès CHF 25.–</span></dt><dd>Par personne, projection à la demande pour 6 à 40 personnes.</dd></div>
+          </dl>
+          <div class="info__texte"><p>La salle se loue aussi pour des soirées privées, des événements, des anniversaires, des workshops ou des projections.</p></div>
+          <dl class="info__lignes">
+            <div class="info__ligne"><dt>Contact</dt><dd>Laurent Toplitsch, <a href="tel:+41765671291">076 567 12 91</a></dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="info" aria-labelledby="titre-merci">
+        <h2 class="info__terme" id="titre-merci">Remerciements</h2>
+        <div class="info__contenu">
+          <div class="info__texte"><p>Delphine Jeanneret, Auriol Zima, Mélanie Courvoisier, Victor Toplitsch, Sibylle Koessler, Etienne Gillabert, Patrick Aiassa, Patrice Neuenschwander, Thomas Facchinetti, Gaëlle Métrailler, Jean-Marc Lehmann, Xavière Sennac, Yves Blésche, Anaïs Emery, Carine Maillard, Thomas Rosa, Manuel Fuste, Eric Bouzigon, Karen Ichters, Stevan Haener, Loterie Romande, Ville de Neuchâtel, OFC (Succès-Cinéma).</p></div>
+        </div>
+      </section>
+
+      <section class="info" aria-labelledby="titre-credits">
+        <h2 class="info__terme" id="titre-credits">Crédits</h2>
+        <dl class="info__contenu">
+          <div class="info__ligne"><dt>Architecture</dt><dd>Laurent Toplitsch, maître d’ouvrage, Lausanne ; Patrick Aiassa, maître d’ouvrage, Neuchâtel ; Sibylle Koessler, architecte, Lausanne</dd></div>
+          <div class="info__ligne"><dt>Design</dt><dd>Etienne Gillabert, architecte, Paris-Lausanne</dd></div>
+          <div class="info__ligne"><dt>Graphisme</dt><dd>Karen Ichters, Lausanne</dd></div>
+          <div class="info__ligne"><dt>Site web</dt><dd>WeAreBrothers</dd></div>
+        </dl>
+      </section>
     </div>
-    <a class="bloc bloc--lien" href="https://www.openstreetmap.org/search?query=Quai%20Philippe-Godet%2020%2C%202000%20Neuch%C3%A2tel" rel="noopener">Ouvrir le plan ↗</a>
-
-    <section class="bloc bloc--lignes" aria-labelledby="titre-contact">
-      <h2 class="bloc__etiquette" id="titre-contact">Contact</h2>
-      <dl class="lignes">
-        <div class="ligne"><dt>Bureau</dt><dd><a href="tel:+41765671291">076 567 12 91</a></dd></div>
-        <div class="ligne"><dt>Cinéma</dt><dd><a href="tel:+41325453737">032 545 37 37</a></dd></div>
-        <div class="ligne"><dt>E-mail</dt><dd><a href="mailto:cineminimum@gmail.com">cineminimum@gmail.com</a></dd></div>
-      </dl>
-    </section>
-
-    <section class="bloc bloc--lignes" aria-labelledby="titre-tarifs">
-      <h2 class="bloc__etiquette" id="titre-tarifs">Tarifs du cinéma</h2>
-      <ul class="lignes">
-        <li class="ligne"><span class="infos__prix pastille pastille--argent">CHF 16.–</span><span>Tarif ordinaire</span></li>
-        <li class="ligne"><span class="infos__prix pastille pastille--argent">CHF 14.–</span><span>AVS, AI, chômeur.euse.s</span></li>
-        <li class="ligne"><span class="infos__prix pastille pastille--argent">CHF 10.–</span><span>Membres de soutien, abonné.e.s au journal Le Courrier, étudiant.e.s, carte Culture Caritas</span></li>
-        <li class="ligne"><span class="infos__prix pastille pastille--argent">CHF 0.–</span><span>AG culturel</span></li>
-      </ul>
-      <p class="bloc__note">En ligne, par carte, sur la fiche de chaque film. À la buvette, 15 minutes avant chaque séance, en espèces ou par TWINT.</p>
-    </section>
-
-    <section class="bloc" aria-labelledby="titre-membre">
-      <h2 class="bloc__etiquette" id="titre-membre">Carte de membre de soutien</h2>
-      <p>CHF 60.– par an, avec une boisson sans alcool offerte à chaque projection.</p>
-      <p>IBAN CH47 0900 0000 1439 0316 5</p>
-    </section>
-
-    <section class="bloc" aria-labelledby="titre-location">
-      <h2 class="bloc__etiquette" id="titre-location">Projections privées et location</h2>
-      <p>Projections à la demande pour 6 à 40 personnes, dès CHF 25.– par personne. La salle se loue aussi pour des soirées privées, des événements, des anniversaires, des workshops ou des projections.</p>
-      <p>Laurent Toplitsch, <a href="tel:+41765671291">076 567 12 91</a></p>
-    </section>
-
-    <section class="bloc" aria-labelledby="titre-merci">
-      <h2 class="bloc__etiquette" id="titre-merci">Remerciements</h2>
-      <p class="infos__noms">Delphine Jeanneret, Auriol Zima, Mélanie Courvoisier, Victor Toplitsch, Sibylle Koessler, Etienne Gillabert, Patrick Aiassa, Patrice Neuenschwander, Thomas Facchinetti, Gaëlle Métrailler, Jean-Marc Lehmann, Xavière Sennac, Yves Blésche, Anaïs Emery, Carine Maillard, Thomas Rosa, Manuel Fuste, Eric Bouzigon, Karen Ichters, Stevan Haener, Loterie Romande, Ville de Neuchâtel, OFC (Succès-Cinéma).</p>
-    </section>
-
-    <section class="bloc" aria-labelledby="titre-credits">
-      <h2 class="bloc__etiquette" id="titre-credits">Crédits</h2>
-      <p class="infos__noms">Architecture : Laurent Toplitsch, maître d’ouvrage, Lausanne ; Patrick Aiassa, maître d’ouvrage, Neuchâtel ; Sibylle Koessler, architecte, Lausanne.<br />Design : Etienne Gillabert, architecte, Paris-Lausanne.<br />Graphisme : Karen Ichters, Lausanne.<br />Site web : WeAreBrothers.</p>
-    </section>
   </main>
   <footer class="pied">
     <p class="pied__case pied__case--adresse">Quai Philippe-Godet 20, 2000 Neuchâtel</p>

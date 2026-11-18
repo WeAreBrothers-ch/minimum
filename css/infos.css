@@ -1,0 +1,217 @@
+/* Minimum : la page Infos, un tableau à deux colonnes comme la fiche d'un
+   film. À gauche, l'intitulé (Adresse, Contact, Tarifs…) ; à droite, ses
+   cases, jointes d'un trait. Dans une case, une ligne a toujours la même
+   forme : un terme ou un prix dans une colonne fixe, puis sa valeur, tout de
+   suite à côté. Le texte suivi ne dépasse pas une longueur de ligne lisible.
+
+   Téléphone : l'intitulé au-dessus de ses cases. À partir de 56rem : les
+   deux colonnes côte à côte, et la photo de la salle à droite de l'adresse. */
+
+.infos {
+  --colonne-terme: 7.5rem;
+  display: grid;
+  gap: var(--trait);
+  background: var(--encre);
+}
+
+.info {
+  display: grid;
+  gap: var(--trait);
+  background: var(--encre);
+}
+
+.info > *,
+.info__contenu > * {
+  min-width: 0;
+  background: var(--fond);
+}
+
+/* L'intitulé de la rangée. */
+.info__terme {
+  padding: var(--espace-3) var(--marge) var(--espace-2);
+  font-size: var(--taille-petite);
+  font-weight: var(--graisse-nom);
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+/* Les cases d'une rangée, l'une sous l'autre. */
+.info__contenu,
+.info__lignes {
+  display: grid;
+  gap: var(--trait);
+  align-content: start;
+  background: var(--encre);
+}
+
+/* Le texte suivi : une seule taille, une seule marge, une longueur lisible. */
+.info__texte {
+  padding: var(--espace-3) var(--marge);
+}
+
+/* La case va d'un bord à l'autre ; seul le texte s'arrête. */
+.info__texte > * {
+  max-width: var(--mesure);
+}
+
+.info__texte > p + p {
+  margin-top: var(--espace-2);
+}
+
+.info__grand {
+  margin-bottom: var(--espace-2);
+  font-size: clamp(1.375rem, 1rem + 1.4vw, 2.25rem);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+/* « Philippe-Godet 20 » ne se coupe jamais au trait d'union. */
+.info__grand span {
+  white-space: nowrap;
+}
+
+/* Une ligne : le terme (ou le prix) dans sa colonne, la valeur à côté. */
+.info__ligne {
+  display: grid;
+  grid-template-columns: var(--colonne-terme) minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--espace-3);
+  min-height: 3.25rem;
+  padding: var(--espace-2) var(--marge);
+  background: var(--fond);
+}
+
+.info__ligne dt {
+  font-size: var(--taille-petite);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.info__ligne dd {
+  max-width: var(--mesure);
+}
+
+/* Les prix : des pastilles vertes toutes de la même largeur, alignées sur la
+   ligne de base du texte à côté. */
+.info__ligne .pastille {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  font-weight: var(--graisse-moyenne);
+  font-variant-numeric: tabular-nums;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.info__ligne:has(.pastille) {
+  align-items: center;
+}
+
+.info__chiffres {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* Un lien : toute la hauteur de la ligne se presse du doigt. */
+.info__ligne a {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  min-height: var(--cible);
+  margin-block: calc((var(--cible) - 1lh) / -2);
+}
+
+/* Ouvrir le plan : une case entière, la flèche au bout. */
+.info__action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espace-3);
+  min-height: 3.25rem;
+  padding: var(--espace-2) var(--marge);
+  font-weight: var(--graisse-nom);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.info__action:active {
+  transform: scale(0.99);
+}
+
+/* La photo de la salle : sous l'adresse sur téléphone. */
+.info__photo {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+}
+
+.info__photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .info__action:hover {
+    color: var(--fond);
+    background: var(--encre);
+  }
+}
+
+@media (min-width: 40rem) {
+  .infos {
+    --colonne-terme: 9rem;
+  }
+}
+
+/* Grand écran : l'intitulé à gauche, ses cases à droite ; la photo prend la
+   hauteur de l'adresse et du lien du plan, sans laisser de vide. */
+@media (min-width: 56rem) {
+  .info {
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  }
+
+  .info__terme {
+    padding-top: var(--espace-3);
+  }
+
+  .info__contenu--adresse {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 18rem);
+  }
+
+  .info__contenu--adresse .info__photo {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    aspect-ratio: auto;
+    min-height: 12rem;
+  }
+
+  .info__contenu--adresse .info__texte,
+  .info__contenu--adresse .info__action {
+    grid-column: 1;
+  }
+}
+
+@media (min-width: 75rem) {
+  .info {
+    grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+  }
+
+  .info__contenu--adresse {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  }
+}
+
+@media (min-width: 100rem) {
+  .info__contenu--adresse {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 34rem);
+  }
+}

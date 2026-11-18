@@ -161,6 +161,11 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
 - **Les cartes de film et de soirée** s'alignent d'une carte à l'autre
   (sous-grille) ; un fait (« 16/16 ans ») ne se coupe jamais.
 - **Une émission sans visuel** devient une affiche typographique bleue sur le mur.
+- **La page Infos est un tableau à deux colonnes**, comme la fiche d'un film
+  (`css/infos.css`) : l'intitulé à gauche, ses cases à droite. Une ligne a toujours
+  la même forme, un terme ou un prix dans une colonne fixe puis sa valeur juste à
+  côté (plus de valeurs collées au bord droit) ; le texte suivi s'arrête à une
+  longueur de ligne lisible ; la photo de la salle prend la hauteur de l'adresse.
 
 ### Le bureau de la radio (page Radio, demande d'Eliott, 18.11.2026)
 La page Radio reprend le **principe** de soso radio (R2), un faux bureau
