@@ -1,6 +1,6 @@
 // @ts-check
 /* Minimum Radio : ce que le lecteur peut jouer, le direct puis les
-   émissions. Une « plage » est une piste du lecteur de la barre du bas
+   émissions. Une « plage » est une piste du lecteur du site
    (lecteur.js) accompagnée de ce que le bureau en écrit. */
 
 import { FLUX_RADIO } from "../config.js";

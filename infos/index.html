@@ -47,16 +47,24 @@
         <li class="menu__item"><a class="menu__lien" href="../agenda/">Agenda</a></li>
         <li class="menu__item"><a class="menu__lien" href="../infos/" aria-current="page">Infos</a></li>
       </ul>
+      <button class="lecteur__bouton" type="button" aria-pressed="false" aria-label="Radio : pas encore à l’antenne" disabled>
+        <span class="lecteur__icone" aria-hidden="true"></span>
+        <span class="lecteur__etat">Radio</span>
+        <span class="lecteur__titre">Pas encore à l’antenne</span>
+      </button>
     </nav>
   </header>
   <main id="contenu" class="page page--cases surface-ecran" tabindex="-1">
     <h1 class="page__titre">Infos</h1>
 
-    <section class="bloc" aria-labelledby="titre-adresse">
-      <h2 class="bloc__etiquette" id="titre-adresse">Adresse</h2>
-      <p class="bloc__grand">Quai Philippe-Godet 20<br />2000 Neuchâtel</p>
-      <p class="bloc__note">Cinéma Minimum, salle Anaïs Emery<br />À La Case à Chocs, ancienne Brasserie Müller</p>
-    </section>
+    <div class="infos__tete">
+      <section class="bloc" aria-labelledby="titre-adresse">
+        <h2 class="bloc__etiquette" id="titre-adresse">Adresse</h2>
+        <p class="bloc__grand">Quai Philippe-Godet 20<br />2000 Neuchâtel</p>
+        <p class="bloc__note">Cinéma Minimum, salle Anaïs Emery<br />À La Case à Chocs, ancienne Brasserie Müller</p>
+      </section>
+      <figure class="infos__photo"><img src="../assets/img/salle.jpg" width="603" height="401" alt="La salle Anaïs Emery : des rangées de fauteuils rouges face à l’écran" loading="lazy" decoding="async" /></figure>
+    </div>
     <a class="bloc bloc--lien" href="https://www.openstreetmap.org/search?query=Quai%20Philippe-Godet%2020%2C%202000%20Neuch%C3%A2tel" rel="noopener">Ouvrir le plan ↗</a>
 
     <section class="bloc bloc--lignes" aria-labelledby="titre-contact">
@@ -107,16 +115,6 @@
     <a class="pied__case" href="mailto:cineminimum@gmail.com">cineminimum@gmail.com</a>
     <p class="pied__case pied__case--signature">Site par WeAreBrothers</p>
   </footer>
-  <aside class="lecteur surface-nuit" aria-label="Lecteur de la radio">
-    <div class="lecteur__commande">
-      <button class="lecteur__bouton pastille pastille--radio pastille--action" type="button" aria-pressed="false" disabled>Écouter</button>
-    </div>
-    <p class="lecteur__infos" aria-live="polite">
-      <span class="lecteur__etat">Radio</span>
-      <span class="lecteur__tirets tirets" aria-hidden="true"></span>
-      <span class="lecteur__titre">Pas encore à l’antenne</span>
-    </p>
-  </aside>
   <script type="module" src="../js/main.js"></script>
 </body>
 </html>

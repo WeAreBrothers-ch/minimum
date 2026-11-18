@@ -3,8 +3,8 @@
    trois touches, le volume en blocs, la playlist et la barre d'état,
    comme un lecteur de musique des années 90.
 
-   Elle ne produit aucun son : elle pilote le lecteur de la barre du bas
-   (lecteur.js), le seul à jouer, qui ne s'arrête pas quand on change de
+   Elle ne produit aucun son : elle pilote le lecteur du site (lecteur.js,
+   la case radio de la barre du haut), le seul à jouer, qui ne s'arrête pas quand on change de
    page. Tant qu'une plage n'a pas de son, le lecteur le dit au lieu de
    faire semblant de jouer. */
 

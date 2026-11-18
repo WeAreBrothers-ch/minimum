@@ -1,85 +1,96 @@
-/* Minimum : la barre de la radio, toujours en bas, qui ne s'arrête pas
-   quand on change de page. La ligne de tirets (D2) la traverse. */
-
-.lecteur {
-  position: sticky;
-  bottom: 0;
-  z-index: 4;
-  display: flex;
-  align-items: stretch;
-  min-height: var(--hauteur-lecteur);
-  padding-bottom: env(safe-area-inset-bottom);
-  color: var(--encre);
-  background: var(--fond);
-  border-top: var(--trait) solid var(--encre);
-}
-
-/* La case du bouton garde son trait ; Écouter est la pastille bleue de la radio. */
-.lecteur__commande {
-  flex: none;
-  display: flex;
-  align-items: center;
-  padding-inline: var(--espace-2);
-  border-right: var(--trait) solid var(--encre);
-}
+/* Minimum : le lecteur de la radio, une case de la barre du haut.
+   Le son ne s'arrête pas quand on change de page (lecteur.js). La case se
+   remplit du bleu de la radio quand elle joue, comme la case d'une
+   rubrique ; tant qu'il n'y a rien à écouter, elle le dit, éteinte.
+   Téléphone : l'icône et « Radio », entre le nom et le menu. Grand écran :
+   à droite des rubriques, avec le titre de ce qui joue. */
 
 .lecteur__bouton {
-  min-width: 6.5rem;
+  order: 2;
+  display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
+  align-items: center;
+  gap: var(--espace-2);
+  min-height: var(--hauteur-entete);
+  padding: 0 var(--espace-3);
+  font: inherit;
+  font-size: var(--taille-nav);
+  color: var(--encre);
+  background: var(--fond);
+  border: 0;
+  border-left: var(--trait) solid var(--encre);
+  cursor: pointer;
 }
 
-.lecteur__infos {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  padding-inline: var(--espace-3);
+/* L'icône : un triangle pour écouter, deux barres pour la pause. */
+.lecteur__icone {
+  flex: none;
+  width: 0.75rem;
+  height: 0.875rem;
+  background: currentColor;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.lecteur__bouton[data-joue="true"] .lecteur__icone {
+  background: linear-gradient(90deg, currentColor 0 35%, transparent 35% 65%, currentColor 65%);
+  clip-path: none;
 }
 
 .lecteur__etat {
-  flex: none;
-  font-size: var(--taille-petite);
-  font-weight: var(--graisse-moyenne);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: var(--graisse-nom);
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
+  white-space: nowrap;
 }
 
-/* Téléphone : l'état au-dessus du titre, sans ligne de tirets. */
-.lecteur__tirets {
-  display: none;
-}
-
+/* Le titre de ce qui joue : seulement là où il y a la place. */
 .lecteur__titre {
-  max-width: 100%;
-  min-width: 0;
+  display: none;
+  max-width: 14rem;
   overflow: hidden;
   font-size: var(--taille-petite);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Plus large : tout sur une ligne, la ligne de tirets au milieu. */
-@media (min-width: 30rem) {
-  .lecteur__infos {
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: var(--espace-2);
-  }
+.lecteur__bouton[data-joue="true"] {
+  color: var(--pastille-texte);
+  background: var(--pastille-radio);
+}
 
-  .lecteur__etat,
+/* Rien à écouter : la case reste lisible, seule l'icône s'éteint. */
+.lecteur__bouton:disabled {
+  cursor: default;
+}
+
+.lecteur__bouton:disabled .lecteur__icone {
+  opacity: var(--opacite-eteint);
+}
+
+.lecteur__bouton:active:not(:disabled) {
+  transform: scale(0.98);
+  transition: transform var(--duree-pression) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lecteur__bouton:not(:disabled):hover {
+    color: var(--pastille-texte);
+    background: var(--pastille-radio);
+  }
+}
+
+@media (min-width: 56rem) {
+  .lecteur__bouton {
+    padding-inline: var(--espace-3) var(--espace-4);
+  }
+}
+
+@media (min-width: 75rem) {
   .lecteur__titre {
-    font-size: var(--taille-texte);
-  }
-
-  .lecteur__tirets {
     display: block;
-    flex: 1 1 2rem;
-    min-width: 1.5rem;
-  }
-
-  .lecteur__titre {
-    flex: 0 1 auto;
   }
 }

@@ -24,7 +24,9 @@ function carreauHTML(soiree, racine) {
     `<div class="carreau__texte"><h3 class="carreau__titre"><a href="${lien}">${echapper(soiree.titre)}</a></h3></div>` +
     `<p class="carreau__faits">${echapper(jourLongMajuscule(soiree.date))}<br />${heureCourte(soiree.heure)}${fin}</p>` +
     `<a class="carreau__action carreau__action--nuit" href="${lien}">Line-up</a>` +
-    (soiree.tarifs.length ? `<a class="carreau__action carreau__action--argent" href="${lien}#billets">Billets</a>` : "") +
+    (soiree.tarifs.length
+      ? `<a class="carreau__action carreau__action--argent" href="${lien}#billets">Billets</a>`
+      : `<p class="carreau__action">Billets à l’entrée</p>`) +
     `</li>`
   );
 }
@@ -40,7 +42,7 @@ export function initNuit() {
         .filter((s) => s.date >= programme.aujourdhui)
         .sort((a, b) => (a.date + a.heure).localeCompare(b.date + b.heure));
       zone.innerHTML = aVenir.length
-        ? `<ul class="carreaux">${aVenir.map((s) => carreauHTML(s, racine)).join("")}</ul>`
+        ? `<ul class="carreaux carreaux--nuit">${aVenir.map((s) => carreauHTML(s, racine)).join("")}</ul>`
         : '<p class="page__vide">Aucune soirée annoncée pour l’instant.</p>';
     })
     .catch((/** @type {unknown} */ erreur) => afficherErreur(zone, erreur));

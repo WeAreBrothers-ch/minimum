@@ -7,23 +7,33 @@
    empilées ; les colonnes s'ajoutent avec la largeur. */
 
 /* ---------- La page : d'un bord à l'autre ---------- */
+
+/* Une seule marge intérieure pour toutes les cases du site : le texte de
+   chaque case commence au même endroit, du titre au pied de page. */
+.page--cases,
+.pied {
+  --marge: var(--espace-3);
+}
+
 .page--cases {
   padding: 0;
 }
 
+/* Chaque case est fermée par un trait en dessous, la dernière comprise :
+   le tableau reste fermé même quand la page est courte. */
 .page--cases > * {
   border-bottom: var(--trait) solid var(--encre);
 }
 
 .page--cases .page__titre {
-  padding: var(--espace-4) var(--espace-3);
-  font-size: var(--taille-grand);
+  padding: var(--espace-4) var(--marge) var(--espace-3);
+  font-size: clamp(2rem, 1.5rem + 2.4vw, 3.25rem);
 }
 
 .page--cases .page__intro {
   max-width: none;
   margin: 0;
-  padding: var(--espace-3);
+  padding: var(--espace-3) var(--marge);
 }
 
 .page--cases .page__section {
@@ -31,13 +41,13 @@
 }
 
 .page--cases .page__sous-titre {
-  padding: var(--espace-3) var(--espace-3) 0;
+  padding: var(--espace-3) var(--marge) 0;
   font-size: var(--taille-texte);
 }
 
 .page--cases .page__sous-titre + .tirets {
   margin: 0;
-  padding: var(--espace-1) var(--espace-3) var(--espace-2);
+  padding: var(--espace-1) var(--marge) var(--espace-2);
   border-bottom: var(--trait) solid var(--encre);
 }
 
@@ -45,7 +55,7 @@
 .page--cases .avis {
   max-width: none;
   margin: 0;
-  padding: var(--espace-3);
+  padding: var(--espace-3) var(--marge);
 }
 
 /* ---------- Les onglets : une rangée de cases, la choisie est pleine ---------- */
@@ -81,6 +91,16 @@
   background: var(--encre);
 }
 
+/* Deux rangées d'onglets l'une sur l'autre (agenda) : le mode choisi est
+   souligné, seule la case du jour est pleine. */
+.onglets:has(+ .onglets--jours) .onglet[aria-pressed="true"] {
+  color: var(--encre);
+  background: var(--fond);
+  text-decoration: underline;
+  text-decoration-thickness: calc(var(--trait) * 2);
+  text-underline-offset: 0.35em;
+}
+
 .onglet--cinema[aria-pressed="true"] {
   color: var(--pastille-texte);
   background: var(--pastille-cinema);
@@ -105,22 +125,30 @@
 
 /* ---------- La grille des affiches : affiche, titre, faits, billets ---------- */
 /* Les traits sont à droite et en dessous de chaque case : une case vide en
-   fin de grille reste blanche, comme sur le mur d'accueil. */
+   fin de grille reste blanche, comme sur le mur d'accueil. Chaque carte
+   s'étend sur --rangees rangées de la grille (sous-grille) : affiches,
+   titres, faits et cases d'action restent alignés d'une carte à l'autre. */
 .carreaux {
+  --rangees: 4;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   list-style: none;
   background: var(--fond);
 }
 
+.carreaux--nuit {
+  --rangees: 5;
+}
+
 .carreau {
-  border-right: var(--trait) solid var(--encre);
-  border-bottom: var(--trait) solid var(--encre);
   display: grid;
-  grid-template-rows: auto 1fr auto auto;
-  gap: var(--joint);
+  grid-row: span var(--rangees);
+  grid-template-rows: subgrid;
+  row-gap: var(--joint);
   min-width: 0;
   background: var(--encre);
+  border-right: var(--trait) solid var(--encre);
+  border-bottom: var(--trait) solid var(--encre);
 }
 
 .carreau > * {
@@ -138,12 +166,27 @@
   border: 0;
 }
 
+/* Une affiche recadrée garde le haut de l'image, là où sont les visages
+   et les titres. */
+.carreau__affiche img {
+  object-position: 50% 25%;
+}
+
+/* Pas encore d'affiche : le titre en grand, posé en bas de la case. */
+.carreau__affiche .fiche__affiche--typo {
+  display: flex;
+  align-items: flex-end;
+  padding: var(--marge, var(--espace-3));
+  font-size: var(--taille-carte);
+  line-height: var(--interligne-titre);
+}
+
 .carreau__texte {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--espace-1);
-  padding: var(--espace-2) var(--espace-3);
+  padding: var(--espace-2) var(--marge);
 }
 
 .carreau__titre {
@@ -172,7 +215,7 @@
 }
 
 .carreau__faits {
-  padding: var(--espace-2) var(--espace-3);
+  padding: var(--espace-2) var(--marge);
   font-size: var(--taille-petite);
 }
 
@@ -180,7 +223,7 @@
   display: flex;
   align-items: center;
   min-height: var(--cible);
-  padding: var(--espace-1) var(--espace-3);
+  padding: var(--espace-1) var(--marge);
   font-size: var(--taille-petite);
   font-weight: var(--graisse-nom);
   line-height: var(--interligne-titre);
@@ -211,7 +254,7 @@
 /* ---------- Les blocs de texte (infos) ---------- */
 .bloc {
   display: block;
-  padding: var(--espace-3);
+  padding: var(--espace-3) var(--marge);
 }
 
 .bloc > p + p {
@@ -256,12 +299,14 @@
 
 .bloc--lignes > .bloc__etiquette {
   margin: 0;
-  padding: var(--espace-3) var(--espace-3) var(--espace-2);
+  padding: var(--espace-3) var(--marge) var(--espace-2);
 }
 
+/* Dans un bloc de lignes, tous les traits vont d'un bord à l'autre. */
 .bloc--lignes > .bloc__note {
+  max-width: none;
   margin: 0;
-  padding: var(--espace-2) var(--espace-3) var(--espace-3);
+  padding: var(--espace-3) var(--marge);
   border-top: var(--trait) solid var(--encre);
 }
 
@@ -276,7 +321,7 @@
   align-items: center;
   gap: var(--espace-2);
   min-height: var(--cible);
-  padding: var(--espace-2) var(--espace-3);
+  padding: var(--espace-2) var(--marge);
   border-top: var(--trait) solid var(--encre);
 }
 
@@ -311,20 +356,25 @@
 }
 
 /* ---------- Le pied de page : des cases, comme la barre du haut ---------- */
+/* Il porte son trait au-dessus, et remonte d'une épaisseur de trait (règle
+   de Zinéma) : collé au contenu, son trait recouvre celui du dernier bloc ;
+   séparé par un blanc sur une page courte, il reste cadré. */
 .pied {
+  position: relative;
+  margin-top: calc(var(--trait) * -1);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--joint);
-  color: var(--encre);
-  background: var(--encre);
-  border-bottom: var(--trait) solid var(--encre);
+  color: var(--noir);
+  background: var(--noir);
+  border-top: var(--trait) solid var(--noir);
 }
 
 .pied__case {
   display: flex;
   align-items: center;
-  min-height: var(--cible);
-  padding: var(--espace-2) var(--espace-3);
+  min-height: 3.25rem;
+  padding: var(--espace-2) var(--marge);
   font-weight: var(--graisse-moyenne);
   text-decoration: none;
   color: var(--noir);
@@ -345,32 +395,17 @@
 
 /* ---------- Plus large : les colonnes s'ajoutent ---------- */
 @media (min-width: 40rem) {
+  .page--cases,
+  .pied {
+    --marge: var(--espace-4);
+  }
+
   .carreaux {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .pied {
     grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  }
-
-  .page--cases .page__titre,
-  .page--cases .page__intro,
-  .bloc {
-    padding-inline: var(--espace-4);
-  }
-
-  .ligne {
-    padding-inline: var(--espace-4);
-  }
-}
-
-@media (min-width: 56rem) {
-  .page--cases .page__titre {
-    padding-block: var(--espace-5);
-  }
-
-  .bloc {
-    padding: var(--espace-4);
   }
 }
 

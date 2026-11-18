@@ -25,7 +25,8 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
 - HTML, CSS et JavaScript sans étape de construction. Le code est typé par
   TypeScript (`// @ts-check` et annotations JSDoc, `tsconfig.json` en mode strict).
 - `js/main.js` lance la page affichée. `js/navigation.js` change de page sans
-  recharger la barre du lecteur : la radio continue de jouer.
+  recharger : la radio continue de jouer. Le lecteur de la radio est une case de
+  la barre du haut (`js/lecteur.js`, `css/lecteur.css`) : il ne recouvre rien.
 - `js/mur.js` : un mur d'affiches par moitié de l'accueil (Nuit, Cinéma), fait de
   colonnes qui défilent chacune seule et sans fin (`js/colonne.js`) : 1 colonne
   par mur sur téléphone, 2 sur ordinateur, soit 4 colonnes indépendantes.
@@ -47,7 +48,7 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
   `api/` (PHP). Mode d'emploi et liste avant ouverture : `BILLETTERIE.md`.
 - Page Radio : un faux bureau d'ordinateur dans le style de soso radio
   (`js/pages/radio.js`, `js/bureau/`, `css/bureau.css`) : fenêtres, lecteur,
-  Réglages pour changer le fond d'écran. Il pilote le lecteur de la barre du bas ;
+  Réglages pour changer le fond d'écran. Il pilote le lecteur de la barre du haut ;
   voir `DIRECTION-ARTISTIQUE.md`, « Le bureau de la radio ».
 - Design : celui de Zinéma, déguisé (tableau de cases, `css/cases.css`,
   `css/entete.css`) ; voir `DIRECTION-ARTISTIQUE.md`.

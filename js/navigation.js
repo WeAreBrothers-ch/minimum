@@ -1,8 +1,9 @@
 // @ts-check
 /* Minimum : changer de page sans couper la radio.
 
-   Un clic sur un lien du site va chercher la page suivante, remplace
-   l’en-tête et le contenu, et laisse la barre du lecteur en place.
+   Un clic sur un lien du site va chercher la page suivante et remplace
+   l’en-tête, le contenu et le pied de page ; le son de la radio, lui, vit
+   dans lecteur.js et ne s’arrête pas.
    Si quoi que ce soit échoue, on retombe sur une navigation classique :
    la page change quand même (le son, lui, s’arrête). */
 

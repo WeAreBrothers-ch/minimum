@@ -19,7 +19,11 @@ import { lienFilm } from "./film-commun.js";
  * @returns {string}
  */
 function faitsHTML(film, prochaine) {
-  const faits = [film.genre, duree(film.duree), film.version, film.age].filter(Boolean).join(" / ");
+  /* Chaque fait reste d’un seul tenant : « 16/16 ans » ne se coupe pas. */
+  const faits = [film.genre, duree(film.duree), film.version, film.age]
+    .filter(Boolean)
+    .map((f) => f.replace(/ /g, "\u00a0"))
+    .join(" / ");
   return `<p class="carreau__faits">${echapper(faits)}${prochaine ? `<br />${echapper(prochaine)}` : ""}</p>`;
 }
 
@@ -34,7 +38,7 @@ function carreauHTML(film, programme, racine) {
   const premiere = seances[0];
   const lien = echapper(lienFilm(racine, film.id));
   const prochaine = premiere
-    ? `${jourLongMajuscule(premiere.date)}, ${heureCourte(premiere.heure)}`
+    ? `${jourLongMajuscule(premiere.date)}, ${heureCourte(premiere.heure).replace(" ", "\u00a0")}`
     : film.sortie
       ? `Sortie le ${jourLong(film.sortie)}`
       : "";

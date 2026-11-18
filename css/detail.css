@@ -165,8 +165,8 @@
   border-top: var(--trait) solid var(--encre);
 }
 
-.detail__liens li {
-  border-bottom: var(--trait) solid var(--encre);
+.detail__liens li + li {
+  border-top: var(--trait) solid var(--encre);
 }
 
 .detail__liens a {

@@ -25,6 +25,7 @@
 
 .menu__nom {
   display: flex;
+  flex: none;
   align-items: center;
   min-height: var(--hauteur-entete);
   padding-inline: var(--espace-3);
@@ -35,8 +36,9 @@
   letter-spacing: var(--interlettre-capitales);
 }
 
-/* La case du menu : deux barres inégales dans un carré. */
+/* La case du menu : deux barres inégales dans un carré, tout à droite. */
 .menu__ouvrir {
+  order: 3;
   position: relative;
   flex: none;
   width: var(--hauteur-entete);
@@ -170,6 +172,7 @@
 
   .menu__liste,
   .menu[data-ouvert="true"] .menu__liste {
+    order: 1;
     position: static;
     display: flex;
     flex: 1;

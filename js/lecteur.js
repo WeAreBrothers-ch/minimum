@@ -1,9 +1,12 @@
 // @ts-check
 /* Minimum : le lecteur de la radio.
 
-   Il vit dans la barre du bas, que la navigation ne remplace jamais :
-   le son continue quand on change de page. Quand une émission n’a pas
-   encore de son (exemples, flux pas encore fourni), le lecteur le dit
+   Le son vit ici, dans un seul élément audio créé une fois pour toutes :
+   il continue quand on change de page. Sa commande est une case de la
+   barre du haut (.lecteur__bouton) ; la navigation remplace cette barre à
+   chaque page, d’où le clic écouté sur tout le document et
+   rafraichirLecteur(), appelé après chaque changement de page. Quand une
+   émission n’a pas encore de son (flux pas encore fourni), la case le dit
    au lieu de faire semblant de jouer. */
 
 import { FLUX_RADIO } from "./config.js";
@@ -43,15 +46,18 @@ function joue() {
   return audio !== null && !audio.paused;
 }
 
-/** Met la barre à jour d’après la piste et l’état du son. */
+/** Met la case à jour d’après la piste et l’état du son. */
 function afficher() {
   const el = elements();
-  if (!el) return;
-  el.etat.textContent = pisteCourante.etat;
-  el.titre.textContent = pisteCourante.titre;
-  el.bouton.disabled = pisteCourante.audio === null;
-  el.bouton.setAttribute("aria-pressed", String(joue()));
-  el.bouton.textContent = joue() ? "Pause" : "Écouter";
+  if (el) {
+    el.etat.textContent = pisteCourante.etat;
+    el.titre.textContent = pisteCourante.titre;
+    el.bouton.disabled = pisteCourante.audio === null;
+    el.bouton.setAttribute("aria-pressed", String(joue()));
+    el.bouton.dataset.joue = String(joue());
+    const action = pisteCourante.audio === null ? "" : joue() ? "Mettre en pause, " : "Écouter, ";
+    el.bouton.setAttribute("aria-label", `${action}${pisteCourante.etat} : ${pisteCourante.titre}`);
+  }
   document.dispatchEvent(
     new CustomEvent(EVENEMENT_PISTE, { detail: { id: joue() ? pisteCourante.id : null } })
   );
@@ -115,14 +121,20 @@ export function mettreRadioEnPause() {
   audio?.pause();
 }
 
-/** Crée le son et branche le bouton de la barre. À appeler une seule fois. */
+/** Remet la case de la barre du haut à jour, après un changement de page. */
+export function rafraichirLecteur() {
+  afficher();
+}
+
+/** Crée le son et écoute la case de la barre. À appeler une seule fois. */
 export function initLecteur() {
-  const el = elements();
-  if (!el || audio) return;
+  if (audio) return;
   const son = new Audio();
   son.preload = "none";
   audio = son;
-  el.bouton.addEventListener("click", () => {
+  document.addEventListener("click", (e) => {
+    const bouton = e.target instanceof Element ? e.target.closest(".lecteur__bouton") : null;
+    if (!(bouton instanceof HTMLButtonElement) || bouton.disabled) return;
     if (son.paused) void lancer();
     else son.pause();
   });

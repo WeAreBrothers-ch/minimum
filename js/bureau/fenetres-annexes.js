@@ -144,7 +144,7 @@ export function fenetreApropos(racine) {
     icone: "info",
     largeur: 360,
     contenu:
-      `<div class="apropos"><p class="apropos__logo" aria-hidden="true">M</p>` +
+      `<div class="apropos"><img class="apropos__logo" src="${racine}assets/img/minimum-logo.png" alt="" width="604" height="745">` +
       `<p class="apropos__nom">Minimum radio, édition bureau</p>` +
       `<p>La web radio de Minimum, à La Case à Chocs, Neuchâtel.</p>` +
       `<p class="apropos__liens"><a href="${racine}cinema/">Cinéma</a><a href="${racine}nuit/">Nuit</a><a href="${racine}infos/">Infos</a></p>` +

@@ -5,9 +5,10 @@
    se voit entre les cases, comme entre les affiches du mur. Ce qu'il y a
    dans chaque case est dans detail.css. */
 
-/* La fiche va d'un bord à l'autre de l'écran, comme le mur d'accueil. */
+/* La fiche va d'un bord à l'autre de l'écran, comme le mur d'accueil, et
+   le pied de page se pose directement dessous (un seul trait). */
 .page:has(.detail) {
-  padding: 0 0 var(--espace-5);
+  padding: 0;
 }
 
 /* Téléphone : le titre, la case Billets, l'affiche à côté des repères,

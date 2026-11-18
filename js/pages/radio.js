@@ -4,9 +4,8 @@
    fenêtres que l'on ouvre, déplace et réduit, un lecteur avec sa playlist,
    une barre des tâches avec « Start » et l'horloge.
 
-   Le lecteur de la fenêtre pilote la barre du bas du site (lecteur.js), qui
-   ne s'arrête pas quand on change de page. Sur cette page, la barre du bas
-   est cachée : la barre des tâches du bureau la remplace. */
+   Le lecteur de la fenêtre pilote le lecteur du site (lecteur.js, la case
+   radio de la barre du haut), qui ne s'arrête pas quand on change de page. */
 
 import { chargerProgramme } from "../donnees.js";
 import { echapper } from "../format.js";

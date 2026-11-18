@@ -4,7 +4,7 @@
 
 import { initAccueil } from "./accueil.js";
 import { initEntete } from "./entete.js";
-import { initLecteur } from "./lecteur.js";
+import { initLecteur, rafraichirLecteur } from "./lecteur.js";
 import { initNavigation } from "./navigation.js";
 import { initAgenda } from "./pages/agenda.js";
 import { initBillet } from "./pages/billet.js";
@@ -36,6 +36,7 @@ let demontages = [];
 function lancerPage(page) {
   for (const demonter of demontages) demonter();
   demontages = [initEntete()];
+  rafraichirLecteur();
   const init = PAGES[page];
   if (!init) return;
   const demonter = init();

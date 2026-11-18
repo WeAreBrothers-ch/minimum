@@ -47,6 +47,11 @@
         <li class="menu__item"><a class="menu__lien" href="../agenda/">Agenda</a></li>
         <li class="menu__item"><a class="menu__lien" href="../infos/">Infos</a></li>
       </ul>
+      <button class="lecteur__bouton" type="button" aria-pressed="false" aria-label="Radio : pas encore à l’antenne" disabled>
+        <span class="lecteur__icone" aria-hidden="true"></span>
+        <span class="lecteur__etat">Radio</span>
+        <span class="lecteur__titre">Pas encore à l’antenne</span>
+      </button>
     </nav>
   </header>
   <main id="contenu" class="page surface-nuit" tabindex="-1">
@@ -58,16 +63,6 @@
     <a class="pied__case" href="mailto:cineminimum@gmail.com">cineminimum@gmail.com</a>
     <p class="pied__case pied__case--signature">Site par WeAreBrothers</p>
   </footer>
-  <aside class="lecteur surface-nuit" aria-label="Lecteur de la radio">
-    <div class="lecteur__commande">
-      <button class="lecteur__bouton pastille pastille--radio pastille--action" type="button" aria-pressed="false" disabled>Écouter</button>
-    </div>
-    <p class="lecteur__infos" aria-live="polite">
-      <span class="lecteur__etat">Radio</span>
-      <span class="lecteur__tirets tirets" aria-hidden="true"></span>
-      <span class="lecteur__titre">Pas encore à l’antenne</span>
-    </p>
-  </aside>
   <script type="module" src="../js/main.js"></script>
 </body>
 </html>

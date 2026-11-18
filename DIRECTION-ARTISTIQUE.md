@@ -147,6 +147,21 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
 - Tout le style tient dans les mêmes jetons (`css/jetons.css`) ; le tableau de
   cases est dans `css/cases.css` et `css/entete.css`.
 
+### Finitions (demande d'Eliott, 18.11.2026 : « pas assez clean »)
+- **Le lecteur de la radio est une case de la barre du haut**, à droite des
+  rubriques (sur téléphone, entre le nom et le menu) : il ne recouvre plus le
+  contenu ni le pied de page. Il se remplit du bleu de la radio quand il joue ;
+  sans son, il le dit, l'icône éteinte. La barre noire collée en bas est supprimée.
+- **Les affiches** sont celles du programme de cineminimum.ch, enregistrées avec
+  le site (`assets/img/affiches/`) : elles s'affichent même si le catalogue commun
+  ne répond pas. Le logo M / INIMUM et la photo de la salle sont dans `assets/img/`.
+- **Une seule marge** (`--marge`) pour toutes les cases ; les traits vont d'un
+  bord à l'autre ; chaque bloc se ferme d'un trait et le pied de page remonte
+  d'une épaisseur de trait : jamais deux traits l'un sur l'autre.
+- **Les cartes de film et de soirée** s'alignent d'une carte à l'autre
+  (sous-grille) ; un fait (« 16/16 ans ») ne se coupe jamais.
+- **Une émission sans visuel** devient une affiche typographique bleue sur le mur.
+
 ### Le bureau de la radio (page Radio, demande d'Eliott, 18.11.2026)
 La page Radio reprend le **principe** de soso radio (R2), un faux bureau
 d'ordinateur, mais pas son look des années 90 (gris biseauté, barres bleu marine,
@@ -163,9 +178,9 @@ police à chasse fixe) : elle est habillée avec le design du site (demande d'El
   prises au code du site (bleu radio, rose nuit, jaune cinéma, noir). Le choix est
   mémorisé (`js/bureau/memoire.js`) et le bureau marche sans ce stockage.
 - **Le lecteur** : titre, égaliseur, précédent / lecture / suivant, volume en
-  blocs, playlist, barre d'état. Il pilote le lecteur de la barre du bas du site
-  (`js/lecteur.js`), qui ne s'arrête pas quand on change de page ; sur cette
-  page, cette barre est cachée, la barre des tâches la remplace. Une plage sans
+  blocs, playlist, barre d'état. Il pilote le lecteur du site (`js/lecteur.js`),
+  la case radio de la barre du haut, qui ne s'arrête pas quand on change de
+  page. Une plage sans
   son (flux pas encore branché) le dit dans la barre d'état au lieu de faire
   semblant de jouer.
 - **Sur téléphone** : les icônes forment une rangée en haut, toujours à portée ;

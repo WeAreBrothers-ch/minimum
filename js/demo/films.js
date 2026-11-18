@@ -1,7 +1,9 @@
 // @ts-check
 /* Minimum : le vrai programme de la semaine du 11 au 17 novembre 2026,
    repris de cineminimum.ch (résumés reformulés, liens et bandes-annonces
-   tels que publiés). Les affiches viennent du catalogue commun (Sanity). */
+   tels que publiés). Les affiches sont celles du programme de cineminimum.ch,
+   enregistrées avec le site (assets/img/affiches/) : elles s’affichent même
+   quand le catalogue commun (Sanity) ne répond pas. */
 
 /** @typedef {import("../types.js").Film} Film */
 /** @typedef {import("../types.js").Seance} Seance */
@@ -35,7 +37,7 @@ function film(film) {
 }
 
 /** @type {Film[]} */
-export const FILMS_DEMO = [
+const FILMS = [
   film({
     id: "mr-nobody-against-putin", titre: "Mr. Nobody Against Putin",
     realisation: "David Borenstein et Pavel Ilyich Talankin", pays: "Danemark, Tchéquie, Allemagne",
@@ -98,6 +100,29 @@ export const FILMS_DEMO = [
     liens: [{ genre: "Distribution", source: "Xenix Film", url: "https://www.xenixfilm.ch/de/film_info.php?ID=12100" }],
   }),
 ];
+
+/** Largeur et hauteur de chaque affiche, en pixels.
+    @type {Record<string, [number, number]>} */
+const TAILLES_AFFICHES = {
+  "mr-nobody-against-putin": [603, 905],
+  "garance": [605, 863],
+  "nicole-nicole": [400, 570],
+  "dentro": [607, 865],
+  "ingeborg-bachmann": [607, 864],
+  "enjoy-your-stay": [720, 900],
+  "une-usine-en-catalogne": [606, 866],
+  "mit-einem-tiger-schlafen": [606, 864],
+};
+
+/** @type {Film[]} */
+export const FILMS_DEMO = FILMS.map((f) => {
+  const taille = TAILLES_AFFICHES[f.id];
+  if (!taille) return f;
+  return {
+    ...f,
+    affiche: { url: `assets/img/affiches/${f.id}.jpg`, alt: `Affiche du film ${f.titre}`, largeur: taille[0], hauteur: taille[1] },
+  };
+});
 
 /**
  * @param {string} filmId

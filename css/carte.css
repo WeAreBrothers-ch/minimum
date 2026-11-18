@@ -110,3 +110,20 @@
     transform: none;
   }
 }
+
+/* Une émission sans visuel : une affiche typographique bleue, la couleur de
+   la radio, plutôt qu'une case vide. Le titre grandit pour tenir l'affiche. */
+.carte--typo .carte__titre {
+  font-size: clamp(1.375rem, 1rem + 1.6vw, 2.25rem);
+}
+
+.carte--typo.carte--emission {
+  color: var(--pastille-texte);
+  background: var(--pastille-radio);
+}
+
+.carte--emission .carte__etat {
+  color: var(--blanc);
+  background: var(--noir);
+  border-color: var(--noir);
+}
