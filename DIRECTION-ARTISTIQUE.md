@@ -349,9 +349,20 @@ posées en masque pour prendre la couleur du texte (`.fleche` dans `base.css`).
 - **↗** pour un lien qui sort du site (presse, distributeur, plan). Sur la
   fiche d'un film, ces liens sont des cases entières, sans soulignement : le
   genre en capitales (DISTRIBUTION, PRESSE), la source, la flèche à droite ;
-  au survol, le jaune du cinéma.
+  au survol, la case devient noire.
 - **Au survol**, la flèche traverse sa case : elle sort d'un côté et revient
   de l'autre (en diagonale pour ↗). Immobile avec « réduire les animations ».
+
+### Le pied de page (revu le 18.11.2026 : « plus clair que c'est le footer »)
+Une surface noire aux traits blancs, que rien d'autre sur le site ne rappelle :
+le nom MINIMUM en très grand, d'un bord à l'autre de sa case, et la devise ;
+l'adresse et le contact côte à côte ; la signature. Sur ordinateur, le nom
+occupe deux quarts, l'adresse et le contact un quart chacun.
+
+### Les pastilles d'état (revu le 18.11.2026)
+« À l'affiche », « En direct » : une pastille noire, en capitales grasses,
+plus de jaune pâle. Les couleurs des mondes restent pour les cases (menu,
+filtres, têtes de l'accueil, survols).
 
 ### Signature
 La ligne de tirets du programme de 2009 (D2), tapée en vrais caractères.

@@ -293,8 +293,7 @@ button.seance:focus-visible {
 /* Un lien qui sort du site : une case entière. Le genre en capitales
    grasses dans une colonne fixe (les sources s'alignent d'une ligne à
    l'autre), la source, la flèche ↗ calée à droite. Pas de soulignement :
-   au survol, la case prend le jaune du cinéma, comme les films de la page
-   Cinéma (en noir, elle se confondrait avec la bande-annonce au-dessus). */
+   au survol, la case se remplit de noir, comme « Ouvrir le plan ». */
 .lien-sortie {
   display: grid;
   grid-template-columns: 7.5rem minmax(0, 1fr) auto;
@@ -328,8 +327,15 @@ button.seance:focus-visible {
 
 .lien-sortie:focus-visible {
   outline: none;
-  color: var(--pastille-texte);
-  background: var(--pastille-cinema);
+  color: var(--fond);
+  background: var(--encre);
+}
+
+/* Juste sous la bande-annonce (noire), le premier lien est séparé d'elle
+   par un filet blanc : invisible au repos, il empêche la case survolée,
+   noire elle aussi, de se fondre dans la bande-annonce. */
+.bande-annonce + .detail__liens li:first-child {
+  border-top-color: var(--fond);
 }
 
 /* Le dernier lien est fermé par un trait, sans le doubler (voir .seances). */
@@ -344,8 +350,8 @@ button.seance:focus-visible {
   }
 
   .lien-sortie:hover {
-    color: var(--pastille-texte);
-    background: var(--pastille-cinema);
+    color: var(--fond);
+    background: var(--encre);
   }
 
   .detail__acheter:not(.detail__acheter--ferme):hover {

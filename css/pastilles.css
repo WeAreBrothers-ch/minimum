@@ -43,6 +43,17 @@
   --teinte: var(--pastille-nuit);
 }
 
+/* L'état d'un film ou d'une émission (« À l'affiche », « En direct ») :
+   une pastille noire, en capitales grasses, sur toutes les surfaces. */
+.pastille--etat {
+  font-size: 0.75rem;
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  color: var(--blanc);
+  background: var(--noir);
+}
+
 .pastille--argent,
 .pastille--cinema,
 .pastille--radio,

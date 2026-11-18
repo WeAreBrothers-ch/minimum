@@ -109,8 +109,5 @@
   background: var(--pastille-nuit);
 }
 
-.carte--emission .carte__etat {
-  color: var(--blanc);
-  background: var(--noir);
-  border-color: var(--noir);
-}
+/* L'état (« En direct », « À l'affiche ») : la pastille noire du site
+   (pastilles.css). */

@@ -8,9 +8,6 @@ import { sourcesImage } from "./images.js";
 /** @typedef {import("./types.js").Programme} Programme */
 /** @typedef {import("./types.js").Carte} Carte */
 
-/** La couleur de chaque monde (code couleur, jetons.css). @type {Record<Carte["genre"], string>} */
-const TEINTE = { film: "cinema", soiree: "nuit", emission: "radio" };
-
 /**
  * Le mur Cinéma : les films à l’affiche, du plus proche au plus lointain,
  * puis les films annoncés par date de sortie.
@@ -131,7 +128,7 @@ export function carteHTML(carte, racine, accessible, prioritaire) {
 function contenuTypographique(carte) {
   return (
     `<span class="carte__haut"><span class="carte__titre">${echapper(carte.titre)}</span>` +
-    `<span class="carte__etat pastille pastille--${TEINTE[carte.genre]}">${echapper(carte.etat)}</span></span>` +
+    `<span class="carte__etat pastille pastille--etat">${echapper(carte.etat)}</span></span>` +
     `<span class="carte__bas"><span class="carte__tirets tirets" aria-hidden="true"></span>` +
     `<span class="carte__ligne">${echapper(carte.ligne)}</span></span>`
   );

@@ -59,7 +59,7 @@ function teteHTML(film, programme, options) {
     `<h1 class="page__titre"><span class="masque"><span>${echapper(film.titre)}</span></span></h1>` +
     (film.titreOriginal ? `<p class="detail__original">${echapper(film.titreOriginal)}</p>` : "") +
     `<p class="detail__ligne">Un film de ${echapper(film.realisation)}</p>` +
-    `<p class="detail__etat"><span class="pastille pastille--cinema">${echapper(options.choix.length ? "À l’affiche" : annonce)}</span>` +
+    `<p class="detail__etat"><span class="pastille pastille--etat">${echapper(options.choix.length ? "À l’affiche" : annonce)}</span>` +
     (film.mention ? `<span class="detail__mention">${echapper(film.mention)}</span>` : "") +
     `</p>${presenceHTML(film)}</header>`
   );
