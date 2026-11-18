@@ -302,13 +302,25 @@ uns sur les autres d'un bloc à l'autre :
   « À l'affiche ».
 - **Ordinateur** : les huitièmes et les quarts. Le nom et chaque rubrique
   prennent un huitième de la barre, la radio deux ; les colonnes du mur, de la
-  fiche d'un film et du pied de page sont des quarts. Sur Cinéma, chaque filtre
-  a la largeur d'une colonne de films.
+  fiche d'un film, des films de Cinéma (quatre par rangée) et du pied de page
+  sont des quarts.
+- **Un filtre n'est pas une tête de colonne** : sur Cinéma, « À l'affiche |
+  Prochainement » est un interrupteur dans une barre au-dessus des films, en
+  retrait, pour qu'aucun film ne semble rangé sous « Prochainement ». Chaque
+  film est une colonne : l'affiche, puis son texte dessous ; deux par rangée
+  sur téléphone.
 - **Jamais de filet blanc** entre deux affiches du mur : les joints sont noirs
   des deux côtés.
 - **Jamais de mot coupé** ni de « … » : noms des réalisateurs, légendes des
   icônes, onglets. La case radio de la barre du haut garde le mot « Radio » ; ce
   qui joue s'écrit à côté, sur grand écran.
+
+### La fiche d'un film sur ordinateur (revu le 18.11.2026)
+Pas de grand blanc : la rangée du milieu a la hauteur exacte de l'affiche ;
+les repères (une ligne chacun) s'étirent à côté, et dans la case du texte la
+bande-annonce prend toute la place que le synopsis et les liens laissent (une
+grande case noire, un triangle au centre). Les séances viennent dessous, une
+case chacune sur les quarts de la page, puis les infos pratiques.
 
 ### La caisse (revu le 18.11.2026 : « plus simple et plus clean, un pop-up »)
 Sur la fiche, les séances sont des cases (le jour, l'heure, « Billets → ») ;

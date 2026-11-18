@@ -2,11 +2,12 @@
 /* Minimum : la page Cinéma, en tableau de cases (même mécanique que la
    page Films de Zinéma, surface de Minimum).
 
-   - Une rangée de filtres en cases : À l’affiche, Prochainement, chacun
-     de la largeur exacte d’une colonne de films.
-   - Chaque film est une colonne de cases : l’affiche, une case avec sa
-     prochaine séance (ou sa date de sortie), son titre et sa réalisation,
-     puis une case avec ses faits sur une ligne. Toute la colonne mène à la
+   - Un interrupteur dans une barre : À l’affiche, Prochainement. Il ne
+     s’aligne pas sur les colonnes de films, pour ne pas s’y lire comme
+     une tête de colonne.
+   - Chaque film est une colonne de cases : l’affiche, puis dessous une case
+     avec sa prochaine séance (ou sa date de sortie), son titre et sa
+     réalisation, puis une case avec ses faits. Toute la colonne mène à la
      fiche du film, où l’on prend son billet. Au survol, les cases de texte
      prennent le jaune du cinéma.
    - Une grande case « Toutes les séances » ferme le tableau : elle absorbe

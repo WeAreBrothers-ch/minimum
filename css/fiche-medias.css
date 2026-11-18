@@ -103,7 +103,36 @@
   }
 }
 
+/* Ordinateur : dans la case du texte, la bande-annonce remplit la place
+   libre (detail.css) ; assez haute, elle montre un grand triangle au
+   centre, le titre en bas. */
 @media (min-width: 56rem) {
+  .detail .bande-annonce:not(.bande-annonce--ouverte) {
+    container: annonce / size;
+    min-height: calc(var(--cible) + var(--espace-3) * 2);
+  }
+
+  .detail .bande-annonce__lancer {
+    position: relative;
+    height: 100%;
+    align-items: flex-end;
+    padding-block: var(--espace-3);
+  }
+
+  @container annonce (min-height: 10rem) {
+    .detail .bande-annonce__lancer::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 2.75rem;
+      height: 3.25rem;
+      background: currentColor;
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+      transform: translate(-40%, -60%);
+    }
+  }
+
   .photos {
     grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
   }

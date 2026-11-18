@@ -344,4 +344,78 @@ button.seance:focus-visible {
     justify-content: space-between;
     padding-block: var(--espace-4);
   }
+
+  /* La case du texte a la hauteur de l'affiche voisine : la bande-annonce
+     prend toute la place que le synopsis et les liens laissent. */
+  .detail__texte {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .detail__colle {
+    flex: 1;
+  }
+
+  .detail__colle > .bande-annonce:not(.bande-annonce--ouverte) {
+    flex: 1;
+  }
+
+  /* Les séances : une case chacune, en rangée sur les quarts de la page ;
+     une rangée incomplète s'élargit, jamais de trou. */
+  .detail__seances .seances {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--trait);
+    background: var(--encre);
+    box-shadow: 0 var(--trait) 0 var(--encre);
+  }
+
+  .detail__seances .seances > li {
+    display: flex;
+    flex: 1 1 calc((100% - 3 * var(--trait)) / 4);
+    min-width: 0;
+  }
+
+  .detail__seances .seances > li + li {
+    border-top: 0;
+  }
+
+  .detail__seances .seances > li:last-child {
+    box-shadow: none;
+  }
+
+  .detail__seances .seance {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: space-between;
+    min-height: 7.5rem;
+    padding-block: var(--espace-3);
+  }
+
+  .detail__seances .seance__quand {
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .detail__seances .seance__jour {
+    font-size: var(--taille-carte);
+    line-height: var(--interligne-titre);
+  }
+
+  .detail__notes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--espace-5);
+  }
+
+  /* Les repères ont la hauteur de l'affiche : un texte à leur mesure. */
+  .detail__fait {
+    padding-inline: var(--marge-case);
+  }
+
+  .detail__fait dt {
+    font-size: 0.75rem;
+  }
+
+  .detail__fait dd {
+    font-size: var(--taille-texte);
+  }
 }

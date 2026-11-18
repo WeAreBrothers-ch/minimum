@@ -39,15 +39,23 @@
   grid-column: 2;
 }
 
-/* Ordinateur : quatre colonnes. Le retour et le titre sur trois, la case
-   Billets sur la quatrième ; puis l'affiche et ses repères, le texte sur
-   deux colonnes, les séances à droite, sous Billets. La rangée des
-   repères absorbe la hauteur du texte : l'affiche garde sa taille exacte. */
+/* Ordinateur : quatre colonnes, sur les quarts de la barre du haut.
+     ┌──────────────────────────────┬─────────┐
+     │ ← retour                      │ BILLETS │
+     │ TITRE                         │ (vert)  │
+     ├─────────┬─────────┬───────────┴─────────┤
+     │ AFFICHE │ repères │ synopsis            │
+     │         │         │ ▶ bande-annonce     │
+     │         │         │ liens               │
+     ├─────────┴─────────┴─────────────────────┤
+     │ SÉANCES : une case par séance           │
+     └─────────────────────────────────────────┘
+   La rangée du milieu a la hauteur exacte de l'affiche : les repères
+   s'étirent, la bande-annonce prend la place qui reste. Pas de grand blanc. */
 @media (min-width: 56rem) {
   .detail {
     --marge-case: var(--espace-4);
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-rows: auto auto auto 1fr;
   }
 
   .detail > .detail__retour {
@@ -71,25 +79,21 @@
   }
 
   .detail > .detail__faits {
-    grid-column: 1;
-    grid-row: 4;
+    grid-column: 2;
+    grid-row: 3;
   }
 
   .detail > .detail__texte {
-    grid-column: 2 / 4;
-    grid-row: 3 / 5;
+    grid-column: 3 / -1;
+    grid-row: 3;
   }
 
-  .detail > .detail__seances {
-    grid-column: 4;
-    grid-row: 3 / 5;
-  }
-
-  /* Pas de texte (une soirée sans description) : les séances s'élargissent. */
-  .detail:not(:has(> .detail__texte)) > .detail__seances {
+  /* Pas de texte (une soirée sans description) : les repères s'élargissent. */
+  .detail:not(:has(> .detail__texte)) > .detail__faits {
     grid-column: 2 / -1;
   }
 
+  .detail > .detail__seances,
   .detail > .detail__photos {
     grid-column: 1 / -1;
   }

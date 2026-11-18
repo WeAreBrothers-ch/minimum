@@ -46,7 +46,8 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
   remplie selon l'adresse), en cases jointes d'un trait, sur le modèle de la
   fiche Zinéma : le retour, le titre et la case Billets verte ; l'affiche et
   ses repères ; les séances (une case chacune) ; le texte. Deux colonnes sur
-  téléphone, quatre sur ordinateur, alignées sur la barre du haut. Un clic sur
+  téléphone ; sur ordinateur, quatre colonnes alignées sur la barre du haut,
+  l'affiche, les repères et le texte sur une rangée, les séances dessous. Un clic sur
   Billets ou sur une séance ouvre la caisse, une fenêtre par-dessus la page
   (`<dialog>`) ; l'adresse `…#billets` l'ouvre dès l'arrivée. La grille est
   dans `css/detail-grille.css`, le contenu des cases dans `css/detail.css`,

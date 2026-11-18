@@ -1,37 +1,32 @@
 /* Minimum : la page Cinéma, en tableau de cases. Chaque film est une colonne
-   de cases (l'affiche, son titre, ses faits) jointes d'un trait ; au survol,
-   les cases de texte prennent le jaune du cinéma. Une grande case « Toutes
-   les séances » ferme le tableau et absorbe la place restante de la
-   dernière rangée : jamais de trou.
+   de cases : l'affiche, puis dessous sa séance, son titre, sa réalisation,
+   et ses faits. Au survol, les cases de texte prennent le jaune du cinéma.
+   Une grande case « Toutes les séances » ferme le tableau et absorbe la
+   place restante de la dernière rangée : jamais de trou.
 
-   Tout s'aligne sur une colonne (--colonne) : les filtres du haut ont la
-   largeur exacte d'une colonne de films, leurs traits tombent sur ceux des
-   films. Téléphone : une rangée par film, l'affiche dans la moitié gauche,
-   sous « À l'affiche ». À partir de 40rem : deux films par rangée, trois à
-   partir de 56rem, quatre à partir de 90rem. */
+   Deux films par rangée sur téléphone et tablette, quatre sur ordinateur :
+   les colonnes tombent sur les moitiés puis les quarts de la barre du haut.
+   Les filtres sont un interrupteur, dans une barre au-dessus. */
 
 .cinema {
   --par-rangee: 2;
-  --colonne: calc((100% - (var(--par-rangee) - 1) * var(--trait)) / var(--par-rangee));
 }
 
 .films {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--trait);
   background: var(--encre);
   border-bottom: var(--trait) solid var(--encre);
-  container-type: inline-size;
 }
 
 /* ---------- Un film ---------- */
-/* L'affiche fait la moitié de la largeur, moins le trait ; la rangée a
-   la hauteur de l'affiche entière (1,5 fois sa largeur). */
 .film {
-  display: grid;
-  grid-template-columns: var(--colonne) minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) auto;
+  display: flex;
+  flex: none;
+  flex-direction: column;
   gap: var(--trait);
-  min-height: calc((100cqi - var(--trait)) / 2 * 1.5);
+  width: calc((100% - (var(--par-rangee) - 1) * var(--trait)) / var(--par-rangee));
   min-width: 0;
   color: var(--encre);
   text-decoration: none;
@@ -40,15 +35,13 @@
 
 .film__affiche {
   display: block;
-  grid-row: 1 / -1;
+  flex: none;
   min-width: 0;
   overflow: hidden;
 }
 
 .film__affiche .fiche__affiche {
-  width: 100%;
-  height: 100%;
-  aspect-ratio: auto;
+  aspect-ratio: var(--proportion-affiche);
 }
 
 .film__affiche img {
@@ -57,17 +50,18 @@
 
 .film__case {
   min-width: 0;
-  min-height: 0;
-  overflow: hidden;
   padding: var(--espace-2) var(--marge);
   background: var(--fond);
   transition: background-color 200ms var(--ease-out);
 }
 
+/* La case de titre absorbe la hauteur restante de la rangée. */
 .film__entete {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 0.125rem;
+  padding-block: var(--espace-3);
 }
 
 /* La prochaine séance, ou la date de sortie : la ligne qui fait choisir. */
@@ -119,16 +113,23 @@
 }
 
 /* ---------- La case qui ferme le tableau ---------- */
+/* Elle prend toute la place qui reste sur la dernière rangée ; son texte
+   se règle sur cette place, il ne la fait jamais passer à la ligne. */
 .films__agenda {
   display: flex;
+  flex: 1 1 0;
+  flex-wrap: wrap;
+  align-content: flex-end;
   align-items: flex-end;
   justify-content: space-between;
-  gap: var(--espace-3);
-  min-height: 5rem;
+  gap: var(--espace-1) var(--espace-3);
+  min-width: 10rem;
+  min-height: 10rem;
   padding: var(--espace-3) var(--marge);
-  font-size: var(--taille-carte);
+  font-size: clamp(1.375rem, 0.9rem + 2.2vw, 3.25rem);
   font-weight: var(--graisse-nom);
   line-height: 0.95;
+  overflow-wrap: break-word;
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
@@ -152,64 +153,50 @@
   }
 }
 
-/* ---------- Tablette et plus : des colonnes de cases ---------- */
+/* Les filtres : une barre au-dessus des films, avec un interrupteur en
+   retrait (deux cases jointes, la choisie en jaune). Ils ne s'alignent pas
+   sur les colonnes : on ne les lit pas comme des têtes de colonne (un film
+   à l'affiche ne semble jamais « prochainement »), et la barre n'a pas de
+   case vide. */
+.cinema .filtres {
+  display: flex;
+  gap: 0;
+  padding: var(--espace-2) var(--marge);
+  background: var(--fond);
+}
+
+.cinema .filtres::after {
+  content: none;
+}
+
+.cinema .filtre {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-inline: var(--espace-1);
+  border: var(--trait) solid var(--encre);
+}
+
+.cinema .filtre + .filtre {
+  border-left: 0;
+}
+
 @media (min-width: 40rem) {
-  /* Flexbox plutôt que grille : la case « Toutes les séances » s'élargit
-     pour remplir la dernière rangée. */
-  .films {
-    display: flex;
-    flex-wrap: wrap;
+  .cinema .filtre {
+    flex: 0 1 auto;
+    min-width: 12rem;
+    padding-inline: var(--espace-3);
+  }
+}
+
+/* ---------- Ordinateur : quatre films par rangée ---------- */
+@media (min-width: 56rem) {
+  .cinema {
+    --par-rangee: 4;
   }
 
-  .film {
-    display: flex;
-    flex: none;
-    flex-direction: column;
-    width: var(--colonne);
-    min-height: 0;
-  }
-
-  .film__affiche {
-    flex: none;
-  }
-
-  .film__affiche .fiche__affiche {
-    height: auto;
-    aspect-ratio: var(--proportion-affiche);
-  }
-
-  /* La case de titre absorbe la hauteur restante de la rangée. */
-  .film__entete {
-    flex: 1;
-    padding-block: var(--espace-3);
-  }
-
-  /* Elle prend toute la place qui reste sur la dernière rangée ; son texte
-     se règle sur cette place, il ne la fait jamais passer à la ligne. */
   .films__agenda {
-    flex: 1 1 0;
     min-width: 12rem;
     min-height: 14rem;
     padding: var(--espace-4) var(--marge);
-    font-size: clamp(1.75rem, 0.9rem + 2.2vw, 3.25rem);
-    overflow-wrap: break-word;
-  }
-}
-
-/* Les filtres reprennent la largeur des colonnes ; une case blanche ferme
-   la rangée (cases.css). */
-@media (min-width: 56rem) {
-  .cinema {
-    --par-rangee: 3;
-  }
-
-  .cinema .filtres {
-    grid-template-columns: repeat(var(--n, 1), var(--colonne)) minmax(0, 1fr);
-  }
-}
-
-@media (min-width: 90rem) {
-  .cinema {
-    --par-rangee: 4;
   }
 }
