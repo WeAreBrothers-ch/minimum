@@ -50,6 +50,23 @@ main [data-remplir]:empty {
   font-size: clamp(2rem, 1.5rem + 2.4vw, 3.25rem);
 }
 
+/* Le titre de la page et sa ligne de présentation, dans la même case. */
+.page--cases .page__tete {
+  padding: var(--espace-4) var(--marge) var(--espace-3);
+}
+
+.page--cases .page__tete .page__titre {
+  padding: 0;
+}
+
+.page__chapeau {
+  margin-top: var(--espace-2);
+  font-size: var(--taille-petite);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
 .page--cases .page__intro {
   max-width: none;
   margin: 0;
@@ -153,11 +170,13 @@ main [data-remplir]:empty {
 
 /* ---------- Les films et les soirées : affiche, titre, faits, billets ---------- */
 
-/* Téléphone : une carte par ligne, l'affiche à gauche, le titre, les faits
-   et les cases d'action à droite, comme un programme imprimé. Rien ne se
-   coupe en deux, chaque case d'action tient sur une ligne. */
+/* Téléphone et tablette : une carte par ligne, l'affiche à gauche, le titre,
+   les faits et les cases d'action à droite, comme un programme imprimé.
+   La carte a exactement la hauteur de son affiche : toutes les affiches ont
+   la même taille et il n'y a jamais de blanc dessous. Le texte est resserré
+   pour y tenir (titre sur deux lignes au plus, faits sur trois). */
 .carreaux {
-  --affiche-l: clamp(7.5rem, 38vw, 11rem);
+  --affiche-l: clamp(8.5rem, 40vw, 12rem);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   list-style: none;
@@ -167,63 +186,80 @@ main [data-remplir]:empty {
 .carreau {
   display: grid;
   grid-template-columns: var(--affiche-l) minmax(0, 1fr);
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   gap: var(--joint);
+  height: calc(var(--affiche-l) * 1.5 + var(--trait));
   min-width: 0;
+  overflow: hidden;
   background: var(--encre);
   border-bottom: var(--trait) solid var(--encre);
 }
 
 .carreaux--nuit .carreau {
-  grid-template-rows: auto 1fr auto auto;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
 }
 
 .carreau > :not(.carreau__affiche) {
   grid-column: 2;
 }
 
-/* L'affiche garde sa proportion, calée en haut : si le texte de la carte
-   est plus haut qu'elle, la case se prolonge en blanc, l'image n'est jamais
-   étirée ni recadrée en bande. */
+/* Le titre et les faits cèdent la place ; les cases d'action, jamais : elles
+   gardent leurs 44 px, la hauteur d'un doigt. */
+.carreau > :is(.carreau__texte, .carreau__faits) {
+  min-height: 0;
+  overflow: hidden;
+}
+
 .carreau__affiche {
   grid-column: 1;
   grid-row: 1 / -1;
 }
 
 .carreau__affiche .fiche__affiche {
-  aspect-ratio: var(--proportion-affiche);
+  height: 100%;
+  aspect-ratio: auto;
 }
 
-/* Plus large : une grille d'affiches. Chaque carte s'étend sur --rangees
-   rangées de la grille (sous-grille) : affiches, titres, faits et cases
-   d'action restent alignés d'une carte à l'autre. Les traits sont à droite
-   et en dessous de chaque carte : une case vide en fin de grille reste
-   blanche, comme sur le mur d'accueil. */
-@media (min-width: 40rem) {
+/* Grand écran : une grille d'affiches. js/grille.js choisit le nombre de
+   colonnes (--colonnes) pour que la dernière rangée soit pleine ; quand
+   c'est impossible, il garde la liste (data-liste). Jamais de case vide.
+   Chaque carte s'étend sur --rangees rangées (sous-grille) : affiches,
+   titres, faits et cases d'action restent alignés d'une carte à l'autre. */
+@media (min-width: 56rem) {
   .carreaux {
-    --rangees: 4;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    --affiche-l: 12rem;
   }
 
-  .carreaux--nuit {
+  .carreaux:not([data-liste]) {
+    --rangees: 4;
+    grid-template-columns: repeat(var(--colonnes, 4), minmax(0, 1fr));
+    max-width: calc(var(--colonnes, 4) * 22rem);
+  }
+
+  .carreaux--nuit:not([data-liste]) {
     --rangees: 5;
   }
 
-  .carreau,
-  .carreaux--nuit .carreau {
+  .carreaux:not([data-liste]) .carreau {
     grid-row: span var(--rangees);
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: subgrid;
     column-gap: 0;
+    height: auto;
+    overflow: visible;
     border-right: var(--trait) solid var(--encre);
   }
 
-  .carreau > :not(.carreau__affiche),
-  .carreau__affiche {
+  .carreaux:not([data-liste]) .carreau > :not(.carreau__affiche),
+  .carreaux:not([data-liste]) .carreau__affiche {
     grid-column: 1;
     grid-row: auto;
   }
 
+  .carreaux:not([data-liste]) .carreau__affiche .fiche__affiche {
+    height: auto;
+    aspect-ratio: var(--proportion-affiche);
+  }
 }
 
 .carreau > * {
@@ -259,7 +295,7 @@ main [data-remplir]:empty {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--espace-1);
+  gap: 0.125rem;
   padding: var(--espace-2) var(--marge);
 }
 
@@ -290,9 +326,66 @@ main [data-remplir]:empty {
 }
 
 .carreau__faits {
+  display: flex;
+  flex-direction: column;
   padding: var(--espace-2) var(--marge);
   font-size: var(--taille-petite);
   line-height: 1.35;
+}
+
+/* Téléphone : le titre sur deux lignes au plus, le nom sur une, les faits
+   sur deux, la date sur une. La distinction (« Oscar 2026 ») est sur la
+   fiche du film. */
+@media (max-width: 55.99rem) {
+  .carreau__titre,
+  .carreau__qui,
+  .carreau__infos {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .carreau__titre,
+  .carreau__infos {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .carreau__qui {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+
+  .carreau__mention {
+    display: none !important;
+  }
+
+  .carreau__quand {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* La même liste sur grand écran, quand une grille laisserait un trou. */
+.carreaux[data-liste] :is(.carreau__titre, .carreau__qui, .carreau__infos) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.carreaux[data-liste] :is(.carreau__titre, .carreau__infos) {
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.carreaux[data-liste] .carreau__qui {
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
+.carreaux[data-liste] .carreau__mention {
+  display: none;
 }
 
 .carreau__action {
@@ -332,6 +425,45 @@ a.carreau__action::after {
     text-decoration: underline;
     text-decoration-thickness: var(--trait);
     text-underline-offset: 0.25em;
+  }
+}
+
+/* ---------- Les infos pratiques sous une liste (Cinéma) ---------- */
+/* Une ligne : l'intitulé dans une colonne fixe, la valeur juste à côté,
+   comme sur la page Infos. */
+.pratique {
+  position: relative;
+  margin-top: calc(var(--trait) * -1);
+  border-top: var(--trait) solid var(--encre);
+}
+
+.pratique__ligne {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--espace-3);
+  min-height: 3.25rem;
+  padding: var(--espace-3) var(--marge);
+}
+
+.pratique__ligne + .pratique__ligne {
+  border-top: var(--trait) solid var(--encre);
+}
+
+.pratique dt {
+  font-size: var(--taille-petite);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.pratique dd {
+  max-width: var(--mesure);
+}
+
+@media (min-width: 56rem) {
+  .pratique__ligne {
+    grid-template-columns: 10rem minmax(0, 1fr);
   }
 }
 
@@ -386,10 +518,6 @@ a.carreau__action::after {
 }
 
 @media (min-width: 75rem) {
-  .carreaux {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
   .carreau__titre {
     font-size: var(--taille-petite);
   }

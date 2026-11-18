@@ -865,10 +865,21 @@
   display: none;
 }
 
+/* Aucune fenêtre ouverte : l'horloge prend la place, calée à droite. */
+.barre:not(:has(.barre__onglet:not([hidden]))) .barre__onglets {
+  display: none;
+}
+
+.barre:not(:has(.barre__onglet:not([hidden]))) .barre__heure {
+  flex: 1;
+  justify-content: flex-end;
+}
+
+/* Les onglets se partagent toute la place, comme les cases du menu : pas de
+   case vide entre eux et l'horloge. */
 .barre__onglet {
-  flex: 0 1 auto;
+  flex: 1 1 0;
   min-width: 0;
-  max-width: 12rem;
   white-space: nowrap;
   border-right: var(--trait) solid var(--os-ligne);
 }
@@ -904,7 +915,6 @@
   display: flex;
   flex: none;
   align-items: center;
-  border-left: var(--trait) solid var(--os-ligne);
   padding: 0 var(--espace-3);
   font-size: 0.75rem;
   font-weight: var(--graisse-nom);
@@ -1070,10 +1080,6 @@
     grid-template-columns: auto var(--cible) minmax(0, 1fr) var(--cible);
     gap: var(--trait);
     background: var(--os-ligne);
-  }
-
-  .barre__onglet {
-    max-width: 14rem;
   }
 
   .barre__onglet span {

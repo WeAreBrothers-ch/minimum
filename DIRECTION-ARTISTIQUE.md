@@ -161,9 +161,18 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
 - **Les cartes de film et de soirée** s'alignent d'une carte à l'autre
   (sous-grille) ; un fait (« 16/16 ans ») ne se coupe jamais.
 - **Une émission sans visuel** devient une affiche typographique bleue sur le mur.
+- **Aucune case vide, aucun ornement inutile** (demande d'Eliott, 18.11.2026) :
+  pas de cadre au survol des affiches ; une grille d'affiches prend autant de
+  colonnes qu'il faut pour que la dernière rangée soit pleine (`js/grille.js`),
+  sinon elle reste en liste ; les onglets de la barre des tâches de la radio se
+  partagent toute la largeur.
+- **En-tête des pages** : le titre et une ligne de présentation dans la même
+  case ; les infos pratiques (billets, paiement) en lignes sous les films.
 - **Films et soirées sur téléphone** : une carte par ligne, l'affiche à gauche
   dans sa vraie proportion, le titre, les faits (date courte « Mer. 11 nov. ») et
-  les cases d'action à droite (« Billets → », sur une ligne). La grille d'affiches
+  les cases d'action à droite (« Billets → », sur une ligne). Chaque carte a
+  exactement la hauteur de son affiche : toutes les affiches ont la même taille,
+  jamais de blanc dessous (titre sur deux lignes au plus). La grille d'affiches
   revient à partir de 40rem.
 - **Menu de téléphone** : les deux barres deviennent une croix ; une rubrique
   prend sa couleur au clavier au lieu d'un cadre ; l'adresse et le téléphone en
@@ -234,7 +243,7 @@ Des entrées franches et courtes qui suivent le dessin du site, dans
   dévoile de haut en bas.
 - **Menu** : sur téléphone, les rubriques arrivent l'une après l'autre ; sur
   ordinateur, la case survolée se remplit de bas en haut. Les flèches avancent
-  d'un pas au survol ; une affiche survolée reçoit un cadre, rien ne grossit.
+  d'un pas au survol ; une affiche survolée ne change pas.
 - **Accueil** : les deux murs s'ouvrent l'un après l'autre.
 - **Radio** : les fenêtres s'ouvrent et se referment, le menu Start monte, la
   case radio de la barre du haut clignote « en direct » pendant le direct.

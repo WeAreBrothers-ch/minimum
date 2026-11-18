@@ -1,5 +1,4 @@
 # ID | fichier concerné (ou *) | raison et source
 CT-27c | infos/index.html | « Ouvrir le plan ↗ » est un vrai lien externe (OpenStreetMap) : la flèche ↗ est admise pour ce cas par la règle elle-même.
 TE-24 | css/base.css | main:focus sans contour : main ne reçoit le focus que par script (navigation.js, pour les lecteurs d'écran), jamais au clavier ; les éléments interactifs gardent :focus-visible.
-TE-24 | css/carte.css | .carte:focus-visible remplace le contour par le cadre d'un trait (.carte:focus-visible::after, opacité 1), visible sur toute affiche grâce au mélange « difference ».
 TE-25 | js/pages/bande-annonce.js | Pas un carrousel : « autoplay » ne s'applique qu'à la bande-annonce que le visiteur vient de lancer d'un clic (le lecteur n'existe pas avant ce clic) ; sans lui, il faudrait cliquer deux fois.

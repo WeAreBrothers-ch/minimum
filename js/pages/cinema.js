@@ -6,6 +6,7 @@
 
 import { chargerProgramme, filmsALAffiche, filmsAnnonces, seancesAVenir } from "../donnees.js";
 import { duree, echapper, heureCourte, jourCourt, jourLong } from "../format.js";
+import { ajusterGrilles } from "../grille.js";
 import { afficheHTML, afficherErreur, allerALAncre, zoneAremplir } from "./commun.js";
 import { lienFilm } from "./film-commun.js";
 
@@ -24,7 +25,10 @@ function faitsHTML(film, prochaine) {
     .filter(Boolean)
     .map((f) => f.replace(/ /g, "\u00a0"))
     .join("\u00a0/ ");
-  return `<p class="carreau__faits">${echapper(faits)}${prochaine ? `<br />${echapper(prochaine)}` : ""}</p>`;
+  return (
+    `<p class="carreau__faits"><span class="carreau__infos">${echapper(faits)}</span>` +
+    `${prochaine ? `<span class="carreau__quand">${echapper(prochaine)}</span>` : ""}</p>`
+  );
 }
 
 /**
@@ -51,7 +55,7 @@ function carreauHTML(film, programme, racine, prioritaire) {
     `<a class="carreau__affiche" href="${lien}" tabindex="-1" aria-hidden="true">${afficheHTML(film.affiche, film.titre, { prioritaire })}</a>` +
     `<div class="carreau__texte"><h2 class="carreau__titre"><a href="${lien}">${echapper(film.titre)}</a></h2>` +
     `<p class="carreau__qui">${echapper(film.realisation)}</p>` +
-    (film.mention ? `<p class="carreau__qui">${echapper(film.mention)}</p>` : "") +
+    (film.mention ? `<p class="carreau__qui carreau__mention">${echapper(film.mention)}</p>` : "") +
     `</div>${faitsHTML(film, prochaine)}${action}</li>`
   );
 }
@@ -84,11 +88,23 @@ function montrer(zone, id) {
   }
 }
 
-/** Remplit la page Cinéma. */
+/** Les infos pratiques, sous les films : comment acheter son billet. */
+const PRATIQUE =
+  `<dl class="pratique">` +
+  `<div class="pratique__ligne"><dt>Billets</dt><dd>En ligne, sur la fiche de chaque film. Ou à la buvette, 15 minutes avant la séance.</dd></div>` +
+  `<div class="pratique__ligne"><dt>Paiement</dt><dd>Par carte en ligne. En espèces ou par TWINT à la buvette.</dd></div>` +
+  `</dl>`;
+
+/**
+ * Remplit la page Cinéma. Renvoie de quoi la démonter.
+ * @returns {() => void}
+ */
 export function initCinema() {
   const zone = zoneAremplir();
-  if (!zone) return;
+  if (!zone) return () => {};
   const racine = document.body.dataset.racine ?? "";
+  /** @type {() => void} */
+  let arreter = () => {};
   chargerProgramme()
     .then((programme) => {
       const aLAffiche = filmsALAffiche(programme);
@@ -111,7 +127,9 @@ export function initCinema() {
               )
               .join("")}</div>`
           : "";
-      zone.innerHTML = onglets + groupes.map((g) => panneauHTML(g.id, g.titre, g.films, programme, racine)).join("");
+      zone.innerHTML =
+        onglets + groupes.map((g) => panneauHTML(g.id, g.titre, g.films, programme, racine)).join("") + PRATIQUE;
+      arreter = ajusterGrilles(zone);
 
       /* L'adresse peut viser un film annoncé : on ouvre alors son onglet. */
       const viseAnnonce = location.hash && annonces.some((f) => `#film-${f.id}` === decodeURIComponent(location.hash));
@@ -123,4 +141,5 @@ export function initCinema() {
       allerALAncre();
     })
     .catch((/** @type {unknown} */ erreur) => afficherErreur(zone, erreur));
+  return () => arreter();
 }

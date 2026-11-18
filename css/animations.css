@@ -65,7 +65,8 @@
     animation: 820ms var(--ease-entree) both titre-monte;
   }
 
-  .page__titre + .page__intro {
+  .page__titre + .page__intro,
+  .page__chapeau {
     animation: var(--duree-entree) var(--ease-entree) 180ms both apparaitre;
   }
 
@@ -167,30 +168,6 @@
 
     .detail__acheter:hover .detail__fleche {
       animation: 900ms var(--ease-out) infinite fleche-descend;
-    }
-
-    /* Une affiche survolée : un cadre se pose dedans, rien ne grossit. */
-    .carreau__affiche {
-      position: relative;
-    }
-
-    .carreau__affiche::after {
-      content: "";
-      position: absolute;
-      inset: var(--espace-2);
-      border: var(--trait) solid var(--blanc);
-      mix-blend-mode: difference;
-      opacity: 0;
-      scale: 1.03;
-      transition:
-        opacity 220ms var(--ease-out),
-        scale 320ms var(--ease-entree);
-      pointer-events: none;
-    }
-
-    .carreau:hover .carreau__affiche::after {
-      opacity: 1;
-      scale: 1;
     }
   }
 

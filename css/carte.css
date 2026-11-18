@@ -65,33 +65,11 @@
   font-size: var(--taille-petite);
 }
 
-/* Cadre d'un trait au survol : rien ne bouge, rien ne grossit. */
-.carte::after {
-  content: "";
-  position: absolute;
-  inset: var(--espace-2);
-  border: var(--trait) solid var(--blanc);
-  mix-blend-mode: difference;
-  opacity: 0;
-  pointer-events: none;
-}
-
+/* Au clavier seulement : un contour, pour savoir où l'on est. Au survol,
+   rien : l'affiche reste telle quelle. */
 .carte:focus-visible {
-  outline: none;
-}
-
-.carte:focus-visible::after {
-  opacity: 1;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .carte::after {
-    transition: opacity var(--duree-survol) ease;
-  }
-
-  .carte:hover::after {
-    opacity: 1;
-  }
+  outline: var(--trait) solid var(--encre);
+  outline-offset: calc(var(--trait) * -3);
 }
 
 .carte--emission:active {
