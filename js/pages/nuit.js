@@ -1,6 +1,7 @@
 // @ts-check
-/* Minimum : la page Nuit, les soirées du club. Chaque soirée mène à sa
-   fiche : affiche entière, line-up et billets. */
+/* Minimum : la page Nuit, les soirées du club. Une grille d’affiches :
+   sous chacune, la date, la case rose du line-up et la case verte des
+   billets. Chaque soirée mène à sa fiche. */
 
 import { chargerProgramme } from "../donnees.js";
 import { echapper, heureCourte, jourLongMajuscule } from "../format.js";
@@ -13,17 +14,18 @@ import { afficheHTML, afficherErreur, zoneAremplir } from "./commun.js";
  * @param {string} racine
  * @returns {string}
  */
-function soireeHTML(soiree, racine) {
-  const lien = `${racine}soiree/?id=${encodeURIComponent(soiree.id)}`;
+function carreauHTML(soiree, racine) {
+  const lien = echapper(`${racine}soiree/?id=${encodeURIComponent(soiree.id)}`);
   /* Insécable autour du tiret (et un liant invisible) : « 23 h – 4 h » ne se coupe pas. */
-  const fin = soiree.fin ? `\u00a0–\u2060\u00a0${heureCourte(soiree.fin)}` : "";
+  const fin = soiree.fin ? ` –⁠ ${heureCourte(soiree.fin)}` : "";
   return (
-    `<article class="fiche" id="${echapper(soiree.id)}">${afficheHTML(soiree.affiche, soiree.titre)}` +
-    `<div class="fiche__texte"><h3 class="fiche__titre"><a href="${echapper(lien)}">${echapper(soiree.titre)}</a></h3>` +
-    `<p>${echapper(jourLongMajuscule(soiree.date))}, ${heureCourte(soiree.heure)}${fin}</p>` +
-    `<p class="fiche__actions"><a class="pastille pastille--nuit pastille--action" href="${echapper(lien)}">Line-up</a>` +
-    (soiree.tarifs.length ? `<a class="pastille pastille--argent pastille--action" href="${echapper(lien)}#billets">Billets</a>` : "") +
-    `</p></div></article>`
+    `<li class="carreau" id="${echapper(soiree.id)}">` +
+    `<a class="carreau__affiche" href="${lien}" tabindex="-1" aria-hidden="true">${afficheHTML(soiree.affiche, soiree.titre)}</a>` +
+    `<div class="carreau__texte"><h3 class="carreau__titre"><a href="${lien}">${echapper(soiree.titre)}</a></h3></div>` +
+    `<p class="carreau__faits">${echapper(jourLongMajuscule(soiree.date))}<br />${heureCourte(soiree.heure)}${fin}</p>` +
+    `<a class="carreau__action carreau__action--nuit" href="${lien}">Line-up</a>` +
+    (soiree.tarifs.length ? `<a class="carreau__action carreau__action--argent" href="${lien}#billets">Billets</a>` : "") +
+    `</li>`
   );
 }
 
@@ -37,11 +39,9 @@ export function initNuit() {
       const aVenir = programme.soirees
         .filter((s) => s.date >= programme.aujourdhui)
         .sort((a, b) => (a.date + a.heure).localeCompare(b.date + b.heure));
-      zone.innerHTML =
-        (aVenir.length
-          ? `<section class="page__section"><h2 class="page__sous-titre">Soirées à venir</h2>` +
-            `<span class="tirets" aria-hidden="true"></span>${aVenir.map((s) => soireeHTML(s, racine)).join("")}</section>`
-          : '<p class="page__vide">Aucune soirée annoncée pour l’instant.</p>');
+      zone.innerHTML = aVenir.length
+        ? `<ul class="carreaux">${aVenir.map((s) => carreauHTML(s, racine)).join("")}</ul>`
+        : '<p class="page__vide">Aucune soirée annoncée pour l’instant.</p>';
     })
     .catch((/** @type {unknown} */ erreur) => afficherErreur(zone, erreur));
 }

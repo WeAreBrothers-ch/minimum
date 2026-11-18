@@ -51,6 +51,16 @@ function remplacer(suivante) {
   }
   entete.replaceWith(document.adoptNode(nouvelEntete));
   contenu.replaceWith(document.adoptNode(nouveauContenu));
+  /* Le pied de page vit hors du contenu, et l'accueil n'en a pas. */
+  const pied = document.querySelector(".pied");
+  const nouveauPied = suivante.querySelector(".pied");
+  if (nouveauPied) {
+    const neuf = document.adoptNode(nouveauPied);
+    if (pied) pied.replaceWith(neuf);
+    else nouveauContenu.after(neuf);
+  } else {
+    pied?.remove();
+  }
   document.title = suivante.title;
   const description = suivante.querySelector('meta[name="description"]');
   const actuelle = document.querySelector('meta[name="description"]');

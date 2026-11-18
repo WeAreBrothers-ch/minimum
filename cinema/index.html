@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="../css/billet.css" />
   <link rel="stylesheet" href="../css/achat.css" />
   <link rel="stylesheet" href="../css/achat-paiement.css" />
+  <link rel="stylesheet" href="../css/cases.css" />
   <link rel="stylesheet" href="../css/radio.css" />
 </head>
 <body data-page="cinema" data-racine="../">
@@ -38,21 +39,27 @@
   <header class="entete">
     <nav class="menu" aria-label="Menu principal" data-ouvert="false">
       <a class="menu__nom" href="../">Minimum</a>
-      <button class="menu__ouvrir pastille pastille--action" type="button" aria-expanded="false" aria-controls="menu-liste">Menu</button>
+      <button class="menu__ouvrir" type="button" aria-expanded="false" aria-controls="menu-liste" aria-label="Ouvrir le menu"><span class="menu__barres" aria-hidden="true"></span></button>
       <ul class="menu__liste" id="menu-liste">
-        <li><a class="menu__lien pastille pastille--action pastille--cinema" href="../cinema/" aria-current="page">Cinéma</a></li>
-        <li><a class="menu__lien pastille pastille--action pastille--nuit" href="../nuit/">Nuit</a></li>
-        <li><a class="menu__lien pastille pastille--action pastille--radio" href="../radio/">Radio</a></li>
-        <li><a class="menu__lien pastille pastille--action" href="../agenda/">Agenda</a></li>
-        <li><a class="menu__lien pastille pastille--action" href="../infos/">Infos</a></li>
+        <li class="menu__item"><a class="menu__lien menu__lien--cinema" href="../cinema/" aria-current="page">Cinéma</a></li>
+        <li class="menu__item"><a class="menu__lien menu__lien--nuit" href="../nuit/">Nuit</a></li>
+        <li class="menu__item"><a class="menu__lien menu__lien--radio" href="../radio/">Radio</a></li>
+        <li class="menu__item"><a class="menu__lien" href="../agenda/">Agenda</a></li>
+        <li class="menu__item"><a class="menu__lien" href="../infos/">Infos</a></li>
       </ul>
     </nav>
   </header>
-  <main id="contenu" class="page surface-ecran" tabindex="-1">
+  <main id="contenu" class="page page--cases surface-ecran" tabindex="-1">
     <h1 class="page__titre">Cinéma</h1>
     <p class="page__intro">Salle Anaïs Emery, à La Case à Chocs. Billets en ligne sur la fiche de chaque film, ou à la buvette, 15 minutes avant la séance, en espèces ou par TWINT.</p>
     <div data-remplir></div>
   </main>
+  <footer class="pied">
+    <p class="pied__case pied__case--adresse">Quai Philippe-Godet 20, 2000 Neuchâtel</p>
+    <a class="pied__case" href="tel:+41325453737">032 545 37 37</a>
+    <a class="pied__case" href="mailto:cineminimum@gmail.com">cineminimum@gmail.com</a>
+    <p class="pied__case pied__case--signature">Site par WeAreBrothers</p>
+  </footer>
   <aside class="lecteur surface-nuit" aria-label="Lecteur de la radio">
     <div class="lecteur__commande">
       <button class="lecteur__bouton pastille pastille--radio pastille--action" type="button" aria-pressed="false" disabled>Écouter</button>

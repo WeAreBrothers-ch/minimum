@@ -54,9 +54,9 @@ mécanique se reprend, la surface (police, couleurs, épaisseurs) vient de Minim
 |---|---|---|---|---|---|
 | 1 | L'accueil ne contient que les affiches ; tout le reste est dans le menu | R1 | Le programme se voit avant de se lire | D3 | Deux murs d'affiches, rien d'autre sur l'accueil |
 | 2 | Chaque monde a sa surface | D1 | Savoir où l'on est sans lire | D1 | Nuit sur fond noir, Cinéma sur fond blanc |
-| 3 | Les séparations sont des traits, jamais des ombres ni des arrondis | R1 | Une page qui se lit comme un programme imprimé | D2 | Traits d'un pixel partout (demande d'Eliott : plus fin que Zinéma). Aucun arrondi, pastilles comprises (demande d'Eliott, 17.11.2026) |
+| 3 | Les séparations sont des traits, jamais des ombres ni des arrondis | R1 | Une page qui se lit comme un programme imprimé | D2 | Traits de 2 px partout (`--trait`), au lieu des 4 px de Zinéma (demande d'Eliott : plus fin, mais le même tableau de cases). Aucun arrondi, pastilles comprises (demande d'Eliott, 17.11.2026) |
 | 4 | La signature vient du lieu | D2 | Reconnaître Minimum, pas un gabarit | D2 | La ligne de tirets du programme de 2009 sépare les blocs et porte le lecteur radio |
-| 5 | La fiche d'un film se lit comme un tableau | R1 | Tout voir d'un coup, chaque info à sa place | D4 | Fiche film et fiche soirée en cases jointes d'un trait d'un pixel, d'un bord à l'autre de l'écran (demande d'Eliott, 16.11.2026) : titre et case Billets verte, rangée Année, Pays, Durée, Genre, Version, Âge, puis affiche, texte et caisse. La surface reste celle de Minimum : Archivo, noir et blanc, pastilles, tirets |
+| 5 | La fiche d'un film se lit comme un tableau | R1 | Tout voir d'un coup, chaque info à sa place | D4 | Fiche film et fiche soirée en cases jointes d'un trait, d'un bord à l'autre de l'écran (demande d'Eliott, 16.11.2026) : titre et case Billets verte, rangée Année, Pays, Durée, Genre, Version, Âge, puis affiche, texte et caisse. La surface reste celle de Minimum : Archivo, noir et blanc, pastilles, tirets |
 
 ### Tensions tranchées
 - Plus d'air, mais pas dans les colonnes : les affiches restent serrées
@@ -127,6 +127,25 @@ Une couleur ne sert qu'à ce sens-là, partout sur le site :
   À remplacer par la police du logo si le client la fournit sous licence web.
 - Capitales grasses pour le nom et les titres (D1, D2) ; texte courant en romain, 16 px minimum.
 - Jamais d'italique.
+
+### Le design de Zinéma, déguisé (demande d'Eliott, 18.11.2026)
+Même propriétaire : le site reprend le **design** de Zinéma (une page = un tableau
+de cases jointes par un trait), avec les pages, le contenu et le défilement de
+Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
+- **Repris** : la barre de menu en cases (nom, puis une case par rubrique) et sa
+  case carrée sur téléphone ; le titre de page en grande case ; les onglets en
+  cases ; la grille d'affiches avec, sous chacune, le titre, les faits et la case
+  d'action ; l'agenda en lignes heure | titre ; les lignes terme | valeur de la
+  page Infos ; le pied de page en cases ; le mur d'accueil aux colonnes décalées.
+- **Changé** : fond blanc au lieu du gris ; trait de 2 px au lieu de 4 ; Archivo
+  en 900 au lieu d'Aileron ; la couleur d'une case dit toujours quelque chose
+  (jaune cinéma, rose nuit, bleu radio, vert argent) au lieu d'un tirage au
+  hasard ; aucun rose fluo ; le menu s'ouvre sur de grandes cases sans numéros ;
+  la ligne de tirets de 2009 ; le partage Nuit / Cinéma de l'accueil ; le poste
+  de radio ; des onglets d'agenda (Jour, Semaine, Plus tard) et des faits
+  séparés par « / » plutôt que « · ».
+- Tout le style tient dans les mêmes jetons (`css/jetons.css`) ; le tableau de
+  cases est dans `css/cases.css` et `css/entete.css`.
 
 ### Le poste de radio (page Radio, demande d'Eliott, 18.11.2026)
 - Dans le style de soso radio (R2), mais avec les règles de Minimum : cadre

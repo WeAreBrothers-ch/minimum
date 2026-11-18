@@ -1,7 +1,9 @@
-/* Minimum : la barre de menu. Le nom à gauche, les rubriques en pastilles
-   (demande d'Eliott, 16.11.2026) : chaque monde à sa couleur (jaune le
-   cinéma, rose la nuit, bleu la radio), l'agenda et les infos cadrés d'un trait.
-   La page où l'on est porte un anneau noir, détaché de sa pastille. */
+/* Minimum : la barre de menu, un tableau de cases comme le reste du site.
+   Le nom est la première case, chaque rubrique une case jointe par un trait.
+   Au survol et sur la page courante, la case se remplit : de la couleur de
+   son monde (jaune le cinéma, rose la nuit, bleu la radio, jetons.css), ou
+   en noir pour l'agenda et les infos. Sur téléphone, seule reste la case du
+   nom et la case du menu, qui s'ouvre sur tout l'écran. */
 
 .entete {
   position: relative;
@@ -13,52 +15,71 @@
 
 .menu {
   display: flex;
-  align-items: center;
-  gap: var(--espace-3);
+  align-items: stretch;
   min-height: var(--hauteur-entete);
-  padding-inline: var(--espace-3);
 }
 
 .menu a {
   text-decoration: none;
 }
 
-.menu__nom,
-.menu__ouvrir,
-.menu__lien {
-  font-size: var(--taille-menu);
+.menu__nom {
+  display: flex;
+  align-items: center;
+  min-height: var(--hauteur-entete);
+  padding-inline: var(--espace-3);
+  margin-right: auto;
+  font-size: var(--taille-nav);
+  font-weight: var(--graisse-nom);
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
 }
 
-.menu__nom {
-  display: flex;
-  align-items: center;
-  min-height: var(--cible);
-  margin-right: auto;
-  font-weight: var(--graisse-nom);
+/* La case du menu : deux barres inégales dans un carré. */
+.menu__ouvrir {
+  position: relative;
+  flex: none;
+  width: var(--hauteur-entete);
+  color: var(--encre);
+  background: var(--fond);
+  border: 0;
+  border-left: var(--trait) solid var(--encre);
+  cursor: pointer;
 }
 
-.menu__lien {
-  font-weight: var(--graisse-moyenne);
+.menu__barres,
+.menu__barres::before {
+  position: absolute;
+  left: 50%;
+  height: var(--trait);
+  background: currentColor;
+  transform: translateX(-50%);
 }
 
-.menu__lien[aria-current] {
-  font-weight: var(--graisse-nom);
-  box-shadow:
-    0 0 0 var(--anneau-ecart) var(--fond),
-    0 0 0 calc(var(--anneau-ecart) + var(--anneau)) var(--encre);
+.menu__barres {
+  top: calc(50% - 0.375rem);
+  width: 1.5rem;
 }
 
-/* Téléphone : la liste s'ouvre sur tout l'écran, sous la barre. */
+.menu__barres::before {
+  content: "";
+  top: 0.75rem;
+  width: 0.875rem;
+  left: 0.3125rem;
+  transform: none;
+}
+
+.menu[data-ouvert="true"] .menu__ouvrir {
+  color: var(--blanc);
+  background: var(--noir);
+}
+
+/* Téléphone : la liste s'ouvre sur tout l'écran, une case par rubrique. */
 .menu__liste {
   position: fixed;
   inset: calc(var(--hauteur-entete) + var(--trait)) 0 0;
   display: none;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--espace-2);
-  padding: var(--espace-4) var(--espace-3);
   background: var(--fond);
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -76,24 +97,71 @@
   }
 }
 
+.menu__item {
+  display: flex;
+  border-bottom: var(--trait) solid var(--encre);
+}
+
 .menu__liste .menu__lien {
-  min-height: calc(var(--cible) + var(--espace-2));
-  padding-inline: var(--espace-4);
-  font-size: var(--taille-carte);
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 5rem;
+  padding-inline: var(--espace-3);
+  font-size: var(--taille-grand);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.menu__liste .menu__lien::after {
+  content: "→";
+  font-weight: var(--graisse-texte);
+}
+
+.menu__lien--cinema { --remplissage: var(--pastille-cinema); }
+.menu__lien--nuit { --remplissage: var(--pastille-nuit); }
+.menu__lien--radio { --remplissage: var(--pastille-radio); }
+
+.menu__lien {
+  color: var(--encre);
+  background: var(--fond);
+}
+
+/* La page où l'on est : sa case est pleine. */
+.menu__lien[aria-current] {
+  color: var(--pastille-texte);
+  background: var(--remplissage, var(--noir));
+}
+
+.menu__lien:not([class*="--"])[aria-current] {
+  color: var(--blanc);
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .menu__lien:hover {
+    color: var(--pastille-texte);
+    background: var(--remplissage, var(--noir));
+  }
+
+  .menu__lien:not([class*="--"]):hover {
+    color: var(--blanc);
+  }
+
   .menu__nom:hover {
-    text-decoration: underline;
-    text-decoration-thickness: var(--trait);
-    text-underline-offset: 0.25em;
+    color: var(--blanc);
+    background: var(--noir);
   }
 }
 
-/* Ordinateur : toutes les pastilles sur la barre, à droite du nom. */
+/* Ordinateur : toutes les cases sur la barre, à droite de celle du nom. */
 @media (min-width: 56rem) {
-  .menu {
-    padding-inline: var(--espace-4) var(--espace-3);
+  .menu__nom {
+    margin-right: 0;
+    padding-inline: var(--espace-4);
+    border-right: var(--trait) solid var(--encre);
   }
 
   .menu__ouvrir {
@@ -104,16 +172,28 @@
   .menu[data-ouvert="true"] .menu__liste {
     position: static;
     display: flex;
+    flex: 1;
     flex-direction: row;
-    align-items: center;
-    padding: 0;
-    background: none;
     overflow: visible;
   }
 
+  .menu__item {
+    flex: 1 1 auto;
+    border-bottom: 0;
+  }
+
+  .menu__item + .menu__item {
+    border-left: var(--trait) solid var(--encre);
+  }
+
   .menu__liste .menu__lien {
-    min-height: calc(var(--cible) - var(--espace-1));
+    justify-content: center;
+    min-height: var(--hauteur-entete);
     padding-inline: var(--espace-3);
-    font-size: var(--taille-menu);
+    font-size: var(--taille-nav);
+  }
+
+  .menu__liste .menu__lien::after {
+    content: none;
   }
 }

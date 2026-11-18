@@ -14,7 +14,7 @@ export function initEntete() {
   const basculer = (ouvert) => {
     menu.dataset.ouvert = String(ouvert);
     bouton.setAttribute("aria-expanded", String(ouvert));
-    bouton.textContent = ouvert ? "Fermer" : "Menu";
+    bouton.setAttribute("aria-label", ouvert ? "Fermer le menu" : "Ouvrir le menu");
   };
 
   const auClic = () => basculer(menu.dataset.ouvert !== "true");

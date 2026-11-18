@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="css/billet.css" />
   <link rel="stylesheet" href="css/achat.css" />
   <link rel="stylesheet" href="css/achat-paiement.css" />
+  <link rel="stylesheet" href="css/cases.css" />
   <link rel="stylesheet" href="css/radio.css" />
 </head>
 <body data-page="accueil" data-racine="">
@@ -38,13 +39,13 @@
   <header class="entete">
     <nav class="menu" aria-label="Menu principal" data-ouvert="false">
       <a class="menu__nom" href="./">Minimum</a>
-      <button class="menu__ouvrir pastille pastille--action" type="button" aria-expanded="false" aria-controls="menu-liste">Menu</button>
+      <button class="menu__ouvrir" type="button" aria-expanded="false" aria-controls="menu-liste" aria-label="Ouvrir le menu"><span class="menu__barres" aria-hidden="true"></span></button>
       <ul class="menu__liste" id="menu-liste">
-        <li><a class="menu__lien pastille pastille--action pastille--cinema" href="cinema/">Cinéma</a></li>
-        <li><a class="menu__lien pastille pastille--action pastille--nuit" href="nuit/">Nuit</a></li>
-        <li><a class="menu__lien pastille pastille--action pastille--radio" href="radio/">Radio</a></li>
-        <li><a class="menu__lien pastille pastille--action" href="agenda/">Agenda</a></li>
-        <li><a class="menu__lien pastille pastille--action" href="infos/">Infos</a></li>
+        <li class="menu__item"><a class="menu__lien menu__lien--cinema" href="cinema/">Cinéma</a></li>
+        <li class="menu__item"><a class="menu__lien menu__lien--nuit" href="nuit/">Nuit</a></li>
+        <li class="menu__item"><a class="menu__lien menu__lien--radio" href="radio/">Radio</a></li>
+        <li class="menu__item"><a class="menu__lien" href="agenda/">Agenda</a></li>
+        <li class="menu__item"><a class="menu__lien" href="infos/">Infos</a></li>
       </ul>
     </nav>
   </header>
