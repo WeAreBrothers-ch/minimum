@@ -185,6 +185,9 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
   (rose la nuit, jaune le cinéma, comme le menu), son nom en capitales grasses,
   ce qu'il contient (« 7 soirées · 3 émissions », « 8 films ») et une flèche ;
   toute la case mène à la page.
+- **Chaque case est fermée** : une rangée de filtres a son trait dessous ; la
+  dernière case d'une colonne de l'agenda aussi, sans jamais doubler le trait du
+  bas du tableau. Pas de petits chiffres dans les filtres de Cinéma.
 - **Jamais deux cases noires l'une contre l'autre** (elles se souderaient en un
   bloc, règle de Zinéma) : le filtre « Tout » actif de l'agenda reste blanc,
   souligné des trois couleurs des mondes.
@@ -230,8 +233,10 @@ police à chasse fixe) : elle est habillée avec le design du site (demande d'El
   son (flux pas encore branché) le dit dans la barre d'état au lieu de faire
   semblant de jouer.
 - **Sur téléphone** : les icônes forment une rangée en haut, toujours à portée ;
-  une seule fenêtre est ouverte à la fois (les autres se réduisent dans la barre
-  des tâches) ; pas de volume (le téléphone règle le sien). À partir de 40rem :
+  une seule fenêtre est ouverte à la fois et occupe tout le bureau jusqu'à la
+  barre des tâches (les autres s'y réduisent, en cases carrées ; l'onglet ouvert
+  prend la place et écrit son nom) ; dans le lecteur, seule la playlist défile,
+  la barre d'état reste visible ; le volume est là comme sur ordinateur. À partir de 40rem :
   icônes en colonne, fenêtres qui se déplacent à la barre de titre, se
   superposent et se réduisent.
 - **Surface** : celle du site. Des cases blanches jointes par le trait de 2 px

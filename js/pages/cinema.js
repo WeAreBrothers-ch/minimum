@@ -122,7 +122,7 @@ export function initCinema() {
             .map(
               (r) =>
                 `<button type="button" class="filtre filtre--cinema" data-rubrique="${r.id}" aria-pressed="${r.id === active}">` +
-                `${echapper(r.nom)}<span class="filtre__n">${films[r.id].length}</span></button>`
+                `${echapper(r.nom)}</button>`
             )
             .join("") +
           `</div>` +

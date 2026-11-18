@@ -136,6 +136,12 @@
   background: var(--encre);
 }
 
+/* Téléphone : la dernière rangée du jour se ferme d'un trait, avant le jour
+   d'avant et d'après. */
+.jour-vue .rdvs {
+  border-bottom: var(--trait) solid var(--encre);
+}
+
 .rdv {
   --teinte: var(--pastille-cinema);
   display: grid;
@@ -246,12 +252,15 @@
   background: var(--noir);
 }
 
+/* Le trait sous la dernière case d'une colonne est une ombre : elle se pose
+   exactement sur le trait du bas du tableau quand la colonne est la plus
+   longue (un seul trait, jamais deux), et ferme la case sinon. */
 .semaine__liste {
   display: grid;
   gap: var(--trait);
   list-style: none;
   background: var(--encre);
-  border-bottom: var(--trait) solid var(--encre);
+  box-shadow: 0 var(--trait) 0 var(--encre);
 }
 
 .bloc-rdv {

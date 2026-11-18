@@ -368,6 +368,7 @@ a.carreau__action::after {
   display: grid;
   grid-auto-columns: minmax(0, 1fr);
   grid-auto-flow: column;
+  border-bottom: var(--trait) solid var(--encre);
   gap: var(--trait);
   background: var(--encre);
 }

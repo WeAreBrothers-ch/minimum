@@ -132,7 +132,51 @@
   display: none;
 }
 
-.fenetre:focus {
+/* Téléphone : la fenêtre ouverte occupe tout le bureau, des icônes à la
+   barre des tâches ; son contenu se répartit dans cette hauteur, la
+   playlist prend la place qui reste. */
+@media (max-width: 39.99rem) {
+  .fenetre {
+    bottom: 0.5rem;
+    max-height: none;
+  }
+
+  .fenetre__corps > .lecteur-os {
+    flex: 1;
+    min-height: 0;
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  /* Seule la playlist défile : la barre d'état reste toujours visible. */
+  .fenetre__corps:has(> .lecteur-os) {
+    overflow: hidden;
+  }
+
+  .lecteur-os > .playlist {
+    min-height: 0;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .lecteur-os .playlist__liste {
+    max-height: none;
+    align-content: start;
+  }
+
+  .fenetre__corps > .visionneuse {
+    flex: 1;
+    grid-template-rows: minmax(0, 1fr) auto auto;
+  }
+
+  .fenetre__corps > .visionneuse .visionneuse__image {
+    height: auto;
+    min-height: 12rem;
+  }
+}
+
+/* La fenêtre reçoit le focus quand elle s'ouvre (pour le clavier) : son
+   cadre ne se double jamais d'un contour. */
+.bureau .fenetre:focus,
+.bureau .fenetre:focus-visible {
   outline: none;
 }
 
@@ -459,8 +503,14 @@
 }
 
 /* Le volume ne s'affiche que sur grand écran : un téléphone règle le sien. */
+/* Le volume, sur toutes les tailles d'écran : une case « Volume », moins,
+   les blocs, plus. (Certains téléphones gardent la main sur le volume :
+   l'iPhone, par exemple, ignore ce réglage.) */
 .volume {
-  display: none;
+  display: grid;
+  grid-template-columns: auto var(--cible) minmax(0, 1fr) var(--cible);
+  gap: var(--trait);
+  background: var(--os-ligne);
 }
 
 .volume__nom {
@@ -907,8 +957,23 @@
   background: var(--os-accent);
 }
 
-/* Téléphone : un onglet n'écrit son nom que s'il est celui de la fenêtre
-   ouverte ; les autres ne montrent que leur icône. */
+/* Téléphone : l'onglet de la fenêtre ouverte prend la place et écrit son
+   nom ; les autres sont des cases carrées, leur icône seule. Sans fenêtre
+   ouverte, toutes les cases se partagent la largeur. */
+@media (max-width: 39.99rem) {
+  .barre__onglets:has(.barre__onglet[aria-pressed="true"]) .barre__onglet {
+    flex: 0 0 var(--os-barre);
+    justify-content: center;
+    padding: 0;
+  }
+
+  .barre__onglets:has(.barre__onglet[aria-pressed="true"]) .barre__onglet[aria-pressed="true"] {
+    flex: 1 1 0;
+    justify-content: flex-start;
+    padding: 0 var(--espace-3);
+  }
+}
+
 .barre__onglet span {
   display: none;
   overflow: hidden;
@@ -1085,16 +1150,6 @@
     min-height: 2.5rem;
   }
 
-  .commandes {
-    display: grid;
-  }
-
-  .volume {
-    display: grid;
-    grid-template-columns: auto var(--cible) minmax(0, 1fr) var(--cible);
-    gap: var(--trait);
-    background: var(--os-ligne);
-  }
 
   .barre__onglet span {
     display: inline;
