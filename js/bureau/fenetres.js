@@ -1,0 +1,260 @@
+// @ts-check
+/* Minimum Radio : les fenêtres du bureau.
+
+   Ouvrir, fermer, réduire dans la barre des tâches, passer devant les
+   autres, et, sur un écran assez large, les déplacer à la barre de titre.
+   Sur téléphone, une fenêtre prend toute la largeur : on ne la déplace pas,
+   on la ferme ou on la réduit. */
+
+import { echapper } from "../format.js";
+import { icone } from "./icones.js";
+
+/**
+ * @typedef {Object} Definition
+ * @property {string} id
+ * @property {string} titre
+ * @property {string} icone      Le nom d'une icône (icones.js).
+ * @property {string} contenu    Le HTML du corps de la fenêtre.
+ * @property {number} [largeur]  En pixels, sur grand écran.
+ * @property {(corps: HTMLElement) => (void | (() => void))} [monter]
+ *   Branche le contenu ; peut renvoyer de quoi le débrancher.
+ */
+
+/**
+ * @typedef {Object} Fenetre
+ * @property {Definition} def
+ * @property {HTMLElement} el
+ * @property {HTMLButtonElement} onglet
+ * @property {"ouverte" | "reduite" | "fermee"} etat
+ * @property {(() => void) | null} demonter
+ */
+
+/** Largeur à partir de laquelle on peut déplacer les fenêtres (40rem). */
+const GRAND_ECRAN = "(min-width: 40rem)";
+const DECALAGE = 28;
+
+/**
+ * @param {{ fenetres: HTMLElement, onglets: HTMLElement }} zones
+ *   `fenetres` : le calque où se posent les fenêtres ; `onglets` : la rangée
+ *   de la barre des tâches.
+ */
+export function creerFenetres({ fenetres: calque, onglets }) {
+  /** @type {Map<string, Fenetre>} */
+  const toutes = new Map();
+  const grand = window.matchMedia(GRAND_ECRAN);
+  let devant = 10;
+  let actif = "";
+  let ouvertes = 0;
+
+  /** @param {string} id */
+  function activer(id) {
+    actif = id;
+    devant += 1;
+    for (const [cle, f] of toutes) {
+      const estActif = cle === id && f.etat === "ouverte";
+      f.el.classList.toggle("fenetre--active", estActif);
+      f.onglet.setAttribute("aria-pressed", String(estActif));
+    }
+    const f = toutes.get(id);
+    if (f) f.el.style.zIndex = String(devant);
+  }
+
+  /** @param {string} id */
+  function fermer(id) {
+    const f = toutes.get(id);
+    if (!f || f.etat === "fermee") return;
+    f.etat = "fermee";
+    f.el.hidden = true;
+    f.onglet.hidden = true;
+    if (actif === id) {
+      /* La fenêtre la plus haute encore ouverte reprend la main. */
+      const suivante = [...toutes.values()]
+        .filter((w) => w.etat === "ouverte")
+        .sort((a, b) => Number(b.el.style.zIndex) - Number(a.el.style.zIndex))[0];
+      activer(suivante ? suivante.def.id : "");
+    }
+  }
+
+  /** @param {string} id */
+  function reduire(id) {
+    const f = toutes.get(id);
+    if (!f || f.etat !== "ouverte") return;
+    f.etat = "reduite";
+    f.el.hidden = true;
+    f.onglet.setAttribute("aria-pressed", "false");
+    if (actif === id) activer("");
+  }
+
+  /** @param {Fenetre} f */
+  function montrer(f) {
+    /* Sur téléphone, une seule fenêtre à la fois : les autres se réduisent
+       dans la barre des tâches, d'où l'on les rappelle d'un appui. */
+    if (!grand.matches) {
+      for (const autre of toutes.values()) if (autre !== f && autre.etat === "ouverte") reduire(autre.def.id);
+    }
+    f.etat = "ouverte";
+    f.el.hidden = false;
+    f.onglet.hidden = false;
+    activer(f.def.id);
+  }
+
+  /**
+   * Un clic sur un onglet : la fenêtre se montre, passe devant, ou se réduit
+   * si elle est déjà devant.
+   * @param {string} id
+   */
+  function basculer(id) {
+    const f = toutes.get(id);
+    if (!f) return;
+    if (f.etat === "ouverte" && actif === id) reduire(id);
+    else montrer(f);
+  }
+
+  /** @param {Definition} def */
+  function creer(def) {
+    const el = document.createElement("section");
+    el.className = "fenetre";
+    el.dataset.id = def.id;
+    el.setAttribute("role", "dialog");
+    el.setAttribute("aria-labelledby", `titre-${def.id}`);
+    el.tabIndex = -1;
+    const rangee = ouvertes;
+    ouvertes += 1;
+    el.style.setProperty("--l", `${def.largeur ?? 420}px`);
+    el.style.setProperty("--x", `${150 + rangee * DECALAGE}px`);
+    el.style.setProperty("--y", `${24 + rangee * DECALAGE}px`);
+    el.innerHTML =
+      `<header class="fenetre__titre"><h2 class="fenetre__nom" id="titre-${echapper(def.id)}">${echapper(def.titre)}</h2>` +
+      `<div class="fenetre__boutons">` +
+      `<button type="button" class="fenetre__bouton" data-action="reduire" aria-label="Réduire">_</button>` +
+      `<button type="button" class="fenetre__bouton" data-action="fermer" aria-label="Fermer">×</button></div></header>` +
+      `<div class="fenetre__corps">${def.contenu}</div>`;
+    calque.append(el);
+
+    const onglet = document.createElement("button");
+    onglet.type = "button";
+    onglet.className = "barre__onglet";
+    onglet.dataset.id = def.id;
+    onglet.setAttribute("aria-pressed", "false");
+    onglet.innerHTML = `${icone(def.icone, "barre__icone")}<span>${echapper(def.titre)}</span>`;
+    onglets.append(onglet);
+
+    /** @type {Fenetre} */
+    const f = { def, el, onglet, etat: "ouverte", demonter: null };
+    toutes.set(def.id, f);
+    const corps = el.querySelector(".fenetre__corps");
+    if (def.monter && corps instanceof HTMLElement) f.demonter = def.monter(corps) ?? null;
+    placer(f);
+    if (!grand.matches) {
+      for (const autre of toutes.values()) if (autre !== f && autre.etat === "ouverte") reduire(autre.def.id);
+    }
+    activer(def.id);
+    el.focus({ preventScroll: true });
+  }
+
+  /**
+   * Garde la fenêtre dans le bureau, sur grand écran.
+   * @param {Fenetre} f
+   */
+  function placer(f) {
+    if (!grand.matches) return;
+    const largeur = calque.clientWidth;
+    const hauteur = calque.clientHeight;
+    const l = f.el.offsetWidth;
+    const x = Math.max(0, Math.min(Number.parseFloat(f.el.style.getPropertyValue("--x")), largeur - l - 8));
+    const y = Math.max(0, Math.min(Number.parseFloat(f.el.style.getPropertyValue("--y")), hauteur - 80));
+    f.el.style.setProperty("--x", `${x}px`);
+    f.el.style.setProperty("--y", `${y}px`);
+  }
+
+  /** @param {Definition} def */
+  function ouvrir(def) {
+    const f = toutes.get(def.id);
+    if (f) {
+      montrer(f);
+      f.el.focus({ preventScroll: true });
+    } else creer(def);
+  }
+
+  /* ---------- Boutons de la fenêtre, onglets, déplacement ---------- */
+
+  /** @param {MouseEvent} e */
+  const auClic = (e) => {
+    const cible = e.target instanceof Element ? e.target : null;
+    if (!cible) return;
+    const fenetre = cible.closest(".fenetre");
+    if (!(fenetre instanceof HTMLElement)) return;
+    const id = fenetre.dataset.id ?? "";
+    const action = cible.closest("[data-action]");
+    if (action instanceof HTMLElement) {
+      if (action.dataset.action === "fermer") fermer(id);
+      if (action.dataset.action === "reduire") reduire(id);
+    }
+  };
+
+  /** @param {PointerEvent} e */
+  const auPointeur = (e) => {
+    const cible = e.target instanceof Element ? e.target : null;
+    const fenetre = cible?.closest(".fenetre");
+    if (!(fenetre instanceof HTMLElement)) return;
+    const id = fenetre.dataset.id ?? "";
+    if (actif !== id) activer(id);
+    const titre = cible?.closest(".fenetre__titre");
+    if (!(titre instanceof HTMLElement) || cible?.closest("button") || !grand.matches) return;
+    const f = toutes.get(id);
+    if (!f) return;
+    const departX = e.clientX;
+    const departY = e.clientY;
+    const x0 = Number.parseFloat(fenetre.style.getPropertyValue("--x"));
+    const y0 = Number.parseFloat(fenetre.style.getPropertyValue("--y"));
+    titre.setPointerCapture(e.pointerId);
+    fenetre.classList.add("fenetre--deplace");
+
+    /** @param {PointerEvent} m */
+    const deplacer = (m) => {
+      const x = Math.max(-fenetre.offsetWidth + 96, Math.min(x0 + m.clientX - departX, calque.clientWidth - 96));
+      const y = Math.max(0, Math.min(y0 + m.clientY - departY, calque.clientHeight - 36));
+      fenetre.style.setProperty("--x", `${x}px`);
+      fenetre.style.setProperty("--y", `${y}px`);
+    };
+    const lacher = () => {
+      fenetre.classList.remove("fenetre--deplace");
+      titre.removeEventListener("pointermove", deplacer);
+      titre.removeEventListener("pointerup", lacher);
+      titre.removeEventListener("pointercancel", lacher);
+    };
+    titre.addEventListener("pointermove", deplacer);
+    titre.addEventListener("pointerup", lacher);
+    titre.addEventListener("pointercancel", lacher);
+  };
+
+  /** @param {MouseEvent} e */
+  const auClicOnglet = (e) => {
+    const cible = e.target instanceof Element ? e.target.closest(".barre__onglet") : null;
+    if (cible instanceof HTMLElement && cible.dataset.id) basculer(cible.dataset.id);
+  };
+
+  /** @param {KeyboardEvent} e */
+  const auClavier = (e) => {
+    if (e.key === "Escape" && actif && calque.contains(document.activeElement)) fermer(actif);
+  };
+
+  calque.addEventListener("click", auClic);
+  calque.addEventListener("pointerdown", auPointeur);
+  onglets.addEventListener("click", auClicOnglet);
+  document.addEventListener("keydown", auClavier);
+
+  return {
+    ouvrir,
+    fermer,
+    /** Débranche tout : à appeler quand on quitte la page. */
+    detruire() {
+      calque.removeEventListener("click", auClic);
+      calque.removeEventListener("pointerdown", auPointeur);
+      onglets.removeEventListener("click", auClicOnglet);
+      document.removeEventListener("keydown", auClavier);
+      for (const f of toutes.values()) f.demonter?.();
+      toutes.clear();
+    },
+  };
+}

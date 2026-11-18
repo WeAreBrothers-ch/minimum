@@ -1,4 +1,4 @@
-/* Minimum : l'agenda, la radio et les petites suites de la page Infos,
+/* Minimum : l'agenda et les petites suites de la page Infos,
    en cases jointes d'un trait comme le reste (cases.css). */
 
 /* Le contenu rempli par script : ses blocs se touchent, le dernier
@@ -82,63 +82,6 @@
   }
 }
 
-/* ---------- La radio : le poste, puis une ligne par émission ---------- */
-.page--cases .poste {
-  margin: var(--espace-3);
-}
-
-.page--cases .page__section {
-  border-top: var(--trait) solid var(--encre);
-}
-
-.emissions {
-  display: grid;
-  gap: var(--joint);
-  list-style: none;
-  background: var(--encre);
-}
-
-.emission {
-  display: grid;
-  grid-template-columns: 7rem minmax(0, 1fr);
-  gap: var(--joint);
-}
-
-.emission > * {
-  background: var(--fond);
-}
-
-/* Écouter : la case bleue de la radio. */
-.emission__bouton {
-  width: 100%;
-  min-height: 4.5rem;
-  background: var(--teinte);
-}
-
-.emission__bouton {
-  border: 0;
-}
-
-.emission__bouton:disabled {
-  background: var(--fond);
-}
-
-.emission__texte {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: var(--espace-1);
-  padding: var(--espace-2) var(--espace-3);
-}
-
-.emission__titre {
-  font-size: var(--taille-texte);
-  font-weight: var(--graisse-nom);
-  line-height: var(--interligne-titre);
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
-}
-
 /* ---------- Infos ---------- */
 .infos__prix {
   justify-self: start;
@@ -155,12 +98,7 @@
   }
 
   .rdv__texte,
-  .rdv__jour,
-  .emission__texte {
+  .rdv__jour {
     padding-inline: var(--espace-4);
-  }
-
-  .page--cases .poste {
-    margin: var(--espace-4) auto;
   }
 }

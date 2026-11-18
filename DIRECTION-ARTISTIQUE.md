@@ -43,7 +43,7 @@ défile à son rythme : on lit la nuit d'un côté, l'écran de l'autre, sans un
 |---|---|---|---|
 | R1 | zinema.ch, projet WeAreBrothers, cinéma frère à Lausanne | Le mur d'affiches en boucle comme page d'accueil, la barre de menu en cases, l'absence de tout décor, la fiche film en cases (titre et « Acheter », rangée de repères, affiche, bande-annonce, séances) | Les traits épais (Eliott veut plus fin), le gris de fond, la police Aileron, les affiches qui grossissent au survol (MV-03), les blocs à trait épais à gauche (CO-06) |
 
-| R2 | sosoradio.co : un poste de radio rétro (cadre, écran à pixels, cadran, haut-parleurs), police pixel Press Start 2P | La page Radio est un poste : écran à pixels qui scintille, cadran et aiguille, touches, volume, égaliseur | Le cadre doré, l'écran vert, les angles arrondis, les lueurs et les ombres, le fond de bois : Minimum reste à angle droit, sans ombre, et le bleu est celui de la radio |
+| R2 | sosoradio.co : un faux bureau d'ordinateur des années 90 (fond d'écran, icônes, fenêtres à barre de titre bleue, lecteur de musique avec playlist, barre des tâches « Start » et horloge, Réglages pour changer le fond) | La page Radio est ce bureau : tout ce qui s'y fait se fait dans une fenêtre | Les photos de soso (les fonds de Minimum sont dessinés pour lui), les angles arrondis des icônes, le nom et les liens de soso |
 
 Pour R1, une seule référence maison pour un lieu de la même famille :
 la parenté visible est voulue (réponse d'Eliott, 16.11.2026). Distance : la
@@ -141,31 +141,50 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
   en 900 au lieu d'Aileron ; la couleur d'une case dit toujours quelque chose
   (jaune cinéma, rose nuit, bleu radio, vert argent) au lieu d'un tirage au
   hasard ; aucun rose fluo ; le menu s'ouvre sur de grandes cases sans numéros ;
-  la ligne de tirets de 2009 ; le partage Nuit / Cinéma de l'accueil ; le poste
+  la ligne de tirets de 2009 ; le partage Nuit / Cinéma de l'accueil ; le bureau
   de radio ; des onglets d'agenda (Jour, Semaine, Plus tard) et des faits
   séparés par « / » plutôt que « · ».
 - Tout le style tient dans les mêmes jetons (`css/jetons.css`) ; le tableau de
   cases est dans `css/cases.css` et `css/entete.css`.
 
-### Le poste de radio (page Radio, demande d'Eliott, 18.11.2026)
-- Dans le style de soso radio (R2), mais avec les règles de Minimum : cadre
-  épais de 6 px et haut-parleurs rayés en bleu (la couleur de la radio), écran
-  sombre `--lcd-fond` à texte bleu, lignes d'écran et léger scintillement, angles
-  droits, aucune ombre ni lueur.
-- **Press Start 2P** (SIL OFL, `assets/fonts/`), réservée au poste : écran,
-  touches, marque. Tout le reste du site reste en Archivo.
-- Le poste ne produit pas de son : il pilote le lecteur de la barre du bas
-  (`js/lecteur.js`), qui ne s'arrête pas quand on change de page. Une plage sans
-  son (flux pas encore branché) désactive la lecture et l'écran dit « Hors antenne »
-  ou « Son à venir » : il ne fait jamais semblant de jouer.
-- Les touches ≥ 44 px, le volume est un vrai champ `range` ; le poste se lit et
-  se commande au clavier. Mouvement coupé avec `prefers-reduced-motion`.
+### Le bureau de la radio (page Radio, demande d'Eliott, 18.11.2026)
+La page Radio est un faux bureau d'ordinateur des années 90, dans le style de
+soso radio (R2). Une première version en « poste de radio » avec écran à pixels
+passait à côté de la référence : elle a été remplacée.
+- **Le bureau** : un fond d'écran, cinq icônes (Minimum radio, Photos, Écrire,
+  À propos, Réglages), des fenêtres grises à barre de titre colorée, une barre des
+  tâches avec « Start » (qui mène aussi aux pages du site), un onglet par fenêtre
+  ouverte et l'horloge.
+- **Changer le décor** (Réglages) : trois fonds de couleur unie, quatre fonds
+  dessinés pour Minimum (Lac, Nuit, Écran, Coucher, en SVG dans
+  `assets/img/fonds/`), ou **sa propre image**, réduite à 1600 px et gardée sur
+  l'appareil seulement ; cinq couleurs de barre de titre. Le choix est mémorisé
+  (`js/bureau/memoire.js`) et le bureau marche sans ce stockage.
+- **Le lecteur** : titre, égaliseur, précédent / lecture / suivant, volume en
+  blocs, playlist, barre d'état. Il pilote le lecteur de la barre du bas du site
+  (`js/lecteur.js`), qui ne s'arrête pas quand on change de page ; sur cette
+  page, cette barre est cachée, la barre des tâches la remplace. Une plage sans
+  son (flux pas encore branché) le dit dans la barre d'état au lieu de faire
+  semblant de jouer.
+- **Sur téléphone** : les icônes forment une rangée en haut, toujours à portée ;
+  une seule fenêtre est ouverte à la fois (les autres se réduisent dans la barre
+  des tâches) ; pas de volume (le téléphone règle le sien). À partir de 40rem :
+  icônes en colonne, fenêtres qui se déplacent à la barre de titre, se
+  superposent et se réduisent.
+- **Surface** : le gris, le blanc et le bleu marine d'un bureau d'époque, avec des
+  biseaux (`--os-*` dans `css/bureau.css`) ; c'est le seul endroit du site où les
+  couleurs ne suivent pas le code des pastilles, comme le veut la référence.
+  Archivo pour le texte, une chasse fixe pour les états.
+- Boutons et lignes d'au moins 44 px ; tout se commande au clavier (Échap ferme la
+  fenêtre) ; mouvement coupé avec `prefers-reduced-motion`.
+- Le message d'envoi de « Écrire » ouvre la messagerie du visiteur (`MAIL_RADIO`
+  dans `js/config.js`) : rien n'est envoyé par le site lui-même.
 
 ### Mobile d'abord
 - Tout le CSS part du téléphone et s'élargit avec `min-width` (40rem, 56rem, 75rem) ;
   aucune règle `max-width` de mise en page.
 - Zones tactiles de 44 px au moins (`--cible`) pour tout lien ou bouton : liens des
-  fiches, séances, agenda, coordonnées, touches du poste.
+  fiches, séances, agenda, coordonnées, boutons des fenêtres du bureau radio.
 - Vérifié sans débordement horizontal à 320, 360 et 390 px sur toutes les pages.
 
 ### Mouvement

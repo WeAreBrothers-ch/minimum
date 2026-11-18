@@ -40,3 +40,7 @@ export const MAX_BILLETS = 10;
 
 /** Où se trouve le lieu, tel qu’écrit sur les billets. */
 export const ADRESSE_BILLET = "Minimum, La Case à Chocs, quai Philippe-Godet 20, Neuchâtel";
+
+/** L'adresse où écrire à la radio (demander un titre, proposer une émission).
+    La fenêtre « Écrire » de la page Radio ouvre la messagerie du visiteur. */
+export const MAIL_RADIO = "cineminimum@gmail.com";

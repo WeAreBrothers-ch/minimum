@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <filter id="flou" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="90"/></filter>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" seed="9"/><feColorMatrix values="0 0 0 0 .8  0 0 0 0 .8  0 0 0 0 .8  0 0 0 .5 0"/></filter>
+  </defs>
+  <rect width="1600" height="1000" fill="#07060d"/>
+  <ellipse cx="330" cy="260" rx="380" ry="260" fill="#ff2d95" opacity=".85" filter="url(#flou)"/>
+  <ellipse cx="1260" cy="700" rx="460" ry="300" fill="#2a56ff" opacity=".9" filter="url(#flou)"/>
+  <ellipse cx="900" cy="140" rx="300" ry="160" fill="#7a2cff" opacity=".6" filter="url(#flou)"/>
+  <ellipse cx="260" cy="900" rx="320" ry="170" fill="#00d1ff" opacity=".35" filter="url(#flou)"/>
+  <rect width="1600" height="1000" filter="url(#grain)" opacity=".6"/>
+</svg>
