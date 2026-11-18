@@ -1,0 +1,211 @@
+/* Minimum : la page Cinéma, en tableau de cases. Chaque film est une colonne
+   de cases (l'affiche, son titre, ses faits) jointes d'un trait ; au survol,
+   les cases de texte prennent le jaune du cinéma. Une grande case « Toutes
+   les séances » ferme le tableau et absorbe la place restante de la
+   dernière rangée : jamais de trou.
+
+   Téléphone : une rangée par film, l'affiche à gauche, à la hauteur exacte
+   de l'affiche. À partir de 56rem : trois films par rangée, quatre à partir
+   de 90rem. */
+
+.films {
+  --affiche-l: clamp(8.5rem, 40vw, 12rem);
+  display: grid;
+  gap: var(--trait);
+  background: var(--encre);
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+/* ---------- Un film ---------- */
+.film {
+  display: grid;
+  grid-template-columns: var(--affiche-l) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: var(--trait);
+  height: calc(var(--affiche-l) * 1.5);
+  min-width: 0;
+  color: var(--encre);
+  text-decoration: none;
+  background: var(--encre);
+}
+
+.film__affiche {
+  display: block;
+  grid-row: 1 / -1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.film__affiche .fiche__affiche {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+.film__affiche img {
+  object-position: 50% 20%;
+}
+
+.film__case {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: var(--espace-2) var(--marge);
+  background: var(--fond);
+  transition: background-color 200ms var(--ease-out);
+}
+
+.film__entete {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+/* La prochaine séance, ou la date de sortie : la ligne qui fait choisir. */
+.film__statut {
+  margin-bottom: var(--espace-1);
+  font-size: 0.75rem;
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.film__titre {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: clamp(1.0625rem, 0.9rem + 0.7vw, 1.5rem);
+  font-weight: var(--graisse-nom);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  overflow-wrap: break-word;
+  hyphens: auto;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.film__qui {
+  margin-top: auto;
+  padding-top: var(--espace-2);
+  overflow: hidden;
+  font-size: var(--taille-petite);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.film__faits {
+  font-size: var(--taille-petite);
+  line-height: 1.35;
+}
+
+/* Survol et clavier : les cases de texte prennent le jaune du cinéma. */
+.film:focus-visible {
+  outline: none;
+}
+
+.film:focus-visible .film__case {
+  color: var(--pastille-texte);
+  background: var(--pastille-cinema);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .film:hover .film__case {
+    color: var(--pastille-texte);
+    background: var(--pastille-cinema);
+  }
+}
+
+/* ---------- La case qui ferme le tableau ---------- */
+.films__agenda {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--espace-3);
+  min-height: 5rem;
+  padding: var(--espace-3) var(--marge);
+  font-size: var(--taille-carte);
+  font-weight: var(--graisse-nom);
+  line-height: 0.95;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  color: var(--encre);
+  background: var(--fond);
+  transition:
+    background-color 200ms var(--ease-out),
+    color 200ms var(--ease-out);
+}
+
+.films__agenda:focus-visible {
+  outline: none;
+  color: var(--blanc);
+  background: var(--noir);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .films__agenda:hover {
+    color: var(--blanc);
+    background: var(--noir);
+  }
+}
+
+/* ---------- Grand écran : des colonnes de cases ---------- */
+@media (min-width: 56rem) {
+  /* Flexbox plutôt que grille : la case « Toutes les séances » s'élargit
+     pour remplir la dernière rangée. */
+  .films {
+    --par-rangee: 3;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .film {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    width: calc((100% - (var(--par-rangee) - 1) * var(--trait)) / var(--par-rangee));
+    height: auto;
+  }
+
+  .film__affiche {
+    flex: none;
+  }
+
+  .film__affiche .fiche__affiche {
+    height: auto;
+    aspect-ratio: var(--proportion-affiche);
+  }
+
+  /* La case de titre absorbe la hauteur restante de la rangée. */
+  .film__entete {
+    flex: 1;
+    padding-block: var(--espace-3);
+  }
+
+  .film__titre {
+    -webkit-line-clamp: unset;
+    line-clamp: none;
+  }
+
+  .film__qui {
+    white-space: normal;
+  }
+
+  /* Elle prend toute la place qui reste sur la dernière rangée ; son texte
+     se règle sur cette place, il ne la fait jamais passer à la ligne. */
+  .films__agenda {
+    flex: 1 1 0;
+    min-width: 12rem;
+    min-height: 14rem;
+    padding: var(--espace-4) var(--marge);
+    font-size: clamp(1.75rem, 0.9rem + 2.2vw, 3.25rem);
+    overflow-wrap: break-word;
+  }
+}
+
+@media (min-width: 90rem) {
+  .films {
+    --par-rangee: 4;
+  }
+}

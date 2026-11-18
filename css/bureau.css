@@ -389,12 +389,17 @@
   border: var(--trait) solid var(--os-ligne);
 }
 
+/* À l'arrêt, la piste reste vide ; en lecture, un trait la balaie. */
 .lcd__progres::before {
   content: "";
   display: block;
-  width: 18%;
+  width: 0;
   height: 100%;
   background: var(--os-accent);
+}
+
+.lecteur-os[data-joue="true"] .lcd__progres::before {
+  width: 18%;
 }
 
 .lecteur-os[data-joue="true"] .lcd__progres::before {
@@ -409,11 +414,18 @@
   padding: var(--espace-2);
 }
 
+/* À l'arrêt, les barres dessinent une onde immobile ; en lecture, elles
+   dansent. La case n'est jamais vide. */
 .lcd__egaliseur i {
   flex: 1;
-  height: 12%;
+  height: 30%;
   background: var(--os-encre);
 }
+
+.lcd__egaliseur i:nth-child(2n) { height: 55%; }
+.lcd__egaliseur i:nth-child(3n) { height: 80%; }
+.lcd__egaliseur i:nth-child(5n) { height: 40%; }
+.lcd__egaliseur i:nth-child(7n) { height: 65%; }
 
 .lecteur-os[data-joue="true"] .lcd__egaliseur i {
   animation: danse 0.9s steps(7, jump-none) infinite alternate;
@@ -556,12 +568,14 @@
   background: var(--os-ligne);
 }
 
+/* L'affiche sur fond noir, à sa taille : pas de marge blanche autour. */
 .visionneuse__image {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: min(18rem, 42dvh);
-  padding: var(--espace-2);
+  height: min(22rem, 46dvh);
+  padding: 0;
+  background: var(--noir);
 }
 
 .visionneuse__image img {

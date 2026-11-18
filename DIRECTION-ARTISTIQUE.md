@@ -164,8 +164,23 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
 - **Aucune case vide, aucun ornement inutile** (demande d'Eliott, 18.11.2026) :
   pas de cadre au survol des affiches ; une grille d'affiches prend autant de
   colonnes qu'il faut pour que la dernière rangée soit pleine (`js/grille.js`),
-  sinon elle reste en liste ; les onglets de la barre des tâches de la radio se
-  partagent toute la largeur.
+  sinon elle reste en liste (page Nuit) ; les onglets de la barre des tâches de
+  la radio se partagent toute la largeur. Sur le bureau de la radio, les
+  fenêtres se rangent en colonnes alignées en haut, jamais en escalier.
+- **Page Cinéma** (revue le 18.11.2026 : « trop monotone ») : la mécanique de
+  la page Films de Zinéma. Une rangée de filtres en cases (À l'affiche,
+  Prochainement) ; chaque film est une colonne de cases (l'affiche ; la
+  prochaine séance ou la date de sortie, le titre en très gras, la réalisation ;
+  les faits sur une ligne), entièrement cliquable vers sa fiche ; au survol, ses
+  cases prennent le jaune du cinéma. Une grande case « Toutes les séances »
+  ferme le tableau et absorbe la place restante de la dernière rangée. Pas de
+  bandeau défilant, pas de grande image à la une : rien qui ne soit du tableau.
+- **Page Agenda** (même date) : la mécanique de l'agenda de Zinéma. Filtres par
+  monde (Tout, Cinéma, Nuit, Radio ; une pastille de couleur sert de légende) ;
+  sur téléphone, les jours en cases avec un repère de couleur par monde, la
+  journée choisie en rangées heure | titre | action, et le jour d'avant et
+  d'après ; sur grand écran, la semaine en sept colonnes, chaque rendez-vous dans
+  une case de la couleur de son monde ; puis « Plus tard ». Pas de vignettes.
 - **En-tête des pages** : le titre et une ligne de présentation dans la même
   case ; les infos pratiques (billets, paiement) en lignes sous les films.
 - **Films et soirées sur téléphone** : une carte par ligne, l'affiche à gauche

@@ -24,8 +24,7 @@
   margin-top: var(--espace-2);
 }
 
-.page__section,
-.jour {
+.page__section {
   margin-top: var(--espace-5);
 }
 

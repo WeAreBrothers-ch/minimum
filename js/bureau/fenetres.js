@@ -35,6 +35,11 @@ const MOINS_DE_MOUVEMENT = window.matchMedia("(prefers-reduced-motion: reduce)")
 /** Largeur à partir de laquelle on peut déplacer les fenêtres (40rem). */
 const GRAND_ECRAN = "(min-width: 40rem)";
 const DECALAGE = 28;
+/** Les fenêtres commencent à droite de la colonne d’icônes, à ce haut. */
+const GAUCHE = 150;
+const HAUT = 24;
+/** L’écart entre deux fenêtres posées côte à côte. */
+const ESPACE = 16;
 
 /**
  * @param {{ fenetres: HTMLElement, onglets: HTMLElement }} zones
@@ -159,9 +164,11 @@ export function creerFenetres({ fenetres: calque, onglets }) {
     el.tabIndex = -1;
     const rangee = ouvertes;
     ouvertes += 1;
-    el.style.setProperty("--l", `${def.largeur ?? 420}px`);
-    el.style.setProperty("--x", `${150 + rangee * DECALAGE}px`);
-    el.style.setProperty("--y", `${24 + rangee * DECALAGE}px`);
+    const largeurFenetre = def.largeur ?? 420;
+    el.style.setProperty("--l", `${largeurFenetre}px`);
+    const { x, y } = emplacement(largeurFenetre, rangee);
+    el.style.setProperty("--x", `${x}px`);
+    el.style.setProperty("--y", `${y}px`);
     el.innerHTML =
       `<header class="fenetre__titre"><h2 class="fenetre__nom" id="titre-${echapper(def.id)}">${echapper(def.titre)}</h2>` +
       `<div class="fenetre__boutons">` +
@@ -189,6 +196,33 @@ export function creerFenetres({ fenetres: calque, onglets }) {
     }
     activer(def.id);
     el.focus({ preventScroll: true });
+  }
+
+  /**
+   * Où poser une nouvelle fenêtre, sur grand écran. Les fenêtres se rangent
+   * en colonnes alignées en haut : la nouvelle se pose à droite de la
+   * dernière colonne s’il y a la place, sinon dans la colonne la plus à
+   * droite où elle tient, par-dessus la fenêtre qui s’y trouve. Jamais
+   * d’escalier, sauf sur un bureau trop étroit pour deux colonnes.
+   * @param {number} largeurFenetre
+   * @param {number} rangee  Le nombre de fenêtres déjà créées.
+   * @returns {{ x: number, y: number }}
+   */
+  function emplacement(largeurFenetre, rangee) {
+    const visibles = [...toutes.values()].filter((w) => w.etat === "ouverte");
+    if (grand.matches && visibles.length > 0) {
+      const limite = calque.clientWidth - ESPACE;
+      const colonnes = [...new Set(visibles.map((w) => Number.parseFloat(w.el.style.getPropertyValue("--x"))))].sort(
+        (a, b) => a - b
+      );
+      const droite = Math.max(
+        ...visibles.map((w) => Number.parseFloat(w.el.style.getPropertyValue("--x")) + w.el.offsetWidth)
+      );
+      if (droite + ESPACE + largeurFenetre <= limite) return { x: droite + ESPACE, y: HAUT };
+      const colonne = colonnes.reverse().find((x) => x > GAUCHE && x + largeurFenetre <= limite);
+      if (colonne !== undefined) return { x: colonne, y: HAUT };
+    }
+    return { x: GAUCHE + rangee * DECALAGE, y: HAUT + rangee * DECALAGE };
   }
 
   /**

@@ -8,17 +8,23 @@
    - une case plus bas attend, invisible (.a-attente), et entre quand on y
      arrive en faisant défiler.
 
-   Les pages remplissent leur contenu après coup (programme chargé, onglets) :
+   Les pages remplissent leur contenu après coup (programme chargé, filtres) :
    on regarde donc ce qui s’ajoute à la page. Rien de tout cela si le
    visiteur a demandé moins de mouvement. */
 
 /** Ce qui entre en cascade : les cases des tableaux, jamais le mur ni le bureau. */
 const CIBLES = [
-  ".onglets",
+  ".rubrique",
   ".carreau",
+  ".film",
+  ".films__agenda",
+  ".filtres",
+  ".jours",
+  ".semaine__jour",
+  ".jour-titre",
   ".info",
-  ".rdv__jour",
-  ".rdv",
+  ".rdvs > li",
+  ".jour-nav",
   ".detail > *",
   ".photos__case",
   ".fiche",
