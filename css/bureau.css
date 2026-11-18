@@ -809,15 +809,16 @@
 }
 
 /* ---------- La barre des tâches : une rangée de cases, comme le menu ---------- */
+/* Le vide entre les onglets et l'horloge reste blanc : seuls les traits
+   séparent les cases, jamais un aplat noir. */
 .barre {
   position: relative;
   z-index: 20;
   display: flex;
-  gap: var(--trait);
   min-height: var(--os-barre);
   padding-bottom: env(safe-area-inset-bottom);
   color: var(--os-encre);
-  background: var(--os-ligne);
+  background: var(--os-fond);
   border-top: var(--trait) solid var(--os-ligne);
 }
 
@@ -844,6 +845,7 @@
 .barre__start {
   flex: none;
   font-weight: var(--graisse-nom);
+  border-right: var(--trait) solid var(--os-ligne);
 }
 
 .barre__start[aria-expanded="true"] {
@@ -854,11 +856,9 @@
 .barre__onglets {
   display: flex;
   flex: 1;
-  gap: var(--trait);
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
-  background: var(--os-ligne);
 }
 
 .barre__onglets::-webkit-scrollbar {
@@ -870,6 +870,7 @@
   min-width: 0;
   max-width: 12rem;
   white-space: nowrap;
+  border-right: var(--trait) solid var(--os-ligne);
 }
 
 .barre__onglet[hidden] {
@@ -903,6 +904,7 @@
   display: flex;
   flex: none;
   align-items: center;
+  border-left: var(--trait) solid var(--os-ligne);
   padding: 0 var(--espace-3);
   font-size: 0.75rem;
   font-weight: var(--graisse-nom);

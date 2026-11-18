@@ -51,6 +51,21 @@ export function jourLongMajuscule(iso) {
   return texte.charAt(0).toUpperCase() + texte.slice(1);
 }
 
+const JOURS_COURTS = ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."];
+const MOIS_COURTS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+
+/**
+ * « Mer. 11 nov. », pour une ligne courte (carte de film sur téléphone).
+ * Insécables entre les mots : la date ne se coupe pas.
+ * @param {string} iso
+ * @returns {string}
+ */
+export function jourCourt(iso) {
+  const d = lireDate(iso);
+  const er = d.getDate() === 1 ? "er" : "";
+  return `${JOURS_COURTS[d.getDay()]}\u00a0${d.getDate()}${er}\u00a0${MOIS_COURTS[d.getMonth()]}`;
+}
+
 /**
  * « 19 h », « 21 h 30 »
  * @param {string} heure HH:MM

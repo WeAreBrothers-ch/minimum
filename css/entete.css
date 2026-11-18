@@ -49,26 +49,49 @@
   cursor: pointer;
 }
 
-.menu__barres,
-.menu__barres::before {
+/* Deux barres inégales, qui se croisent quand le menu est ouvert. */
+.menu__barres {
   position: absolute;
+  top: 50%;
   left: 50%;
+  width: 1.5rem;
+  height: 0.875rem;
+  transform: translate(-50%, -50%);
+}
+
+.menu__barres::before,
+.menu__barres::after {
+  content: "";
+  position: absolute;
+  right: 0;
   height: var(--trait);
   background: currentColor;
-  transform: translateX(-50%);
-}
-
-.menu__barres {
-  top: calc(50% - 0.375rem);
-  width: 1.5rem;
+  transition: transform var(--duree-menu) var(--ease-out), width var(--duree-menu) var(--ease-out);
 }
 
 .menu__barres::before {
-  content: "";
-  top: 0.75rem;
-  width: 0.875rem;
-  left: 0.3125rem;
-  transform: none;
+  top: 0;
+  width: 100%;
+}
+
+.menu__barres::after {
+  bottom: 0;
+  width: 60%;
+}
+
+.menu[data-ouvert="true"] .menu__barres::before,
+.menu[data-ouvert="true"] .menu__barres::after {
+  top: calc(50% - var(--trait) / 2);
+  bottom: auto;
+  width: 100%;
+}
+
+.menu[data-ouvert="true"] .menu__barres::before {
+  transform: rotate(45deg);
+}
+
+.menu[data-ouvert="true"] .menu__barres::after {
+  transform: rotate(-45deg);
 }
 
 .menu[data-ouvert="true"] .menu__ouvrir {
@@ -142,6 +165,35 @@
   color: var(--blanc);
 }
 
+/* Au clavier : la case se remplit, comme au survol, plutôt qu'un cadre
+   dessiné à l'intérieur. */
+.menu__lien:focus-visible {
+  outline: none;
+  color: var(--pastille-texte);
+  background: var(--remplissage, var(--noir));
+}
+
+.menu__lien:not([class*="--"]):focus-visible {
+  color: var(--blanc);
+}
+
+/* Le pied du menu de téléphone : l'adresse et le téléphone, en bas de l'écran. */
+.menu__pied {
+  display: grid;
+  gap: var(--espace-1);
+  margin-top: auto;
+  padding: var(--espace-4) var(--espace-3) calc(var(--espace-4) + env(safe-area-inset-bottom));
+  font-size: var(--taille-petite);
+  border-top: var(--trait) solid var(--encre);
+}
+
+.menu__pied a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--cible);
+  font-weight: var(--graisse-nom);
+}
+
 @media (hover: hover) and (pointer: fine) {
   .menu__lien:hover {
     color: var(--pastille-texte);
@@ -198,5 +250,9 @@
 
   .menu__liste .menu__lien::after {
     content: none;
+  }
+
+  .menu__pied {
+    display: none;
   }
 }

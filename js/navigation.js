@@ -38,6 +38,39 @@ function estInterne(lien, e) {
 }
 
 /**
+ * Charge les feuilles de style de la page suivante qui manquent à celle-ci,
+ * et attend qu’elles soient prêtes : sans cela, une page qui a sa propre
+ * feuille (Infos, par exemple) s’afficherait sans style quand on y arrive
+ * depuis une autre page du site.
+ * @param {Document} suivante
+ * @param {URL} url  L’adresse de la page suivante, pour lire ses liens relatifs.
+ * @returns {Promise<void>}
+ */
+async function chargerStyles(suivante, url) {
+  const presentes = new Set(
+    [...document.querySelectorAll('link[rel="stylesheet"]')].map((l) => (l instanceof HTMLLinkElement ? l.href : ""))
+  );
+  /** @type {Promise<void>[]} */
+  const attentes = [];
+  for (const lien of suivante.querySelectorAll('link[rel="stylesheet"]')) {
+    const href = new URL(lien.getAttribute("href") ?? "", url).href;
+    if (presentes.has(href)) continue;
+    const neuf = document.createElement("link");
+    neuf.rel = "stylesheet";
+    neuf.href = href;
+    attentes.push(
+      new Promise((fin) => {
+        neuf.addEventListener("load", () => fin(), { once: true });
+        neuf.addEventListener("error", () => fin(), { once: true });
+      })
+    );
+    document.head.append(neuf);
+    presentes.add(href);
+  }
+  await Promise.all(attentes);
+}
+
+/**
  * Remplace l’en-tête, le contenu et les réglages de page.
  * @param {Document} suivante
  * @returns {string} La nouvelle page.
@@ -94,6 +127,7 @@ async function charger(url, ajouterAHistorique, auChangement) {
     const reponse = await fetch(url, { headers: { Accept: "text/html" } });
     if (!reponse.ok) throw new Error(`La page a répondu ${reponse.status}`);
     const suivante = new DOMParser().parseFromString(await reponse.text(), "text/html");
+    await chargerStyles(suivante, url);
     if (ajouterAHistorique) history.pushState(null, "", url);
     const page = remplacer(suivante);
     cheminAffiche = url.pathname + url.search;

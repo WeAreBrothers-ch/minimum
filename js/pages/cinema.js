@@ -5,7 +5,7 @@
    grille quand il y a des films annoncés. */
 
 import { chargerProgramme, filmsALAffiche, filmsAnnonces, seancesAVenir } from "../donnees.js";
-import { duree, echapper, heureCourte, jourLong, jourLongMajuscule } from "../format.js";
+import { duree, echapper, heureCourte, jourCourt, jourLong } from "../format.js";
 import { afficheHTML, afficherErreur, allerALAncre, zoneAremplir } from "./commun.js";
 import { lienFilm } from "./film-commun.js";
 
@@ -23,7 +23,7 @@ function faitsHTML(film, prochaine) {
   const faits = [film.genre, duree(film.duree), film.version, film.age]
     .filter(Boolean)
     .map((f) => f.replace(/ /g, "\u00a0"))
-    .join(" / ");
+    .join("\u00a0/ ");
   return `<p class="carreau__faits">${echapper(faits)}${prochaine ? `<br />${echapper(prochaine)}` : ""}</p>`;
 }
 
@@ -38,12 +38,12 @@ function carreauHTML(film, programme, racine) {
   const premiere = seances[0];
   const lien = echapper(lienFilm(racine, film.id));
   const prochaine = premiere
-    ? `${jourLongMajuscule(premiere.date)}, ${heureCourte(premiere.heure).replace(" ", "\u00a0")}`
+    ? `${jourCourt(premiere.date)}, ${heureCourte(premiere.heure).replace(" ", "\u00a0")}`
     : film.sortie
       ? `Sortie le ${jourLong(film.sortie)}`
       : "";
   const action = seances.length
-    ? `<a class="carreau__action carreau__action--argent" href="${echapper(lienFilm(racine, film.id))}#billets">Séances et billets</a>`
+    ? `<a class="carreau__action carreau__action--argent" href="${echapper(lienFilm(racine, film.id))}#billets">Billets</a>`
     : `<a class="carreau__action" href="${lien}">Voir la fiche</a>`;
   return (
     `<li class="carreau" id="film-${echapper(film.id)}">` +

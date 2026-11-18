@@ -161,6 +161,16 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
 - **Les cartes de film et de soirée** s'alignent d'une carte à l'autre
   (sous-grille) ; un fait (« 16/16 ans ») ne se coupe jamais.
 - **Une émission sans visuel** devient une affiche typographique bleue sur le mur.
+- **Films et soirées sur téléphone** : une carte par ligne, l'affiche à gauche
+  dans sa vraie proportion, le titre, les faits (date courte « Mer. 11 nov. ») et
+  les cases d'action à droite (« Billets → », sur une ligne). La grille d'affiches
+  revient à partir de 40rem.
+- **Menu de téléphone** : les deux barres deviennent une croix ; une rubrique
+  prend sa couleur au clavier au lieu d'un cadre ; l'adresse et le téléphone en
+  bas. **Barre des tâches de la radio** : le vide reste blanc, plus d'aplat noir.
+- **Navigation sans rechargement** : la page suivante apporte ses feuilles de
+  style (`js/navigation.js`), sans quoi une page avec sa propre feuille (Infos)
+  s'affichait sans style quand on y arrivait depuis une autre page.
 - **La page Infos est un tableau à deux colonnes**, comme la fiche d'un film
   (`css/infos.css`) : l'intitulé à gauche, ses cases à droite. Une ligne a toujours
   la même forme, un terme ou un prix dans une colonne fixe puis sa valeur juste à
