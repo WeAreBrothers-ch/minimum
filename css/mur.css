@@ -80,7 +80,7 @@
 }
 
 .moitie__fleche {
-  flex: none;
+  margin: 0;
   font-size: var(--taille-texte);
 }
 

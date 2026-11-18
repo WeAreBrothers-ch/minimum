@@ -153,31 +153,10 @@
       background-size: 100% 100%;
     }
 
-    /* Les flèches avancent d'un pas. */
-    a.carreau__action::after,
-    .info__action span,
-    .detail__fleche {
-      display: inline-block;
-      transition: translate 260ms var(--ease-entree);
-    }
-
-    .moitie__fleche {
-      display: inline-block;
-      transition: translate 260ms var(--ease-entree);
-    }
-
-    .moitie__tete:hover .moitie__fleche {
-      translate: 0.3125rem 0;
-    }
-
-    .carreau:hover a.carreau__action::after,
-    a.carreau__action:hover::after,
-    .info__action:hover span {
-      translate: 0.3125rem 0;
-    }
-
-    .detail__acheter:hover .detail__fleche {
-      animation: 900ms var(--ease-out) infinite fleche-descend;
+    /* Les flèches traversent leur case au survol : elles sortent d'un côté
+       et reviennent de l'autre (↗ en diagonale, ← par la gauche). */
+    :is(a, button):hover .fleche::before {
+      animation: 560ms var(--ease-entree) fleche-traverse;
     }
   }
 
@@ -289,9 +268,17 @@
   }
 }
 
-@keyframes fleche-descend {
-  50% {
-    translate: 0 0.25em;
+@keyframes fleche-traverse {
+  45% {
+    translate: var(--sortie-x) var(--sortie-y);
+  }
+
+  45.01% {
+    translate: calc(var(--sortie-x) * -1) calc(var(--sortie-y) * -1);
+  }
+
+  100% {
+    translate: 0 0;
   }
 }
 

@@ -99,7 +99,6 @@ function optionsAchat(soiree) {
     ],
     choisi: soiree.id,
     tarifs: soiree.tarifs,
-    notes: [],
   };
 }
 

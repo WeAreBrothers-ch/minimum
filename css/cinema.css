@@ -142,6 +142,11 @@
     color 200ms var(--ease-out);
 }
 
+/* La flèche passe à la ligne sous « séances » : sans retrait. */
+.films__agenda .fleche {
+  margin: 0;
+}
+
 .films__agenda:focus-visible {
   outline: none;
   color: var(--blanc);

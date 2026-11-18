@@ -354,11 +354,6 @@
     letter-spacing: var(--interlettre-capitales);
     white-space: nowrap;
   }
-
-  .rdv__action::after {
-    content: "→";
-    font-weight: var(--graisse-texte);
-  }
 }
 
 @media (min-width: 56rem) {

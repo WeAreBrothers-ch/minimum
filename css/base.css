@@ -72,3 +72,63 @@ main:focus {
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
 }
+
+/* ---------- Les flèches ---------- */
+/* <span class="fleche" aria-hidden="true"></span> : une case à la taille du
+   texte, qui cache ce qui dépasse ; le dessin est dedans (::before), pour
+   pouvoir traverser la case au survol (animations.css). */
+.fleche {
+  --sortie-x: 130%;
+  --sortie-y: 0%;
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 1.2em;
+  height: 0.9em;
+  margin-inline-start: 0.4em;
+  overflow: hidden;
+  vertical-align: -0.1em;
+}
+
+.fleche::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  -webkit-mask: var(--fleche) center / contain no-repeat;
+  mask: var(--fleche) center / contain no-repeat;
+}
+
+/* ← : la même, retournée ; elle sort et revient par la gauche. */
+.fleche--retour {
+  --sortie-x: -130%;
+  margin-inline: 0 0.4em;
+}
+
+.fleche--retour::before {
+  rotate: 180deg;
+}
+
+/* ↗ : un lien qui sort du site ; elle sort et revient en diagonale. */
+.fleche--sortie {
+  --sortie-x: 120%;
+  --sortie-y: -120%;
+  width: 0.85em;
+  height: 0.85em;
+}
+
+.fleche--sortie::before {
+  -webkit-mask-image: var(--fleche-sortie);
+  mask-image: var(--fleche-sortie);
+}
+
+/* La même flèche, quand elle ne peut être qu'un ::after (menu de téléphone). */
+.fleche-apres::after {
+  content: "";
+  flex: none;
+  width: 1.2em;
+  height: 0.9em;
+  background: currentColor;
+  -webkit-mask: var(--fleche) center / contain no-repeat;
+  mask: var(--fleche) center / contain no-repeat;
+}

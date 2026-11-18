@@ -144,9 +144,15 @@
   letter-spacing: var(--interlettre-capitales);
 }
 
+/* La flèche dessinée du site (base.css), en ::after. */
 .menu__liste .menu__lien::after {
-  content: "→";
-  font-weight: var(--graisse-texte);
+  content: "";
+  flex: none;
+  width: 0.8em;
+  height: 0.6em;
+  background: currentColor;
+  -webkit-mask: var(--fleche) center / contain no-repeat;
+  mask: var(--fleche) center / contain no-repeat;
 }
 
 .menu__lien--cinema { --remplissage: var(--pastille-cinema); }

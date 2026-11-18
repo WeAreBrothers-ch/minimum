@@ -100,7 +100,7 @@ function ligneHTML(r, racine, avecDate) {
     `<span class="rdv__heure">${avecDate ? `<span class="rdv__date">${echapper(jourCourt(r.date).replace(/\u00a0/g, " "))}</span>` : ""}${heure}</span>` +
     `<span class="rdv__texte"><span class="rdv__monde">${NOMS[r.monde]}</span>` +
     `<span class="rdv__titre">${echapper(r.titre)}</span><span class="rdv__sous">${echapper(r.sous)}</span></span>` +
-    `<span class="rdv__action">${echapper(r.action)}</span></a></li>`
+    `<span class="rdv__action">${echapper(r.action)} <span class="fleche" aria-hidden="true"></span></span></a></li>`
   );
 }
 
@@ -178,8 +178,8 @@ function jourHTML(jours, jour, liste, aujourdhui, racine) {
       ? `<ul class="rdvs">${duJour.map((r) => ligneHTML(r, racine, false)).join("")}</ul>`
       : `<p class="agenda__vide">Rien ce jour-là. Le jour suivant, peut-être ?</p>`) +
     `<div class="jour-nav">` +
-    (avant ? `<button type="button" class="jour-nav__pas" data-jour="${avant}">← ${echapper(nom(avant))}</button>` : "") +
-    (apres ? `<button type="button" class="jour-nav__pas jour-nav__pas--apres" data-jour="${apres}">${echapper(nom(apres))} →</button>` : "") +
+    (avant ? `<button type="button" class="jour-nav__pas" data-jour="${avant}"><span class="fleche fleche--retour" aria-hidden="true"></span> ${echapper(nom(avant))}</button>` : "") +
+    (apres ? `<button type="button" class="jour-nav__pas jour-nav__pas--apres" data-jour="${apres}">${echapper(nom(apres))} <span class="fleche" aria-hidden="true"></span></button>` : "") +
     `</div></section>`
   );
 }

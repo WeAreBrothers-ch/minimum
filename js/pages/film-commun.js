@@ -62,7 +62,7 @@ export function liensHTML(liens) {
     .map(
       (l) =>
         `<li><a href="${echapper(l.url)}" target="_blank" rel="noopener">${echapper(l.genre)}, ${echapper(l.source)}` +
-        ` <span aria-hidden="true">↗</span><span class="visuellement-cache"> (nouvel onglet)</span></a></li>`
+        ` <span class="fleche fleche--sortie" aria-hidden="true"></span><span class="visuellement-cache"> (nouvel onglet)</span></a></li>`
     )
     .join("")}</ul>`;
 }

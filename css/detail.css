@@ -7,7 +7,6 @@
 .detail__retour a {
   display: flex;
   align-items: center;
-  gap: var(--espace-2);
   min-height: var(--cible);
   padding-inline: var(--marge-case);
   font-size: 0.75rem;
@@ -167,15 +166,6 @@
 }
 
 /* ---------- Les séances : une case par séance ---------- */
-/* Les séances en haut ; les infos pratiques en bas de la case. */
-.detail__seances {
-  display: flex;
-  flex-direction: column;
-}
-
-.detail__notes {
-  margin-top: auto;
-}
 
 .detail__case-titre {
   padding: var(--espace-2) var(--marge-case);
@@ -258,13 +248,6 @@ button.seance:focus-visible {
   outline: none;
   color: var(--pastille-texte);
   background: var(--pastille-argent);
-}
-
-.detail__notes {
-  display: grid;
-  gap: var(--espace-1);
-  padding: calc(var(--espace-3) + var(--trait)) var(--marge-case) var(--espace-3);
-  font-size: var(--taille-petite);
 }
 
 .detail__vide {
@@ -399,11 +382,6 @@ button.seance:focus-visible {
   .detail__seances .seance__jour {
     font-size: var(--taille-carte);
     line-height: var(--interligne-titre);
-  }
-
-  .detail__notes {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--espace-5);
   }
 
   /* Les repères ont la hauteur de l'affiche : un texte à leur mesure. */

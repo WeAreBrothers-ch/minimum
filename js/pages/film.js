@@ -32,12 +32,6 @@ import { liensHTML, photosHTML } from "./film-commun.js";
 /** @typedef {import("../types.js").Programme} Programme */
 /** @typedef {import("../billetterie/panneau-html.js").OptionsPanneau} OptionsPanneau */
 
-/** Repris de la page Infos et du programme actuel de Minimum. */
-const NOTES_CINEMA = [
-  "Billets aussi à la buvette, 15 minutes avant la séance, en espèces ou par TWINT.",
-  "Les tarifs réduits se justifient à l’entrée. AG culturel : CHF 0.–, à la buvette.",
-];
-
 const ETATS = /** @type {const} */ ({ complet: "Complet", annule: "Annulée" });
 
 /**
@@ -144,7 +138,6 @@ function optionsAchat(film, seances, programme) {
     })),
     choisi: new URLSearchParams(location.search).get("seance"),
     tarifs: programme.tarifsCinema,
-    notes: NOTES_CINEMA,
   };
 }
 

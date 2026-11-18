@@ -26,9 +26,9 @@ function carreauHTML(soiree, racine, prioritaire) {
     `<div class="carreau__texte"><h2 class="carreau__titre"><a href="${lien}">${echapper(soiree.titre)}</a></h2></div>` +
     `<p class="carreau__faits"><span class="carreau__infos">${echapper(jourLongMajuscule(soiree.date))}</span>` +
     `<span class="carreau__quand">${heureCourte(soiree.heure)}${fin}</span></p>` +
-    `<a class="carreau__action carreau__action--nuit" href="${lien}">Line-up</a>` +
+    `<a class="carreau__action carreau__action--nuit" href="${lien}">Line-up <span class="fleche" aria-hidden="true"></span></a>` +
     (soiree.tarifs.length
-      ? `<a class="carreau__action carreau__action--argent" href="${lien}#billets">Billets</a>`
+      ? `<a class="carreau__action carreau__action--argent" href="${lien}#billets">Billets <span class="fleche" aria-hidden="true"></span></a>`
       : `<p class="carreau__action">Billets à l’entrée</p>`) +
     `</li>`
   );

@@ -327,7 +327,8 @@ Pas de grand blanc : la rangée du milieu a la hauteur exacte de l'affiche ;
 les repères (une ligne chacun) s'étirent à côté, et dans la case du texte la
 bande-annonce prend toute la place que le synopsis et les liens laissent (une
 grande case noire, un triangle au centre). Les séances viennent dessous, une
-case chacune sur les quarts de la page, puis les infos pratiques.
+case chacune sur les quarts de la page. Pas de bloc d'infos pratiques sous
+les séances (retiré le 18.11.2026) : elles sont sur la page Infos.
 
 ### La caisse (revu le 18.11.2026 : « plus simple et plus clean, un pop-up »)
 Sur la fiche, les séances sont des cases (le jour, l'heure, « Billets → ») ;
@@ -338,6 +339,16 @@ ordinateur. Dedans, des cases d'un bord à l'autre : ce qu'on achète, la séanc
 « Payer CHF … », qui porte le total (pas de ligne Total à part). La tête et le
 bouton Payer restent en vue quand la caisse défile. Toujours blanche, même
 sur la fiche d'une soirée (fond noir).
+
+### Les flèches (revu le 18.11.2026 : « des plus trendy »)
+Plus de caractère « → » de la police (fin, pâle à côté d'Archivo 900) : deux
+flèches dessinées en SVG (`--fleche`, `--fleche-sortie` dans `jetons.css`),
+posées en masque pour prendre la couleur du texte (`.fleche` dans `base.css`).
+- **→** pour avancer, **←** (la même retournée) pour revenir : une tige aussi
+  épaisse qu'une lettre grasse, une pointe à angle droit, sans arrondi.
+- **↗** pour un lien qui sort du site (presse, distributeur, plan).
+- **Au survol**, la flèche traverse sa case : elle sort d'un côté et revient
+  de l'autre (en diagonale pour ↗). Immobile avec « réduire les animations ».
 
 ### Signature
 La ligne de tirets du programme de 2009 (D2), tapée en vrais caractères.

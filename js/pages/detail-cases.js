@@ -37,7 +37,7 @@ export function caseBilletsHTML(options, sansVente) {
   }
   return (
     `<button type="button" class="detail__acheter" data-acheter="${echapper(premierChoix(options) ?? "")}">` +
-    `<span class="detail__acheter-titre">Billets <span class="detail__fleche" aria-hidden="true">→</span></span>` +
+    `<span class="detail__acheter-titre">Billets <span class="fleche" aria-hidden="true"></span></span>` +
     `<span class="detail__acheter-prix">${fourchette(options.tarifs)}</span></button>`
   );
 }
@@ -62,5 +62,5 @@ export function faitsHTML(lignes) {
  * @returns {string}
  */
 export function retourHTML(href, texte) {
-  return `<p class="detail__retour"><a href="${echapper(href)}"><span aria-hidden="true">←</span> ${echapper(texte)}</a></p>`;
+  return `<p class="detail__retour"><a href="${echapper(href)}"><span class="fleche fleche--retour" aria-hidden="true"></span>${echapper(texte)}</a></p>`;
 }

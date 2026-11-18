@@ -32,7 +32,6 @@ import { echapper, prix } from "../format.js";
  * @property {Choix[]} choix
  * @property {string | null} choisi   La séance demandée dans l’adresse, s’il y en a une.
  * @property {Tarif[]} tarifs
- * @property {string[]} notes         Phrases sous les séances (buvette, réductions…).
  */
 
 /**
@@ -72,7 +71,7 @@ function seanceHTML(choix, vente) {
   if (!vente) return `<li><p class="seance">${quand}</p></li>`;
   return (
     `<li><button type="button" class="seance" data-acheter="${echapper(choix.id)}" aria-label="${echapper(`Billets pour ${choix.jour}, ${choix.heure}`)}">` +
-    `${quand}<span class="seance__action">Billets <span aria-hidden="true">→</span></span></button></li>`
+    `${quand}<span class="seance__action">Billets <span class="fleche" aria-hidden="true"></span></span></button></li>`
   );
 }
 
@@ -88,12 +87,9 @@ export function seancesHTML(options, vide) {
   const liste = options.choix.length
     ? `<ul class="seances">${options.choix.map((c) => seanceHTML(c, vente)).join("")}</ul>`
     : `<p class="detail__vide">${echapper(vide)}</p>`;
-  const notes = options.notes.length && options.choix.length
-    ? `<div class="detail__notes">${options.notes.map((n) => `<p>${echapper(n)}</p>`).join("")}</div>`
-    : "";
   return (
     `<section class="detail__seances" id="billets" aria-labelledby="titre-seances">` +
-    `<h2 class="detail__case-titre" id="titre-seances">${titre}</h2>${liste}${notes}</section>`
+    `<h2 class="detail__case-titre" id="titre-seances">${titre}</h2>${liste}</section>`
   );
 }
 

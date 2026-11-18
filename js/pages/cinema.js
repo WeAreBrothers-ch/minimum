@@ -129,7 +129,7 @@ export function initCinema() {
             .join("") +
           `</div>` +
           `<div class="films">${liste.map((f, i) => filmHTML(f, programme, racine, i < 2)).join("")}` +
-          `<a class="films__agenda" href="${racine}agenda/"><span>Toutes les séances</span><span aria-hidden="true">→</span></a></div></div>` +
+          `<a class="films__agenda" href="${racine}agenda/"><span>Toutes les séances</span><span class="fleche" aria-hidden="true"></span></a></div></div>` +
           PRATIQUE;
       };
 

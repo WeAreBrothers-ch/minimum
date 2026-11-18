@@ -337,11 +337,6 @@ main [data-remplir]:empty {
   letter-spacing: var(--interlettre-capitales);
 }
 
-a.carreau__action::after {
-  content: "→";
-  font-weight: var(--graisse-texte);
-}
-
 /* Billets : la seule case de couleur, verte comme tout ce qui est de l'argent. */
 .carreau__action--argent {
   color: var(--pastille-texte);

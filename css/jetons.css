@@ -116,6 +116,14 @@
   /* L'anneau noir autour de la pastille de la page courante (menu). */
   --anneau: 2px;
   --anneau-ecart: 3px;
+
+  /* Les flèches du site, dessinées (pas un caractère de la police) : une
+     tige aussi épaisse qu'une lettre d'Archivo 900, une pointe à angle
+     droit, sans arrondi. Elles servent de masque : elles prennent la
+     couleur du texte. → pour avancer (et ←, la même retournée), ↗ pour un
+     lien qui sort du site. */
+  --fleche: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 18'%3E%3Cpath d='M0 9h20M13 2l7 7-7 7' fill='none' stroke='%23000' stroke-width='4'/%3E%3C/svg%3E");
+  --fleche-sortie: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 21L19 5M7 4h13v13' fill='none' stroke='%23000' stroke-width='4'/%3E%3C/svg%3E");
 }
 
 /* La nuit et le lecteur : surfaces inversées, pastilles vives. */
