@@ -346,7 +346,10 @@ flèches dessinées en SVG (`--fleche`, `--fleche-sortie` dans `jetons.css`),
 posées en masque pour prendre la couleur du texte (`.fleche` dans `base.css`).
 - **→** pour avancer, **←** (la même retournée) pour revenir : une tige aussi
   épaisse qu'une lettre grasse, une pointe à angle droit, sans arrondi.
-- **↗** pour un lien qui sort du site (presse, distributeur, plan).
+- **↗** pour un lien qui sort du site (presse, distributeur, plan). Sur la
+  fiche d'un film, ces liens sont des cases entières, sans soulignement : le
+  genre en capitales (DISTRIBUTION, PRESSE), la source, la flèche à droite ;
+  au survol, le jaune du cinéma.
 - **Au survol**, la flèche traverse sa case : elle sort d'un côté et revient
   de l'autre (en diagonale pour ↗). Immobile avec « réduire les animations ».
 

@@ -290,11 +290,46 @@ button.seance:focus-visible {
   border-top: var(--trait) solid var(--encre);
 }
 
-.detail__liens a {
-  display: flex;
+/* Un lien qui sort du site : une case entière. Le genre en capitales
+   grasses dans une colonne fixe (les sources s'alignent d'une ligne à
+   l'autre), la source, la flèche ↗ calée à droite. Pas de soulignement :
+   au survol, la case prend le jaune du cinéma, comme les films de la page
+   Cinéma (en noir, elle se confondrait avec la bande-annonce au-dessus). */
+.lien-sortie {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr) auto;
   align-items: center;
-  min-height: var(--cible);
-  padding: var(--espace-1) var(--marge-case);
+  column-gap: var(--espace-3);
+  min-height: 3.5rem;
+  padding: var(--espace-2) var(--marge-case);
+  text-decoration: none;
+  color: var(--encre);
+  transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out);
+}
+
+.page .lien-sortie:hover {
+  text-decoration: none;
+}
+
+.lien-sortie__genre {
+  font-size: 0.75rem;
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.lien-sortie__source {
+  font-weight: var(--graisse-moyenne);
+}
+
+.lien-sortie .fleche {
+  margin: 0;
+}
+
+.lien-sortie:focus-visible {
+  outline: none;
+  color: var(--pastille-texte);
+  background: var(--pastille-cinema);
 }
 
 /* Le dernier lien est fermé par un trait, sans le doubler (voir .seances). */
@@ -306,6 +341,11 @@ button.seance:focus-visible {
   .detail__retour a:hover {
     color: var(--fond);
     background: var(--encre);
+  }
+
+  .lien-sortie:hover {
+    color: var(--pastille-texte);
+    background: var(--pastille-cinema);
   }
 
   .detail__acheter:not(.detail__acheter--ferme):hover {

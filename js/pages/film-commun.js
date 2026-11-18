@@ -51,8 +51,10 @@ export function reperesHTML(film, classe = "") {
 }
 
 /**
- * Les liens vers la presse ou le distributeur. Ils s’ouvrent à côté,
- * pour que la radio continue sur Minimum.
+ * Les liens vers la presse ou le distributeur : une case chacun, comme
+ * « Ouvrir le plan » sur la page Infos. Le genre en capitales (Presse,
+ * Distribution), la source, la flèche ↗ calée à droite. Ils s’ouvrent à
+ * côté, pour que la radio continue sur Minimum.
  * @param {Lien[]} liens
  * @returns {string}
  */
@@ -61,8 +63,10 @@ export function liensHTML(liens) {
   return `<ul class="detail__liens">${liens
     .map(
       (l) =>
-        `<li><a href="${echapper(l.url)}" target="_blank" rel="noopener">${echapper(l.genre)}, ${echapper(l.source)}` +
-        ` <span class="fleche fleche--sortie" aria-hidden="true"></span><span class="visuellement-cache"> (nouvel onglet)</span></a></li>`
+        `<li><a class="lien-sortie" href="${echapper(l.url)}" target="_blank" rel="noopener">` +
+        `<span class="lien-sortie__genre">${echapper(l.genre)}</span>` +
+        `<span class="lien-sortie__source">${echapper(l.source)}</span>` +
+        `<span class="fleche fleche--sortie" aria-hidden="true"></span><span class="visuellement-cache"> (nouvel onglet)</span></a></li>`
     )
     .join("")}</ul>`;
 }
