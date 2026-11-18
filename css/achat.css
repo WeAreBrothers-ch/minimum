@@ -70,6 +70,12 @@ html:has(.caisse[open]) {
   margin-bottom: calc(var(--trait) * -1);
 }
 
+/* Le titre reçoit le focus à l'ouverture (pour le clavier et les lecteurs
+   d'écran) : sans cadre, rien ne s'y dessine. */
+.caisse__titre:focus {
+  outline: none;
+}
+
 .caisse__titre {
   display: flex;
   flex: 1;
@@ -98,8 +104,8 @@ html:has(.caisse[open]) {
   cursor: pointer;
 }
 
-/* La croix reçoit le focus à l'ouverture : un cadre, pas un aplat noir,
-   pour qu'elle ne passe pas pour une case choisie. */
+/* Au clavier : un cadre, pas un aplat noir, pour qu'elle ne passe pas
+   pour une case choisie. */
 .caisse__fermer:focus-visible {
   outline: var(--trait) solid var(--encre);
   outline-offset: calc(var(--trait) * -4);
@@ -147,17 +153,10 @@ html:has(.caisse[open]) {
 }
 
 .caisse__legende {
-  float: left;
-  width: 100%;
-  padding: 0;
   font-size: 0.75rem;
   font-weight: var(--graisse-nom);
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
-}
-
-.caisse__legende + * {
-  clear: both;
 }
 
 .caisse__unique {

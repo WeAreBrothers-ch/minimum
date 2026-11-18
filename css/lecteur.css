@@ -87,6 +87,14 @@
   }
 }
 
+/* Petit téléphone (320 px) : la case se resserre, « Radio » y tient en entier. */
+@media (max-width: 23rem) {
+  .lecteur__bouton {
+    gap: 0.5rem;
+    padding-inline: 0.625rem;
+  }
+}
+
 /* Ordinateur : deux huitièmes de la barre (entete.css). */
 @media (min-width: 56rem) {
   .lecteur__bouton {

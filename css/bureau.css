@@ -211,14 +211,12 @@
   align-items: center;
   min-width: 0;
   min-height: var(--cible);
-  padding: 0 var(--espace-3);
-  overflow: hidden;
+  padding: var(--espace-1) var(--espace-3);
   font-size: 0.8125rem;
   font-weight: var(--graisse-nom);
-  text-overflow: ellipsis;
+  line-height: 1.15;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
-  white-space: nowrap;
   color: var(--os-encre);
   background: var(--os-fond);
 }
@@ -464,7 +462,7 @@
   line-height: var(--interligne-titre);
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .lcd__sous {
@@ -651,10 +649,9 @@
   font-size: var(--taille-petite);
 }
 
+/* Le titre et la date passent à la ligne s'il le faut : jamais de « … ». */
 .playlist__texte span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: break-word;
 }
 
 /* ---------- Photos ---------- */

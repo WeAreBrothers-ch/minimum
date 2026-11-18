@@ -206,10 +206,8 @@
 }
 
 .rdv__sous {
-  overflow: hidden;
   font-size: var(--taille-petite);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.3;
 }
 
 /* L'action et sa flèche : seulement là où il y a la place. */

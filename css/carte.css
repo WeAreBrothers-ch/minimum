@@ -47,8 +47,7 @@
   line-height: var(--interligne-titre);
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
-  overflow-wrap: anywhere;
-  hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 .carte__ligne {
@@ -91,8 +90,11 @@
 
 /* Une émission sans visuel : une affiche typographique bleue, la couleur de
    la radio, plutôt qu'une case vide. Le titre grandit pour tenir l'affiche. */
+/* Sa taille suit la largeur de la colonne (9,5 % de celle-ci) : un mot de
+   neuf lettres, « RÉÉCOUTER », tient sur une ligne, sans coupure, du plus
+   petit téléphone au grand écran. */
 .carte--typo .carte__titre {
-  font-size: clamp(1.375rem, 1rem + 1.6vw, 2.25rem);
+  font-size: clamp(0.9375rem, 9.5cqi, 2.25rem);
 }
 
 .carte--typo.carte--emission {

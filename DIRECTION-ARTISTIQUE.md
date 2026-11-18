@@ -271,6 +271,13 @@ police à chasse fixe) : elle est habillée avec le design du site (demande d'El
 - Zones tactiles de 44 px au moins (`--cible`) pour tout lien ou bouton : liens des
   fiches, séances, agenda, coordonnées, boutons des fenêtres du bureau radio.
 - Vérifié sans débordement horizontal à 320, 360 et 390 px sur toutes les pages.
+- **Vérifié aussi sur le moteur de Safari** (WebKit, iPhone SE et iPhone 15) :
+  chaque page et chaque état (menu ouvert, fenêtres de la radio, caisse). Pas de
+  `fieldset` ni de `legend` (Safari en dessine mal le fond) : des groupes nommés.
+- **Aucun texte coupé** : ni « … », ni mot coupé en deux lignes. Un texte trop
+  long passe à la ligne entre deux mots, ou se cache s'il n'est qu'un
+  complément (le compte des murs de l'accueil, sous 56rem). Contrôlé
+  automatiquement, mot par mot, sur les deux moteurs.
 
 ### Mouvement (revu le 18.11.2026 : Eliott demande des animations)
 Des entrées franches et courtes qui suivent le dessin du site, dans

@@ -121,7 +121,7 @@
   display: inline-flex;
   align-items: center;
   max-width: 100%;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   min-height: var(--cible);
   margin-block: calc((var(--cible) - 1lh) / -2);
 }

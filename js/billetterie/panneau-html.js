@@ -99,7 +99,9 @@ export function seancesHTML(options, vide) {
 
 /**
  * Le choix de la séance, dans la caisse : une case par date, la choisie
- * pleine. Une seule date : elle s’affiche, sans choix à faire.
+ * pleine. Une seule date : elle s’affiche, sans choix à faire. Des groupes
+ * nommés plutôt que fieldset et legend, que Safari dessine mal (le fond du
+ * groupe y commence au milieu de sa légende).
  * @param {OptionsPanneau} options
  * @returns {string}
  */
@@ -125,8 +127,9 @@ function datesHTML(options) {
     })
     .join("");
   return (
-    `<fieldset class="caisse__bloc caisse__bloc--cases"><legend class="caisse__legende">${legende}</legend>` +
-    `<div class="caisse__dates">${cases}</div></fieldset>`
+    `<div class="caisse__bloc caisse__bloc--cases" role="radiogroup" aria-labelledby="caisse-seance">` +
+    `<p class="caisse__legende" id="caisse-seance">${legende}</p>` +
+    `<div class="caisse__dates">${cases}</div></div>`
   );
 }
 
@@ -159,13 +162,14 @@ export function caisseHTML(options) {
   return (
     `<dialog class="caisse surface-ecran" aria-labelledby="caisse-titre">` +
     `<form class="achat" novalidate data-genre="${options.genre}">` +
-    `<div class="caisse__tete"><h2 class="caisse__titre" id="caisse-titre">Billets</h2>` +
+    `<div class="caisse__tete"><h2 class="caisse__titre" id="caisse-titre" tabindex="-1" autofocus>Billets</h2>` +
     `<button type="button" class="caisse__fermer" data-fermer aria-label="Fermer"><span class="caisse__croix" aria-hidden="true"></span></button></div>` +
     `<p class="caisse__quoi">${echapper(options.titre)}</p>` +
     datesHTML(options) +
-    `<fieldset class="caisse__bloc caisse__bloc--cases" aria-describedby="achat-erreur-billets"><legend class="caisse__legende">Billets</legend>` +
+    `<div class="caisse__bloc caisse__bloc--cases" role="group" aria-labelledby="caisse-billets" aria-describedby="achat-erreur-billets">` +
+    `<p class="caisse__legende" id="caisse-billets">Billets</p>` +
     `<div class="caisse__tarifs">${options.tarifs.map(tarifHTML).join("")}</div>` +
-    `<p class="caisse__erreur message-probleme" id="achat-erreur-billets" data-erreur="billets" hidden></p></fieldset>` +
+    `<p class="caisse__erreur message-probleme" id="achat-erreur-billets" data-erreur="billets" hidden></p></div>` +
     `<div class="caisse__bloc"><label class="caisse__legende" for="achat-email">E-mail</label>` +
     `<input class="caisse__champ" id="achat-email" name="email" type="email" autocomplete="email" inputmode="email" ` +
     `spellcheck="false" placeholder="nom@exemple.ch" aria-describedby="achat-email-aide achat-erreur-email">` +

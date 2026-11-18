@@ -74,7 +74,6 @@
   overflow: hidden;
   font-size: var(--taille-petite);
   font-weight: var(--graisse-nom);
-  text-overflow: ellipsis;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
   white-space: nowrap;
@@ -117,6 +116,7 @@
   overscroll-behavior: contain;
   scrollbar-width: none;
   background: var(--noir);
+  container-type: inline-size;
 }
 
 .moitie__colonne + .moitie__colonne {
@@ -133,7 +133,7 @@
   max-width: var(--mesure);
 }
 
-@media (min-width: 40rem) {
+@media (min-width: 56rem) {
   .moitie__compte {
     display: block;
   }
