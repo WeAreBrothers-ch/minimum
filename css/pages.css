@@ -171,7 +171,9 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .page a:hover {
+  /* Seulement les liens dans le texte courant : une case-lien (film, rendez-
+     vous, action) a son propre survol, jamais tout son texte souligné. */
+  .page a:not([class]):hover {
     text-decoration: underline;
     text-decoration-thickness: var(--trait);
     text-underline-offset: 0.25em;

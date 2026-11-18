@@ -119,10 +119,9 @@ export function carteHTML(carte, racine, accessible, prioritaire) {
   const classes = `carte${typo ? " carte--typo" : ""}${carte.genre === "emission" ? " carte--emission" : ""}`;
   const contenu = typo ? contenuTypographique(carte) : imageHTML(carte, racine, prioritaire);
 
-  if (carte.genre === "emission") {
-    return `<button type="button" class="${classes}" data-piste="${echapper(carte.id)}" aria-label="Écouter : ${echapper(carte.titre)}, ${echapper(carte.etat.toLowerCase())}"${cache}>${contenu}</button>`;
-  }
-  return `<a class="${classes}" href="${echapper(racine + carte.lien)}"${cache}>${contenu}</a>`;
+  /* Une émission mène à la page Radio, où le lecteur se place sur elle. */
+  const piste = carte.genre === "emission" ? ` data-piste="${echapper(carte.id)}"` : "";
+  return `<a class="${classes}" href="${echapper(racine + carte.lien)}"${piste}${cache}>${contenu}</a>`;
 }
 
 /**

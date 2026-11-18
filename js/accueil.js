@@ -4,7 +4,7 @@
 import { cartesCinema, cartesNuit } from "./carte.js";
 import { chargerProgramme } from "./donnees.js";
 import { echapper } from "./format.js";
-import { choisirPiste, EVENEMENT_PISTE, pisteQuiJoue } from "./lecteur.js";
+import { EVENEMENT_PISTE, pisteQuiJoue } from "./lecteur.js";
 import { monterMur } from "./mur.js";
 
 /** @typedef {import("./types.js").Programme} Programme */
@@ -66,26 +66,6 @@ function marquerPiste(id) {
   }
 }
 
-/**
- * Un clic sur une émission la charge dans le lecteur.
- * @param {Programme} programme
- * @returns {(e: MouseEvent) => void}
- */
-function auClicEmission(programme) {
-  return (e) => {
-    const cible = e.target instanceof Element ? e.target.closest("[data-piste]") : null;
-    if (!(cible instanceof HTMLElement)) return;
-    const emission = programme.emissions.find((em) => em.id === cible.dataset.piste);
-    if (!emission) return;
-    choisirPiste({
-      id: emission.id,
-      titre: emission.titre,
-      etat: emission.enDirect ? "En direct" : "À réécouter",
-      audio: emission.audio,
-    });
-  };
-}
-
 /** @param {Event} e */
 function auChangementDePiste(e) {
   if (e instanceof CustomEvent) marquerPiste(e.detail?.id ?? null);
@@ -118,9 +98,6 @@ export function initAccueil() {
       compter(moitieCinema, cinema, [["film", "film", "films"]]);
       demontages.push(remplir(moitieNuit, nuit, "Aucune soirée ni émission annoncée pour l’instant.", racine));
       demontages.push(remplir(moitieCinema, cinema, "Aucun film programmé pour l’instant.", racine));
-      const clic = auClicEmission(programme);
-      moitieNuit?.addEventListener("click", clic);
-      demontages.push(() => moitieNuit?.removeEventListener("click", clic));
       marquerPiste(pisteQuiJoue());
     })
     .catch((/** @type {unknown} */ erreur) => {

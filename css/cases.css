@@ -439,12 +439,6 @@ a.carreau__action::after {
   background: var(--fond);
 }
 
-.filtre__n {
-  font-size: 0.75em;
-  font-weight: var(--graisse-moyenne);
-  font-variant-numeric: tabular-nums;
-}
-
 .filtres--2 { --n: 2; }
 .filtres--3 { --n: 3; }
 .filtres--4 { --n: 4; }

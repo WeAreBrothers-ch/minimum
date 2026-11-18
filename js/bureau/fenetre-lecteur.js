@@ -92,8 +92,11 @@ function brancher(corps, liste, ouvrir) {
   const volumeBlocs = trouver(corps, ".volume__blocs", HTMLElement);
   const lecteur = trouver(corps, ".lecteur-os", HTMLElement);
 
-  /* La plage choisie : celle qui joue, sinon le direct. */
-  let rang = Math.max(0, liste.findIndex((p) => p.piste.id === pisteQuiJoue()));
+  /* La plage choisie : celle qui joue ; sinon celle que demande l’adresse
+     (radio/#emission-…, depuis l’accueil ou l’agenda) ; sinon le direct. */
+  const visee = liste.findIndex((p) => `#${p.piste.id}` === decodeURIComponent(location.hash));
+  const enCours = liste.findIndex((p) => p.piste.id === pisteQuiJoue());
+  let rang = Math.max(0, enCours !== -1 ? enCours : visee);
   let niveau = Math.round(volumeDuLecteur() * BLOCS);
   /** Un message passager dans la barre d'état. */
   let message = "";

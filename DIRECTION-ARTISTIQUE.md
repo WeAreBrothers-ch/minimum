@@ -187,7 +187,13 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
   toute la case mène à la page.
 - **Chaque case est fermée** : une rangée de filtres a son trait dessous ; la
   dernière case d'une colonne de l'agenda aussi, sans jamais doubler le trait du
-  bas du tableau. Pas de petits chiffres dans les filtres de Cinéma.
+  bas du tableau. Pas de petits chiffres dans les filtres (Cinéma, Agenda), pas
+  de « Relâche » : un jour sans rendez-vous reste une case blanche.
+- **Survol d'une case-lien** : la case change (jaune, rose ou bleu vifs dans
+  l'agenda, jaune sur Cinéma), son texte n'est jamais souligné en entier ; seuls
+  les liens dans le texte courant se soulignent.
+- **Une émission du mur d'accueil** (case bleue) mène à la page Radio, où le
+  lecteur se place sur elle (`radio/#emission-…`, comme depuis l'agenda).
 - **Jamais deux cases noires l'une contre l'autre** (elles se souderaient en un
   bloc, règle de Zinéma) : le filtre « Tout » actif de l'agenda reste blanc,
   souligné des trois couleurs des mondes.

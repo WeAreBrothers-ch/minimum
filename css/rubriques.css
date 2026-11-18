@@ -309,16 +309,15 @@
   font-size: 0.75rem;
 }
 
-.semaine__vide {
-  padding: var(--espace-3);
-  font-size: var(--taille-petite);
-  color: var(--encre);
-  opacity: 0.6;
-}
-
 @media (hover: hover) and (pointer: fine) {
+  .bloc-rdv--cinema:hover { --teinte: var(--jaune-vif); }
+  .bloc-rdv--nuit:hover { --teinte: var(--rose-vif); }
+  .bloc-rdv--radio:hover { --teinte: var(--bleu-vif); }
+  .rdv--cinema:hover { --teinte: var(--jaune-vif); }
+  .rdv--nuit:hover { --teinte: var(--rose-vif); }
+  .rdv--radio:hover { --teinte: var(--bleu-vif); }
+
   .rdv:hover .rdv__titre,
-  .bloc-rdv:hover .bloc-rdv__titre,
   .jour-nav__pas:hover {
     text-decoration: underline;
     text-decoration-thickness: var(--trait);

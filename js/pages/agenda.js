@@ -106,20 +106,18 @@ function ligneHTML(r, racine, avecDate) {
 
 /**
  * @param {Filtre} filtre
- * @param {Rendez[]} liste
  * @returns {string}
  */
-function filtresHTML(filtre, liste) {
+function filtresHTML(filtre) {
   /** @type {Filtre[]} */
   const filtres = ["tout", "cinema", "nuit", "radio"];
   return (
     `<div class="filtres filtres--4" role="group" aria-label="Afficher">` +
     filtres
       .map((f) => {
-        const n = f === "tout" ? liste.length : liste.filter((r) => r.monde === f).length;
         return (
           `<button type="button" class="filtre filtre--${f}" data-filtre="${f}" aria-pressed="${f === filtre}">` +
-          `${f === "tout" ? "Tout" : NOMS[f]}<span class="filtre__n">${n}</span></button>`
+          `${f === "tout" ? "Tout" : NOMS[f]}</button>`
         );
       })
       .join("") +
@@ -174,7 +172,8 @@ function jourHTML(jours, jour, liste, aujourdhui, racine) {
   return (
     `<section class="jour-vue" aria-labelledby="jour-titre">` +
     `<h2 class="jour-titre" id="jour-titre"><span>${echapper(jour === aujourdhui ? "Aujourd’hui" : jourLongMajuscule(jour))}</span>` +
-    `<span class="jour-titre__n">${duJour.length ? `${duJour.length} rendez-vous` : "Relâche"}</span></h2>` +
+    (duJour.length ? `<span class="jour-titre__n">${duJour.length} rendez-vous</span>` : "") +
+    `</h2>` +
     (duJour.length
       ? `<ul class="rdvs">${duJour.map((r) => ligneHTML(r, racine, false)).join("")}</ul>`
       : `<p class="agenda__vide">Rien ce jour-là. Le jour suivant, peut-être ?</p>`) +
@@ -212,7 +211,7 @@ function semaineHTML(jours, liste, aujourdhui, racine) {
         return (
           `<section class="semaine__jour${j === aujourdhui ? " semaine__jour--auj" : ""}" aria-label="${echapper(jourLongMajuscule(j))}">` +
           `<h2 class="semaine__tete"><span>${j === aujourdhui ? "Aujourd’hui" : ABREGES[d.getDay()]}</span><b>${d.getDate()}</b></h2>` +
-          (blocs ? `<ul class="semaine__liste">${blocs}</ul>` : `<p class="semaine__vide">Relâche</p>`) +
+          (blocs ? `<ul class="semaine__liste">${blocs}</ul>` : "") +
           `</section>`
         );
       })
@@ -251,7 +250,7 @@ export function initAgenda() {
         const plusTard = liste.filter((r) => !jours.includes(r.date));
         zone.innerHTML =
           `<div class="agenda" data-filtre="${filtre}">` +
-          filtresHTML(filtre, tous) +
+          filtresHTML(filtre) +
           joursHTML(jours, jour, semaine, aujourdhui) +
           jourHTML(jours, jour, semaine, aujourdhui, racine) +
           semaineHTML(jours, semaine, aujourdhui, racine) +
