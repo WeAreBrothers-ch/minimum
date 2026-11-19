@@ -134,13 +134,15 @@
 }
 
 /* ---------- Les remerciements : un bandeau qu'on fait défiler ---------- */
-/* Toute la largeur : une case noire « Merci », puis les noms en grand, les
-   uns après les autres, séparés d'un carré de couleur (jaune, rose, bleu,
-   les trois mondes). On les fait défiler au doigt, au pavé ou en tirant à
-   la souris ; la liste revient sans fin. */
+/* Une grande case noire « MERCI », puis les noms en grand, chacun dans sa
+   case, séparés d'un trait noir comme les briques. Sur téléphone, MERCI
+   occupe toute la largeur, au-dessus du bandeau ; sur ordinateur, il est sur
+   la même ligne, dans une case d'un quart. On fait défiler les noms au
+   doigt, au pavé ou en tirant à la souris ; la liste revient sans fin. */
 .merci {
   grid-column: 1 / -1;
   display: flex;
+  flex-direction: column;
   min-width: 0;
   background: var(--encre);
   gap: var(--joint);
@@ -150,16 +152,16 @@
   display: flex;
   flex: none;
   align-items: center;
-  padding: 0 var(--marge);
-  font-size: 0.75rem;
+  padding: var(--espace-3) var(--marge);
+  font-size: clamp(3rem, 21vw, 6rem);
   font-weight: var(--graisse-nom);
+  line-height: 0.9;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
   color: var(--blanc);
   background: var(--noir);
 }
 
-/* Positionné : les positions des listes se mesurent depuis son bord. */
 .merci__defile {
   position: relative;
   flex: 1;
@@ -200,31 +202,15 @@
 .merci__liste li {
   display: flex;
   align-items: center;
-  gap: var(--espace-3);
-  min-height: 5rem;
-  padding-inline: var(--espace-3) 0;
-  font-size: clamp(1.25rem, 1rem + 1.4vw, 2.125rem);
+  min-height: 5.5rem;
+  padding-inline: var(--espace-4);
+  font-size: clamp(1.375rem, 1rem + 1.6vw, 2.25rem);
   font-weight: var(--graisse-nom);
   line-height: 1;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
   white-space: nowrap;
-}
-
-.merci__liste li::after {
-  content: "";
-  flex: none;
-  width: 0.45em;
-  height: 0.45em;
-  background: var(--jaune-vif);
-}
-
-.merci__liste li:nth-child(3n + 2)::after {
-  background: var(--rose-vif);
-}
-
-.merci__liste li:nth-child(3n)::after {
-  background: var(--bleu-vif);
+  border-right: var(--trait) solid var(--encre);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -257,7 +243,18 @@
   .brique--o6 { grid-column: span 6; }
   .brique--o7 { grid-column: span 7; }
 
+  /* Ordinateur : MERCI sur la même ligne, dans une case d'un quart. */
+  .merci {
+    flex-direction: row;
+  }
+
+  .merci__titre {
+    flex: 0 0 calc((100% - 3 * var(--joint)) / 4);
+    padding-block: 0;
+    font-size: clamp(3rem, 1.5rem + 3vw, 5.5rem);
+  }
+
   .merci__liste li {
-    min-height: 6.5rem;
+    min-height: 8.5rem;
   }
 }
