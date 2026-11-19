@@ -550,7 +550,10 @@ main [data-remplir]:empty {
   letter-spacing: var(--interlettre-capitales);
 }
 
+/* Chaque lien du pied, une cible d'au moins 24 px de haut. */
 .pied__case a {
+  display: inline-block;
+  min-height: 1.5rem;
   font-weight: var(--graisse-moyenne);
 }
 

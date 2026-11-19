@@ -23,6 +23,7 @@ const PAGES = {
   film: () => import("./pages/film.js").then((m) => m.initFilm),
   soiree: () => import("./pages/soiree.js").then((m) => m.initSoiree),
   billet: () => import("./pages/billet.js").then((m) => m.initBillet),
+  infos: () => import("./pages/infos.js").then((m) => m.initInfos),
 };
 
 /** @type {Array<() => void>} */
@@ -40,8 +41,8 @@ async function lancerPage(page) {
   for (const demonter of demontages) demonter();
   demontages = [initEntete()];
   rafraichirLecteur();
-  /* Numéroté avant tout : même une page sans code propre (Infos) rend
-     caduque une page précédente dont le code arrive encore. */
+  /* Numéroté avant tout : même une page sans code propre rend caduque une
+     page précédente dont le code arrive encore. */
   const numero = ++demande;
   const charger = PAGES[page];
   if (!charger) return;

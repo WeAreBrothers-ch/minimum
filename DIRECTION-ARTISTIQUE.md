@@ -211,11 +211,18 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
 - **Navigation sans rechargement** : la page suivante apporte ses feuilles de
   style (`js/navigation.js`), sans quoi une page avec sa propre feuille (Infos)
   s'affichait sans style quand on y arrivait depuis une autre page.
-- **La page Infos est un tableau à deux colonnes**, comme la fiche d'un film
-  (`css/infos.css`) : l'intitulé à gauche, ses cases à droite. Une ligne a toujours
-  la même forme, un terme ou un prix dans une colonne fixe puis sa valeur juste à
-  côté (plus de valeurs collées au bord droit) ; le texte suivi s'arrête à une
-  longueur de ligne lisible ; la photo de la salle prend la hauteur de l'adresse.
+- **La page Infos est un mur de briques** (revu le 19.11.2026, `css/infos.css`) :
+  chaque information est une brique serrée, jointe d'un trait, de largeur
+  variable ; d'une rangée à l'autre, les joints verticaux ne tombent pas au même
+  endroit, et chaque rangée est pleine. Une brique a toujours la même forme :
+  l'intitulé en petites capitales, la valeur en grand (les prix surlignés du
+  vert de l'argent), au besoin une ligne de détail. Six colonnes sur téléphone,
+  douze sur ordinateur. Le plan, les téléphones et l'e-mail sont des briques
+  qu'on presse (noires au survol).
+- **Les remerciements défilent dans un bandeau** : une case noire « Merci », puis
+  les noms en grand, séparés d'un carré jaune, rose ou bleu. On le fait défiler à
+  la main (doigt, pavé, ou en tirant à la souris) et il revient sans fin
+  (`js/pages/infos.js`) ; il ne bouge jamais tout seul.
 
 ### Le bureau de la radio (page Radio, demande d'Eliott, 18.11.2026)
 La page Radio reprend le **principe** de soso radio (R2), un faux bureau
@@ -323,6 +330,11 @@ uns sur les autres d'un bloc à l'autre :
 - **Jamais de mot coupé** ni de « … » : noms des réalisateurs, légendes des
   icônes, onglets. La case radio de la barre du haut garde le mot « Radio » ; ce
   qui joue s'écrit à côté, sur grand écran.
+
+### La bande-annonce (revue le 19.11.2026)
+Le lecteur vidéo est affiché d'emblée sur la fiche, avec l'image de la vidéo
+(YouTube sans cookie, Vimeo sans suivi) : un toucher la lance, le son ne part
+jamais tout seul, et la radio se met en pause quand on entre dans le lecteur.
 
 ### La fiche d'un film sur ordinateur (revu le 18.11.2026)
 Pas de grand blanc : la rangée du milieu a la hauteur exacte de l'affiche ;

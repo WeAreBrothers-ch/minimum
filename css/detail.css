@@ -385,7 +385,7 @@ button.seance:focus-visible {
     flex: 1;
   }
 
-  .detail__colle > .bande-annonce:not(.bande-annonce--ouverte) {
+  .detail__colle > .bande-annonce {
     flex: 1;
   }
 

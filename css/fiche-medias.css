@@ -1,51 +1,16 @@
 /* Minimum : la bande-annonce et les images d'un film, sur sa fiche. */
 
-/* Avant le clic : une barre inversée, comme celle de la radio, rien de
-   chargé, d'un bord à l'autre de sa case. Elle prend la hauteur d'une
-   vidéo une fois lancée. */
-.bande-annonce--ouverte {
+/* La bande-annonce : le lecteur, tout de suite, dans une case noire au
+   format de la vidéo, d'un bord à l'autre de sa case. */
+.bande-annonce {
+  position: relative;
   aspect-ratio: 16 / 9;
-}
-
-.bande-annonce__lancer {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--espace-1);
-  width: 100%;
-  min-height: calc(var(--cible) + var(--espace-3));
-  padding: var(--espace-2) var(--marge-case, var(--espace-3));
-  text-align: left;
-  color: var(--fond);
-  background: var(--encre);
-}
-
-.bande-annonce__lancer:focus-visible {
-  outline-color: var(--fond);
-}
-
-.bande-annonce__lancer:active {
-  transform: scale(0.98);
-  transition: transform var(--duree-pression) var(--ease-out);
-}
-
-.bande-annonce__titre {
-  font-size: var(--taille-carte);
-  font-weight: var(--graisse-nom);
-  line-height: var(--interligne-titre);
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
-}
-
-.bande-annonce__tirets {
-  display: none;
-}
-
-.bande-annonce__note {
-  font-size: var(--taille-petite);
+  background: var(--noir);
 }
 
 .bande-annonce__lecteur {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
@@ -76,70 +41,16 @@
   object-fit: cover;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .bande-annonce__lancer:hover .bande-annonce__titre {
-    text-decoration: underline;
-    text-decoration-thickness: var(--trait);
-    text-underline-offset: 0.2em;
-  }
-}
-
-/* Assez de place : titre, tirets et note sur une seule ligne. */
-@media (min-width: 30rem) {
-  .bande-annonce__lancer {
-    flex-direction: row;
-    align-items: center;
-    gap: var(--espace-2);
-  }
-
-  .bande-annonce__tirets {
-    display: block;
-    flex: 1 1 var(--espace-3);
-    min-width: var(--espace-3);
-  }
-
-  .bande-annonce__note {
-    flex: none;
-  }
-}
-
-/* Ordinateur : dans la case du texte, la bande-annonce remplit la place
-   libre (detail.css) ; assez haute, elle montre un grand triangle au
-   centre, le titre en bas. */
+/* Ordinateur : dans la case du texte, à côté de l'affiche, la bande-annonce
+   prend toute la place que le synopsis et les liens laissent (detail.css) ;
+   la vidéo s'y centre, sur le noir. */
 @media (min-width: 56rem) {
-  .detail .bande-annonce:not(.bande-annonce--ouverte) {
-    container: annonce / size;
-    min-height: calc(var(--cible) + var(--espace-3) * 2);
-  }
-
-  .detail .bande-annonce__lancer {
-    position: relative;
-    height: 100%;
-    align-items: flex-end;
-    padding-block: var(--espace-3);
-  }
-
-  @container annonce (min-height: 10rem) {
-    .detail .bande-annonce__lancer::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 2.75rem;
-      height: 3.25rem;
-      background: currentColor;
-      clip-path: polygon(0 0, 100% 50%, 0 100%);
-      transform: translate(-40%, -60%);
-    }
+  .detail .bande-annonce {
+    min-height: 14rem;
+    aspect-ratio: auto;
   }
 
   .photos {
     grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bande-annonce__lancer:active {
-    transform: none;
   }
 }

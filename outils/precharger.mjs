@@ -19,7 +19,7 @@ const PAGES = {
   "nuit/index.html": "js/pages/nuit.js",
   "radio/index.html": "js/pages/radio.js",
   "agenda/index.html": "js/pages/agenda.js",
-  "infos/index.html": null,
+  "infos/index.html": "js/pages/infos.js",
   "film/index.html": "js/pages/film.js",
   "soiree/index.html": "js/pages/soiree.js",
   "billet/index.html": "js/pages/billet.js",

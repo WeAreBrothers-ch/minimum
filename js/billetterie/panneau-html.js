@@ -70,7 +70,7 @@ function seanceHTML(choix, vente) {
   }
   if (!vente) return `<li><p class="seance">${quand}</p></li>`;
   return (
-    `<li><button type="button" class="seance" data-acheter="${echapper(choix.id)}" aria-label="${echapper(`Billets pour ${choix.jour}, ${choix.heure}`)}">` +
+    `<li><button type="button" class="seance" data-acheter="${echapper(choix.id)}">` +
     `${quand}<span class="seance__action">Billets <span class="fleche" aria-hidden="true"></span></span></button></li>`
   );
 }
