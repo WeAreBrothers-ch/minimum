@@ -30,6 +30,10 @@
   padding: var(--espace-3) var(--marge);
   color: var(--encre);
   background: var(--fond);
+  /* L'intitulé et la valeur se règlent aussi sur la largeur de la brique :
+     dans une brique étroite (AG culturel, sur un petit téléphone), aucun
+     mot ne déborde. */
+  container-type: inline-size;
 }
 
 .brique--m2 { grid-column: span 2; }
@@ -37,17 +41,18 @@
 .brique--m4 { grid-column: span 4; }
 .brique--m6 { grid-column: span 6; }
 
+/* L'intitulé : le titre de la brique, en capitales grasses, bien lisible. */
 .brique__terme {
   margin-bottom: var(--espace-1);
-  font-size: 0.6875rem;
+  font-size: min(clamp(1rem, 0.85rem + 0.5vw, 1.25rem), 12cqi);
   font-weight: var(--graisse-nom);
-  line-height: 1.3;
+  line-height: 1.15;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
 }
 
 .brique__valeur {
-  font-size: clamp(1.0625rem, 0.85rem + 0.9vw, 1.5rem);
+  font-size: min(clamp(1.0625rem, 0.85rem + 0.9vw, 1.5rem), 14cqi);
   font-weight: var(--graisse-nom);
   line-height: 1.1;
   text-transform: uppercase;

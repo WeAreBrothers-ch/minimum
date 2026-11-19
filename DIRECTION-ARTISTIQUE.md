@@ -215,7 +215,8 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
   chaque information est une brique serrée, jointe d'un trait, de largeur
   variable ; d'une rangée à l'autre, les joints verticaux ne tombent pas au même
   endroit, et chaque rangée est pleine. Une brique a toujours la même forme :
-  l'intitulé en petites capitales, la valeur en grand (les prix surlignés du
+  l'intitulé en capitales grasses, bien lisible (16 à 20 px, un peu moins dans
+  une brique étroite, jamais coupé), la valeur en grand (les prix surlignés du
   vert de l'argent), au besoin une ligne de détail. Six colonnes sur téléphone,
   douze sur ordinateur. Le plan, les téléphones et l'e-mail sont des briques
   qu'on presse (noires au survol).
