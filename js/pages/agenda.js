@@ -172,7 +172,6 @@ function jourHTML(jours, jour, liste, aujourdhui, racine) {
   return (
     `<section class="jour-vue" aria-labelledby="jour-titre">` +
     `<h2 class="jour-titre" id="jour-titre"><span>${echapper(jour === aujourdhui ? "Aujourd’hui" : jourLongMajuscule(jour))}</span>` +
-    (duJour.length ? `<span class="jour-titre__n">${duJour.length} rendez-vous</span>` : "") +
     `</h2>` +
     (duJour.length
       ? `<ul class="rdvs">${duJour.map((r) => ligneHTML(r, racine, false)).join("")}</ul>`
@@ -255,8 +254,7 @@ export function initAgenda() {
           jourHTML(jours, jour, semaine, aujourdhui, racine) +
           semaineHTML(jours, semaine, aujourdhui, racine) +
           (plusTard.length
-            ? `<section class="plus-tard" aria-labelledby="plus-tard"><h2 class="rubrique" id="plus-tard"><span>Plus tard</span>` +
-              `<span class="rubrique__nombre">${plusTard.length} rendez-vous</span></h2>` +
+            ? `<section class="plus-tard" aria-labelledby="plus-tard"><h2 class="rubrique" id="plus-tard"><span>Plus tard</span></h2>` +
               `<ul class="rdvs">${plusTard.map((r) => ligneHTML(r, racine, true)).join("")}</ul></section>`
             : "") +
           `</div>`;

@@ -465,11 +465,6 @@ main [data-remplir]:empty {
   border-bottom: var(--trait) solid var(--encre);
 }
 
-.rubrique__nombre {
-  font-size: var(--taille-petite);
-  font-weight: var(--graisse-moyenne);
-}
-
 /* ---------- Les infos pratiques sous une liste (Cinéma) ---------- */
 /* Une ligne : l'intitulé dans une colonne fixe, la valeur juste à côté,
    comme sur la page Infos. */
@@ -523,12 +518,22 @@ main [data-remplir]:empty {
   gap: var(--joint);
   color: var(--blanc);
   background: var(--blanc);
-  border-top: var(--trait) solid var(--noir);
 }
 
-/* Après une page noire (Nuit, soirée), un trait blanc marque la limite. */
-.surface-nuit ~ .pied {
-  border-top-color: var(--blanc);
+/* La démarcation : la bande des trois mondes, jaune le cinéma, rose la
+   nuit, bleu la radio, celle qui souligne « Tout » dans l'agenda. Elle
+   ferme la page, blanche ou noire, d'un trait franc avant le noir du pied. */
+.pied::before {
+  content: "";
+  grid-column: 1 / -1;
+  height: 0.5rem;
+  margin-bottom: calc(var(--joint) * -1);
+  background: linear-gradient(
+    90deg,
+    var(--jaune-vif) 0 33.34%,
+    var(--rose-vif) 33.34% 66.67%,
+    var(--bleu-vif) 66.67%
+  );
 }
 
 .pied > * {

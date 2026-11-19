@@ -219,6 +219,87 @@
   }
 }
 
+/* ---------- Le menu ouvert, sur téléphone et tablette ---------- */
+/* Une surface noire aux traits blancs, comme le pied de page : la croix
+   noire de la barre s'y prolonge. Les rubriques se partagent toute la
+   hauteur de l'écran (pas de vide), chacune avec son nom en très grand,
+   ce qu'on y trouve, et la flèche. Pressée, ou si c'est la page où l'on
+   est, la case se remplit de la couleur vive de son monde : jaune le
+   cinéma, rose la nuit, bleu la radio, blanc l'agenda et les infos. */
+.menu__desc {
+  display: none;
+}
+
+@media (max-width: 55.99rem) {
+  .menu__liste {
+    color: var(--blanc);
+    background: var(--noir);
+  }
+
+  .menu__item {
+    flex: 1 0 auto;
+    border-bottom-color: var(--blanc);
+  }
+
+  .menu__liste .menu__lien {
+    --vif: var(--blanc);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-content: center;
+    column-gap: var(--espace-3);
+    row-gap: var(--espace-1);
+    padding-block: var(--espace-3);
+    color: var(--blanc);
+    background: var(--noir);
+  }
+
+  .menu__liste .menu__lien--cinema { --vif: var(--jaune-vif); }
+  .menu__liste .menu__lien--nuit { --vif: var(--rose-vif); }
+  .menu__liste .menu__lien--radio { --vif: var(--bleu-vif); }
+
+  .menu__mot {
+    grid-column: 1;
+  }
+
+  /* Ce qu'on y trouve, et la flèche : de la couleur vive du monde. */
+  .menu__desc {
+    display: block;
+    grid-column: 1;
+    font-size: 0.75rem;
+    letter-spacing: var(--interlettre-capitales);
+    color: var(--vif);
+  }
+
+  .menu__liste .menu__lien::after {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: center;
+    background: var(--vif);
+  }
+
+  .menu__liste .menu__lien[aria-current],
+  .menu__liste .menu__lien:active,
+  .menu__liste .menu__lien:focus-visible {
+    color: var(--noir);
+    background: var(--vif);
+  }
+
+  .menu__liste .menu__lien:is([aria-current], :active, :focus-visible) .menu__desc {
+    color: var(--noir);
+  }
+
+  .menu__liste .menu__lien:is([aria-current], :active, :focus-visible)::after {
+    background: var(--noir);
+  }
+
+  .menu__pied {
+    flex: none;
+    color: var(--blanc);
+    background: var(--noir);
+    border-top: 0;
+  }
+}
+
 /* Ordinateur : toutes les cases sur la barre, à droite de celle du nom.
    La barre est coupée en huitièmes : le nom et chaque rubrique en prennent
    un, la radio deux. Ses traits tombent ainsi sur ceux des colonnes du mur

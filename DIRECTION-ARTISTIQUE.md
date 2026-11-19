@@ -353,8 +353,25 @@ posées en masque pour prendre la couleur du texte (`.fleche` dans `base.css`).
 - **Au survol**, la flèche traverse sa case : elle sort d'un côté et revient
   de l'autre (en diagonale pour ↗). Immobile avec « réduire les animations ».
 
+### Le menu sur téléphone (revu le 19.11.2026 : « plus attirant »)
+Ouvert, il devient une surface noire aux traits blancs, dans le prolongement
+de la croix noire. Les cinq rubriques se partagent toute la hauteur de
+l'écran : le nom en très grand, ce qu'on y trouve en capitales (« Les films à
+l'affiche »…), la flèche. La description et la flèche ont la couleur vive du
+monde (jaune, rose, bleu ; blanc pour l'agenda et les infos) ; la rubrique
+courante, ou pressée, se remplit de cette couleur.
+
+### La barre des tâches de la radio (revue le 19.11.2026)
+Un dock noir aux traits blancs : Start, une case carrée par fenêtre sur
+téléphone (l'icône seule, l'ouverte en bleu), l'heure à droite ; sur
+ordinateur, des onglets de largeur fixe avec leur nom. Entre les deux, le
+noir de la barre, jamais une case blanche vide. La playlist défile plage par
+plage (aimantée), sans bout de ligne coupé.
+
 ### Le pied de page (revu le 18.11.2026 : « plus clair que c'est le footer »)
-Une surface noire aux traits blancs, que rien d'autre sur le site ne rappelle :
+Il s'ouvre sur la bande des trois mondes (jaune, rose, bleu, celle qui
+souligne « Tout » dans l'agenda) : la démarcation, sur une page blanche comme
+sur une page noire (19.11.2026). Puis une surface noire aux traits blancs :
 le nom MINIMUM en très grand, d'un bord à l'autre de sa case, et la devise ;
 l'adresse et le contact côte à côte ; la signature. Sur ordinateur, le nom
 occupe deux quarts, l'adresse et le contact un quart chacun.

@@ -85,11 +85,6 @@
   border-bottom: var(--trait) solid var(--encre);
 }
 
-.jour-titre__n {
-  font-size: var(--taille-petite);
-  font-weight: var(--graisse-moyenne);
-}
-
 .agenda__vide {
   padding: var(--espace-4) var(--marge);
   border-bottom: var(--trait) solid var(--encre);

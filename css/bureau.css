@@ -595,9 +595,15 @@
   letter-spacing: var(--interlettre-capitales);
 }
 
+/* Elle défile plage par plage : jamais un bout de ligne coupé en haut. */
 .playlist__liste {
   max-height: 15rem;
   overflow: auto;
+  scroll-snap-type: y mandatory;
+}
+
+.playlist__liste > li {
+  scroll-snap-align: start;
 }
 
 .playlist__liste > li {
@@ -923,18 +929,28 @@
   color: var(--os-encre);
 }
 
-/* ---------- La barre des tâches : une rangée de cases, comme le menu ---------- */
-/* Le vide entre les onglets et l'horloge reste blanc : seuls les traits
-   séparent les cases, jamais un aplat noir. */
+/* ---------- La barre des tâches : un dock noir, comme le pied de page ---------- */
+/* Une bande noire aux traits blancs, posée sous le bureau : Start à gauche,
+   une case par fenêtre, l'horloge à droite. Entre les deux, le noir de la
+   barre (pas une case vide). La fenêtre ouverte prend la couleur d'accent. */
 .barre {
   position: relative;
   z-index: 20;
   display: flex;
   min-height: var(--os-barre);
   padding-bottom: env(safe-area-inset-bottom);
-  color: var(--os-encre);
-  background: var(--os-fond);
-  border-top: var(--trait) solid var(--os-ligne);
+  color: var(--blanc);
+  background: var(--noir);
+  border-top: var(--trait) solid var(--blanc);
+}
+
+.barre :focus-visible {
+  outline-color: var(--blanc);
+}
+
+/* Les icônes : un trait blanc sur le fond de leur case. */
+.barre svg .f {
+  fill: var(--noir);
 }
 
 .barre__start,
@@ -949,23 +965,23 @@
   font-weight: var(--graisse-nom);
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
-  color: var(--os-encre);
-  background: var(--os-fond);
+  color: var(--blanc);
+  background: var(--noir);
   border: 0;
   cursor: pointer;
 }
 
 /* Start : la première case, comme le nom du site dans la barre du haut ;
-   noire quand le menu est ouvert. */
+   blanche quand le menu est ouvert. */
 .barre__start {
   flex: none;
   font-weight: var(--graisse-nom);
-  border-right: var(--trait) solid var(--os-ligne);
+  border-right: var(--trait) solid var(--blanc);
 }
 
 .barre__start[aria-expanded="true"] {
-  color: var(--blanc);
-  background: var(--noir);
+  color: var(--noir);
+  background: var(--blanc);
 }
 
 .barre__onglets {
@@ -980,23 +996,13 @@
   display: none;
 }
 
-/* Aucune fenêtre ouverte : l'horloge prend la place, calée à droite. */
-.barre:not(:has(.barre__onglet:not([hidden]))) .barre__onglets {
-  display: none;
-}
-
-.barre:not(:has(.barre__onglet:not([hidden]))) .barre__heure {
-  flex: 1;
-  justify-content: flex-end;
-}
-
-/* Les onglets se partagent toute la place, comme les cases du menu : pas de
-   case vide entre eux et l'horloge. */
+/* Ordinateur : des onglets de largeur fixe, avec leur nom ; le noir de la
+   barre les sépare de l'horloge (jamais deux traits côte à côte). */
 .barre__onglet {
-  flex: 1 1 0;
+  flex: 0 1 13rem;
   min-width: 0;
   white-space: nowrap;
-  border-right: var(--trait) solid var(--os-ligne);
+  border-right: var(--trait) solid var(--blanc);
 }
 
 .barre__onglet[hidden] {
@@ -1008,23 +1014,27 @@
   background: var(--os-accent);
 }
 
-/* Téléphone : l'onglet de la fenêtre ouverte prend la place ; les autres
-   sont des cases carrées, leur icône seule. Sans fenêtre ouverte, toutes
-   les cases se partagent la largeur. */
+.barre__onglet[aria-pressed="true"] svg .f {
+  fill: var(--os-accent);
+}
+
+.barre__onglet[aria-pressed="true"] svg .g {
+  fill: var(--os-accent-texte);
+}
+
+/* Téléphone : un dock. Chaque fenêtre est une case carrée, son icône
+   seule ; celle qui est ouverte se remplit de la couleur d'accent. Son nom
+   est déjà dans sa barre de titre. */
 @media (max-width: 39.99rem) {
-  .barre__onglets:has(.barre__onglet[aria-pressed="true"]) .barre__onglet {
-    flex: 0 0 var(--os-barre);
+  .barre__onglet {
+    flex: 0 0 calc(var(--os-barre) + var(--trait));
   }
 
-  .barre__onglets:has(.barre__onglet[aria-pressed="true"]) .barre__onglet[aria-pressed="true"] {
-    flex: 1 1 0;
-  }
-
-  .barre__onglet:not([aria-pressed="true"]) .barre__nom {
+  .barre__nom {
     display: none;
   }
 
-  .barre__onglet:not([aria-pressed="true"]) .barre__contenu {
+  .barre .barre__contenu {
     justify-content: center;
     padding: 0;
   }
@@ -1116,12 +1126,14 @@
   display: flex;
   flex: none;
   align-items: center;
+  margin-left: auto;
   padding: 0 var(--espace-3);
   font-size: 0.75rem;
   font-weight: var(--graisse-nom);
   font-variant-numeric: tabular-nums;
   letter-spacing: var(--interlettre-capitales);
-  background: var(--os-fond);
+  background: var(--noir);
+  border-left: var(--trait) solid var(--blanc);
 }
 
 /* ---------- Le menu Start : une pile de cases ---------- */
