@@ -6,14 +6,20 @@
    on revient d’un nombre entier de cycles. Le contenu étant identique
    d’une copie à l’autre, le saut ne se voit pas. Les cases ont une hauteur
    entière en pixels : le cycle tombe juste et le saut n’accumule aucun
-   décalage. */
+   décalage.
+
+   Vingt et une copies : dix cycles de chaque côté du milieu, des dizaines
+   de milliers de pixels. Même lancée très fort, plusieurs fois de suite,
+   la colonne n’atteint jamais son bout (sur iPhone, le bout rebondit et
+   laisse voir le fond noir). Les affiches sont les mêmes d’une copie à
+   l’autre : chacune n’est téléchargée qu’une fois (carte.js). */
 
 import { carteHTML } from "./carte.js";
 
 /** @typedef {import("./types.js").Carte} Carte */
 
-const COPIES = 7;
-const CENTRE = 3;
+const COPIES = 21;
+const CENTRE = 10;
 const PROPORTION = 1.5;
 const ATTENTE_ARRET = 120;
 

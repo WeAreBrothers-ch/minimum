@@ -143,7 +143,11 @@ function contenuTypographique(carte) {
 function imageHTML(carte, racine, prioritaire) {
   if (!carte.image) return "";
   const { src, srcset, sizes } = sourcesImage(carte.image, racine, [320, 480, 720, 960], "(min-width: 56rem) 25vw, 50vw");
-  const chargement = prioritaire ? ' fetchpriority="high"' : ' loading="lazy"';
+  /* Pas de chargement différé : le mur répète les mêmes affiches de copie en
+     copie, et une affiche qui n'arrive qu'au moment de passer à l'écran
+     laisserait une case vide (noire côté Nuit) quand on défile vite. Le
+     navigateur ne télécharge chaque image qu'une fois. */
+  const chargement = prioritaire ? ' fetchpriority="high"' : "";
   const variantes = srcset ? ` srcset="${echapper(srcset)}" sizes="${echapper(sizes)}"` : "";
   return (
     `<img class="carte__image" src="${echapper(src)}"${variantes} width="480" height="720" ` +

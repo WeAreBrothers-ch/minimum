@@ -381,6 +381,18 @@ occupe deux quarts, l'adresse et le contact un quart chacun.
 plus de jaune pâle. Les couleurs des mondes restent pour les cases (menu,
 filtres, têtes de l'accueil, survols).
 
+### Le mur d'accueil défile sans fin (revu le 19.11.2026)
+Chaque colonne empile vingt et une copies de ses affiches et revient au milieu
+dès qu'on s'arrête : même lancée très fort, plusieurs fois de suite, elle
+n'atteint jamais son bout (sur iPhone, le bout rebondit et montre du noir).
+Les affiches sont chargées d'emblée, une seule fois chacune : jamais de case
+vide en défilant vite.
+
+### L'agenda mène à la fiche, en haut (revu le 19.11.2026)
+Un film ou une soirée de l'agenda ouvre sa fiche en haut de page, sans ouvrir
+la caisse ; la séance cliquée est déjà choisie quand on presse Billets. Seuls
+les boutons « Billets » (page Nuit, fiche) ouvrent la caisse directement.
+
 ### Signature
 La ligne de tirets du programme de 2009 (D2), tapée en vrais caractères.
 

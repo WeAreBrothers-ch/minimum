@@ -27,7 +27,7 @@ import { lienFilm } from "./film-commun.js";
  * @property {string} sous     Une ligne de plus : réalisation, horaires, état.
  * @property {string} lien
  * @property {Monde} monde
- * @property {string} action   « Billets », « Écouter »…
+ * @property {string} action   « Le film », « La soirée », « Écouter » : la fiche s’ouvre en haut.
  */
 
 /** @type {Record<Monde, string>} */
@@ -55,7 +55,7 @@ function rendezVous(programme) {
       sous: etat || `${film.realisation}, ${film.version}`,
       lien: lienFilm("", film.id, s.id),
       monde: "cinema",
-      action: etat ? "La fiche" : "Billets",
+      action: "Le film",
     });
   }
   for (const s of programme.soirees) {
@@ -65,9 +65,9 @@ function rendezVous(programme) {
       heure: s.heure,
       titre: s.titre,
       sous: `${heureCourte(s.heure)}${fin}${s.lineUp.length ? `, ${s.lineUp.length} passages` : ""}`,
-      lien: `soiree/?id=${encodeURIComponent(s.id)}${s.tarifs.length ? "#billets" : ""}`,
+      lien: `soiree/?id=${encodeURIComponent(s.id)}`,
       monde: "nuit",
-      action: s.tarifs.length ? "Billets" : "Line-up",
+      action: "La soirée",
     });
   }
   for (const e of programme.emissions) {

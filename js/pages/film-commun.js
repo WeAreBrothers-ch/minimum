@@ -98,7 +98,9 @@ export function photosHTML(photos) {
 }
 
 /**
- * L’adresse de la fiche d’un film, avec la séance choisie s’il y en a une.
+ * L’adresse de la fiche d’un film, avec la séance choisie s’il y en a une :
+ * la fiche s’ouvre en haut, et cette séance sera déjà choisie dans la
+ * caisse quand on cliquera sur Billets.
  * @param {string} racine
  * @param {string} filmId
  * @param {string} [seanceId]
@@ -107,5 +109,5 @@ export function photosHTML(photos) {
 export function lienFilm(racine, filmId, seanceId) {
   const params = new URLSearchParams({ id: filmId });
   if (seanceId) params.set("seance", seanceId);
-  return `${racine}film/?${params.toString()}${seanceId ? "#billets" : ""}`;
+  return `${racine}film/?${params.toString()}`;
 }
