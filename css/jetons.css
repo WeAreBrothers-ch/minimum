@@ -95,14 +95,17 @@
   --rouge-feu: #a72920;
   --rouge-rubis: #861a22;
   --rouge-tomate: #972e25;
-  --vert-doux: #8fe5ac;
-  --vert-vif: #22d66b;
+  /* Le vert de l'argent (19.11.2026) : plus soutenu que l'ancien vert pâle,
+     pour ressortir à côté des rouges ; texte noir, contraste de 7:1. Au
+     survol, un cran plus foncé (5:1). */
+  --vert: #3cab64;
+  --vert-survol: #2f9152;
   --orange-doux: #ffc394;
   --orange-vif: #ff7a2f;
 
   --texte-monde: var(--blanc);
   --pastille-texte: var(--noir);
-  --pastille-argent: var(--vert-doux);
+  --pastille-argent: var(--vert);
   --pastille-cinema: var(--rouge-feu);
   --pastille-radio: var(--rouge-tomate);
   --pastille-nuit: var(--rouge-rubis);
@@ -124,18 +127,18 @@
   --fleche-sortie: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 21L19 5M7 4h13v13' fill='none' stroke='%23000' stroke-width='4'/%3E%3C/svg%3E");
 }
 
-/* La nuit et le lecteur : surfaces inversées ; le vert et l'orange y sont
-   vifs, les rouges restent les mêmes. */
+/* La nuit et le lecteur : surfaces inversées ; l'orange y est vif, le vert
+   et les rouges restent les mêmes. */
 .surface-nuit {
   --encre: var(--blanc);
   --fond: var(--noir);
-  --pastille-argent: var(--vert-vif);
+  --pastille-argent: var(--vert);
   --pastille-probleme: var(--orange-vif);
 }
 
 .surface-ecran {
   --encre: var(--noir);
   --fond: var(--blanc);
-  --pastille-argent: var(--vert-doux);
+  --pastille-argent: var(--vert);
   --pastille-probleme: var(--orange-doux);
 }

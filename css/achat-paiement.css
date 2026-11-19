@@ -192,7 +192,7 @@
   }
 
   .caisse__payer:hover {
-    background: var(--vert-vif);
+    background: var(--vert-survol);
   }
 }
 

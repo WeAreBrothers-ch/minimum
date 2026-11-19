@@ -96,7 +96,7 @@ tomate.
 
 | Couleur | Sens | Où |
 |---|---|---|
-| Vert | L'argent | Prix, tarifs, total, « Payer », accès aux billets, montant payé sur le billet |
+| Vert (#3cab64, plus soutenu depuis le 19.11.2026 ; #2f9152 au survol) | L'argent | Prix, tarifs, total, « Payer », accès aux billets, montant payé sur le billet |
 | Rouge feu (RAL 3000, #a72920) | Le cinéma (programme) | « À l'affiche », « Prochainement », « Cinéma » dans l'agenda |
 | Rouge tomate (RAL 3013, #972e25) | La radio | « En direct », « À réécouter », « Écouter » |
 | Rouge rubis (RAL 3003, #861a22) | La nuit | « Soirée », « DJ set », « Line-up », « Nuit » dans l'agenda |

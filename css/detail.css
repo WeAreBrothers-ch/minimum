@@ -355,7 +355,7 @@ button.seance:focus-visible {
   }
 
   .detail__acheter:not(.detail__acheter--ferme):hover {
-    background: var(--vert-vif);
+    background: var(--vert-survol);
   }
 
   button.seance:hover {
