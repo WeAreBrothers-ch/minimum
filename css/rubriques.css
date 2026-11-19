@@ -1,7 +1,7 @@
 /* Minimum : la page Agenda. Des filtres par monde, les jours en cases et la
    journée choisie sur téléphone, la semaine en tableau sur grand écran, puis
    ce qui est annoncé plus tard. La couleur d'un rendez-vous est celle de son
-   monde (jaune le cinéma, rose la nuit, bleu la radio). Chargée seulement
+   monde (rouge feu le cinéma, rouge rubis la nuit, rouge tomate la radio). Chargée seulement
    sur cette page. */
 
 .agenda > * {
@@ -58,9 +58,9 @@
   border: 1px solid var(--noir);
 }
 
-.repere--cinema { background: var(--jaune-vif); }
-.repere--nuit { background: var(--rose-vif); }
-.repere--radio { background: var(--bleu-vif); }
+.repere--cinema { background: var(--rouge-feu); }
+.repere--nuit { background: var(--rouge-rubis); }
+.repere--radio { background: var(--rouge-tomate); }
 
 .jour[aria-pressed="true"] {
   color: var(--blanc);
@@ -166,7 +166,7 @@
   font-weight: var(--graisse-nom);
   font-variant-numeric: tabular-nums;
   text-align: center;
-  color: var(--pastille-texte);
+  color: var(--texte-monde);
   background: var(--teinte);
 }
 
@@ -264,7 +264,7 @@
   min-height: 6rem;
   padding: var(--espace-2) var(--espace-3) var(--espace-3);
   text-decoration: none;
-  color: var(--pastille-texte);
+  color: var(--texte-monde);
   background: var(--teinte);
 }
 
@@ -303,12 +303,11 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .bloc-rdv--cinema:hover { --teinte: var(--jaune-vif); }
-  .bloc-rdv--nuit:hover { --teinte: var(--rose-vif); }
-  .bloc-rdv--radio:hover { --teinte: var(--bleu-vif); }
-  .rdv--cinema:hover { --teinte: var(--jaune-vif); }
-  .rdv--nuit:hover { --teinte: var(--rose-vif); }
-  .rdv--radio:hover { --teinte: var(--bleu-vif); }
+  /* Au survol, la case passe au noir : le rouge foncé ne s'éclaircit pas. */
+  .bloc-rdv:hover,
+  .rdv:hover {
+    --teinte: var(--noir);
+  }
 
   .rdv:hover .rdv__titre,
   .jour-nav__pas:hover {

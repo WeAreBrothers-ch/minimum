@@ -9,7 +9,7 @@
      avec sa prochaine séance (ou sa date de sortie), son titre et sa
      réalisation, puis une case avec ses faits. Toute la colonne mène à la
      fiche du film, où l’on prend son billet. Au survol, les cases de texte
-     prennent le jaune du cinéma.
+     prennent le rouge du cinéma.
    - Une grande case « Toutes les séances » ferme le tableau : elle absorbe
      la place qui reste sur la dernière rangée, jamais de trou.
    (Billets et paiement sont sur la page Infos.) */

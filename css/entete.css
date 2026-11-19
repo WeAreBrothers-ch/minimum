@@ -1,7 +1,7 @@
 /* Minimum : la barre de menu, un tableau de cases comme le reste du site.
    Le nom est la première case, chaque rubrique une case jointe par un trait.
    Au survol et sur la page courante, la case se remplit : de la couleur de
-   son monde (jaune le cinéma, rose la nuit, bleu la radio, jetons.css), ou
+   son monde (les trois rouges de jetons.css), ou
    en noir pour l'agenda et les infos. Sur téléphone, seule reste la case du
    nom et la case du menu, qui s'ouvre sur tout l'écran. */
 
@@ -166,7 +166,7 @@
 
 /* La page où l'on est : sa case est pleine. */
 .menu__lien[aria-current] {
-  color: var(--pastille-texte);
+  color: var(--texte-monde);
   background: var(--remplissage, var(--noir));
 }
 
@@ -178,7 +178,7 @@
    dessiné à l'intérieur. */
 .menu__lien:focus-visible {
   outline: none;
-  color: var(--pastille-texte);
+  color: var(--texte-monde);
   background: var(--remplissage, var(--noir));
 }
 
@@ -205,7 +205,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .menu__lien:hover {
-    color: var(--pastille-texte);
+    color: var(--texte-monde);
     background: var(--remplissage, var(--noir));
   }
 
@@ -255,9 +255,9 @@ html.menu-ouvert .entete {
     border-top: 0.375rem solid;
     border-image: linear-gradient(
       90deg,
-      var(--jaune-vif) 0 33.34%,
-      var(--rose-vif) 33.34% 66.67%,
-      var(--bleu-vif) 66.67%
+      var(--rouge-feu) 0 33.34%,
+      var(--rouge-rubis) 33.34% 66.67%,
+      var(--rouge-tomate) 66.67%
     ) 1;
   }
 }

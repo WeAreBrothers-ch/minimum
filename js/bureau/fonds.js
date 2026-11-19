@@ -2,7 +2,7 @@
 /* Minimum Radio : les fonds d'écran et la couleur d'accent des fenêtres, que
    le visiteur change dans Réglages. Des fonds de couleur unie, quatre fonds
    dessinés pour Minimum, et une image à soi. Les couleurs sont celles du site
-   (jetons.css) : le bleu est celui de la radio, le rose celui de la nuit. */
+   (jetons.css) : les trois rouges RAL des mondes, le rouge tomate pour la radio. */
 
 import { ecrire, lire } from "./memoire.js";
 
@@ -18,7 +18,7 @@ import { ecrire, lire } from "./memoire.js";
 export const FONDS_SYSTEME = [
   { id: "noir", nom: "Noir", genre: "couleur", valeur: "#000000" },
   { id: "blanc", nom: "Blanc", genre: "couleur", valeur: "#ffffff" },
-  { id: "bleu", nom: "Bleu radio", genre: "couleur", valeur: "var(--bleu-vif)" },
+  { id: "rouge", nom: "Rouge tomate", genre: "couleur", valeur: "var(--rouge-tomate)" },
 ];
 
 /** @type {Fond[]} */
@@ -32,9 +32,9 @@ export const FONDS_IMAGES = [
 /** La couleur d'accent : barre de titre de la fenêtre ouverte, plage choisie,
     touche de lecture. « texte » est la couleur lisible dessus. */
 export const COULEURS = [
-  { id: "bleu", nom: "Bleu radio", valeur: "var(--bleu-vif)", texte: "#000000" },
-  { id: "rose", nom: "Rose nuit", valeur: "var(--rose-vif)", texte: "#000000" },
-  { id: "jaune", nom: "Jaune cinéma", valeur: "var(--jaune-vif)", texte: "#000000" },
+  { id: "tomate", nom: "Rouge tomate", valeur: "var(--rouge-tomate)", texte: "#ffffff" },
+  { id: "rubis", nom: "Rouge rubis", valeur: "var(--rouge-rubis)", texte: "#ffffff" },
+  { id: "feu", nom: "Rouge feu", valeur: "var(--rouge-feu)", texte: "#ffffff" },
   { id: "noir", nom: "Noir", valeur: "#000000", texte: "#ffffff" },
 ];
 
@@ -62,7 +62,7 @@ function imageDeVisiteur() {
 /** @returns {string} */
 export function couleurChoisie() {
   const id = lire(CLE_COULEUR);
-  return COULEURS.some((c) => c.id === id) && id ? id : "bleu";
+  return COULEURS.some((c) => c.id === id) && id ? id : "tomate";
 }
 
 /**

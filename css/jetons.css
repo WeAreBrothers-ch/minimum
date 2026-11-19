@@ -86,27 +86,26 @@
   --duree-entree: 640ms;
   --duree-page: 340ms;
 
-  /* Code couleur des pastilles (demande d'Eliott, 16.11.2026) : une couleur
-     = un type d'info, le vert toujours pour l'argent. Tons doux sur le
-     Cinéma (fond blanc), vifs sur la Nuit (fond noir). Le texte d'une
-     pastille de couleur est toujours noir : contraste de 7:1 au moins.
-     Aucune teinte entre 250° et 300° (anti-slop CT-01). */
+  /* Code couleur (demande d'Eliott, 19.11.2026) : les trois mondes ont
+     chacun un rouge RAL, ceux de la salle : Rouge feu (RAL 3000) le cinéma,
+     Rouge rubis (RAL 3003) la nuit, Rouge tomate (RAL 3013) la radio. Ils
+     sont foncés : le texte posé dessus est toujours blanc (--texte-monde,
+     contraste de 7:1 au moins). Le vert reste celui de l'argent, l'orange
+     celui d'un problème, avec un texte noir (--pastille-texte). */
+  --rouge-feu: #a72920;
+  --rouge-rubis: #861a22;
+  --rouge-tomate: #972e25;
   --vert-doux: #8fe5ac;
   --vert-vif: #22d66b;
-  --jaune-doux: #f5ec8a;
-  --jaune-vif: #ffe23a;
-  --bleu-doux: #afcbff;
-  --bleu-vif: #5b97ff;
-  --rose-doux: #f8b9db;
-  --rose-vif: #ff62b4;
   --orange-doux: #ffc394;
   --orange-vif: #ff7a2f;
 
+  --texte-monde: var(--blanc);
   --pastille-texte: var(--noir);
   --pastille-argent: var(--vert-doux);
-  --pastille-cinema: var(--jaune-doux);
-  --pastille-radio: var(--bleu-doux);
-  --pastille-nuit: var(--rose-doux);
+  --pastille-cinema: var(--rouge-feu);
+  --pastille-radio: var(--rouge-tomate);
+  --pastille-nuit: var(--rouge-rubis);
   --pastille-probleme: var(--orange-doux);
 
   /* Aucun arrondi sur le site : les pastilles sont à angle droit, comme
@@ -125,14 +124,12 @@
   --fleche-sortie: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 21L19 5M7 4h13v13' fill='none' stroke='%23000' stroke-width='4'/%3E%3C/svg%3E");
 }
 
-/* La nuit et le lecteur : surfaces inversées, pastilles vives. */
+/* La nuit et le lecteur : surfaces inversées ; le vert et l'orange y sont
+   vifs, les rouges restent les mêmes. */
 .surface-nuit {
   --encre: var(--blanc);
   --fond: var(--noir);
   --pastille-argent: var(--vert-vif);
-  --pastille-cinema: var(--jaune-vif);
-  --pastille-radio: var(--bleu-vif);
-  --pastille-nuit: var(--rose-vif);
   --pastille-probleme: var(--orange-vif);
 }
 
@@ -140,8 +137,5 @@
   --encre: var(--noir);
   --fond: var(--blanc);
   --pastille-argent: var(--vert-doux);
-  --pastille-cinema: var(--jaune-doux);
-  --pastille-radio: var(--bleu-doux);
-  --pastille-nuit: var(--rose-doux);
   --pastille-probleme: var(--orange-doux);
 }

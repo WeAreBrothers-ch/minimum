@@ -3,7 +3,7 @@
    barre des tâches) habillé avec le design du site : tout est un tableau de
    cases blanches jointes par un trait (--trait), en Archivo majuscule grasse,
    à angle droit, sans ombre. La couleur d'accent est celle de la radio, le
-   bleu ; le visiteur la change dans Réglages, comme le fond d'écran.
+   rouge tomate ; le visiteur la change dans Réglages, comme le fond d'écran.
 
    Écrit pour le téléphone d'abord : les icônes forment une rangée en haut, une
    fenêtre prend toute la largeur ; à partir de 40rem, les icônes passent en
@@ -14,7 +14,7 @@
   --os-fond: var(--blanc);
   --os-encre: var(--noir);
   --os-accent: var(--pastille-radio);
-  --os-accent-texte: var(--noir);
+  --os-accent-texte: var(--blanc);
   --os-barre: 3rem;
   --haut-icones: 6.5rem;
   /* L'écran moins l'en-tête : le bureau ne fait jamais défiler la page. */

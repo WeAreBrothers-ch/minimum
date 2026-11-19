@@ -87,14 +87,19 @@ mécanique se reprend, la surface (police, couleurs, épaisseurs) vient de Minim
 #### Le code couleur des pastilles (demande d'Eliott, 16.11.2026)
 Eliott veut que certaines infos et certains boutons deviennent des pastilles,
 avec une couleur par type d'info ou d'action, et **le vert toujours pour l'argent**.
-Une couleur ne sert qu'à ce sens-là, partout sur le site :
+Une couleur ne sert qu'à ce sens-là, partout sur le site. **Depuis le
+19.11.2026, les trois mondes sont les trois rouges RAL de la salle** (à la place
+du jaune, du bleu et du rose) ; foncés, ils portent toujours un texte blanc
+(`--texte-monde`), et la case survolée passe au noir. Les mentions de jaune, rose
+ou bleu plus bas dans ce document se lisent donc : rouge feu, rouge rubis, rouge
+tomate.
 
 | Couleur | Sens | Où |
 |---|---|---|
 | Vert | L'argent | Prix, tarifs, total, « Payer », accès aux billets, montant payé sur le billet |
-| Jaune | Le cinéma (programme) | « À l'affiche », « Prochainement », « Cinéma » dans l'agenda |
-| Bleu | La radio | « En direct », « À réécouter », « Écouter » |
-| Rose | La nuit | « Soirée », « DJ set », « Line-up », « Nuit » dans l'agenda |
+| Rouge feu (RAL 3000, #a72920) | Le cinéma (programme) | « À l'affiche », « Prochainement », « Cinéma » dans l'agenda |
+| Rouge tomate (RAL 3013, #972e25) | La radio | « En direct », « À réécouter », « Écouter » |
+| Rouge rubis (RAL 3003, #861a22) | La nuit | « Soirée », « DJ set », « Line-up », « Nuit » dans l'agenda |
 | Orange | Un problème | Messages d'erreur (caisse, programme qui ne charge pas) |
 | Cadré noir ou blanc | Les faits d'un film ou d'une soirée | Genre, durée, version, âge, dans la liste des films. Sur la fiche, ces faits ont chacun leur case (principe 5) |
 

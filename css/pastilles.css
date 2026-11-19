@@ -1,5 +1,5 @@
 /* Minimum : les pastilles. Une couleur = un type d'info (jetons.css) :
-   vert pour l'argent, jaune pour le cinéma, bleu pour la radio, rose pour
+   vert pour l'argent, et un rouge par monde (feu le cinéma, tomate la radio, rubis
    la nuit, orange pour un problème. Les faits courts d'un film (genre,
    durée, version, âge) sont cadrés d'un trait, sans couleur. Le menu est en
    pastilles (entete.css) ; les liens de retour (« Tous les films »)
@@ -58,9 +58,14 @@
 .pastille--cinema,
 .pastille--radio,
 .pastille--nuit {
-  color: var(--pastille-texte);
+  color: var(--texte-monde);
   background: var(--teinte);
   border-color: var(--teinte);
+}
+
+/* L'argent : vert, texte noir. */
+.pastille--argent {
+  color: var(--pastille-texte);
 }
 
 /* Une pastille qu'on presse : 44 px de haut, le texte plus gras. */

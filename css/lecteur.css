@@ -1,6 +1,6 @@
 /* Minimum : le lecteur de la radio, une case de la barre du haut.
    Le son ne s'arrête pas quand on change de page (lecteur.js). La case se
-   remplit du bleu de la radio quand elle joue, comme la case d'une
+   remplit du rouge de la radio quand elle joue, comme la case d'une
    rubrique ; tant qu'il n'y a rien à écouter, elle le dit, éteinte.
    Téléphone : l'icône et « Radio », entre le nom et le menu. Grand écran :
    à droite des rubriques, avec le titre de ce qui joue. */
@@ -62,7 +62,7 @@
 }
 
 .lecteur__bouton[data-joue="true"] {
-  color: var(--pastille-texte);
+  color: var(--texte-monde);
   background: var(--pastille-radio);
 }
 
@@ -82,7 +82,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .lecteur__bouton:not(:disabled):hover {
-    color: var(--pastille-texte);
+    color: var(--texte-monde);
     background: var(--pastille-radio);
   }
 }

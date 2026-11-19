@@ -1,6 +1,6 @@
 /* Minimum : la page Cinéma, en tableau de cases. Chaque film est une colonne
    de cases : l'affiche, puis dessous sa séance, son titre, sa réalisation,
-   et ses faits. Au survol, les cases de texte prennent le jaune du cinéma.
+   et ses faits. Au survol, les cases de texte prennent le rouge du cinéma.
    Une grande case « Toutes les séances » ferme le tableau et absorbe la
    place restante de la dernière rangée : jamais de trou.
 
@@ -95,19 +95,19 @@
   line-height: 1.35;
 }
 
-/* Survol et clavier : les cases de texte prennent le jaune du cinéma. */
+/* Survol et clavier : les cases de texte prennent le rouge du cinéma. */
 .film:focus-visible {
   outline: none;
 }
 
 .film:focus-visible .film__case {
-  color: var(--pastille-texte);
+  color: var(--texte-monde);
   background: var(--pastille-cinema);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .film:hover .film__case {
-    color: var(--pastille-texte);
+    color: var(--texte-monde);
     background: var(--pastille-cinema);
   }
 }
@@ -161,7 +161,7 @@
 }
 
 /* Les filtres : une barre au-dessus des films, avec un interrupteur en
-   retrait (deux cases jointes, la choisie en jaune). Ils ne s'alignent pas
+   retrait (deux cases jointes, la choisie en rouge). Ils ne s'alignent pas
    sur les colonnes : on ne les lit pas comme des têtes de colonne (un film
    à l'affiche ne semble jamais « prochainement »), et la barre n'a pas de
    case vide. */

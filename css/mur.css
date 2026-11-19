@@ -26,7 +26,7 @@
 }
 
 /* La tête d'un mur : une case de la couleur de son monde (rose la nuit,
-   jaune le cinéma, comme dans le menu), son nom en capitales grasses, ce
+   rouge feu le cinéma, comme dans le menu), son nom en capitales grasses, ce
    qu'il contient et une flèche. Toute la case mène à la page. */
 .moitie__tete {
   display: flex;
@@ -35,7 +35,7 @@
   gap: var(--espace-3);
   min-width: 0;
   padding-inline: var(--espace-3);
-  color: var(--pastille-texte);
+  color: var(--texte-monde);
   text-decoration: none;
   background: var(--teinte-monde);
   border-bottom: var(--trait) solid var(--noir);
