@@ -1,5 +1,7 @@
 // @ts-check
-/* Minimum : le menu. Sur téléphone, il s’ouvre sur tout l’écran. */
+/* Minimum : le menu. Sur téléphone, il s’ouvre sur tout l’écran ; la page
+   ne défile plus derrière (classe menu-ouvert sur <html>, entete.css) et
+   la barre du haut reste en vue, même ouverte après avoir défilé. */
 
 /**
  * Branche le bouton du menu de l’en-tête présent dans la page.
@@ -13,6 +15,7 @@ export function initEntete() {
   /** @param {boolean} ouvert */
   const basculer = (ouvert) => {
     menu.dataset.ouvert = String(ouvert);
+    document.documentElement.classList.toggle("menu-ouvert", ouvert);
     bouton.setAttribute("aria-expanded", String(ouvert));
     bouton.setAttribute("aria-label", ouvert ? "Fermer le menu" : "Ouvrir le menu");
   };
@@ -31,6 +34,7 @@ export function initEntete() {
   document.addEventListener("keydown", auClavier);
 
   return () => {
+    document.documentElement.classList.remove("menu-ouvert");
     bouton.removeEventListener("click", auClic);
     document.removeEventListener("keydown", auClavier);
   };

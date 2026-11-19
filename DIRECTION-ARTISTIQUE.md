@@ -353,13 +353,14 @@ posées en masque pour prendre la couleur du texte (`.fleche` dans `base.css`).
 - **Au survol**, la flèche traverse sa case : elle sort d'un côté et revient
   de l'autre (en diagonale pour ↗). Immobile avec « réduire les animations ».
 
-### Le menu sur téléphone (revu le 19.11.2026 : « plus attirant »)
-Ouvert, il devient une surface noire aux traits blancs, dans le prolongement
-de la croix noire. Les cinq rubriques se partagent toute la hauteur de
-l'écran : le nom en très grand, ce qu'on y trouve en capitales (« Les films à
-l'affiche »…), la flèche. La description et la flèche ont la couleur vive du
-monde (jaune, rose, bleu ; blanc pour l'agenda et les infos) ; la rubrique
-courante, ou pressée, se remplit de cette couleur.
+### Le menu sur téléphone (revu le 19.11.2026 : vivant, mais sobre)
+La surface blanche du site ; les cinq rubriques se partagent la hauteur de
+l'écran. Le nom en grand, ce qu'on y trouve en une ligne simple, la flèche ;
+un filet de la couleur vive du monde sur le bord gauche (jaune, rose, bleu).
+La page où l'on est, ou la rubrique pressée, se remplit de noir. En bas,
+l'adresse sous la bande des trois mondes. Ouvert, il bloque le défilement de
+la page derrière, et la barre du haut reste en vue même si l'on avait défilé.
+(Une version noire et colorée a été jugée « too much ».)
 
 ### La barre des tâches de la radio (revue le 19.11.2026)
 Un dock noir aux traits blancs : Start, une case carrée par fenêtre sur
