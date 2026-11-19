@@ -225,8 +225,8 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
   vert de l'argent), au besoin une ligne de détail. Six colonnes sur téléphone,
   douze sur ordinateur. Le plan, les téléphones et l'e-mail sont des briques
   qu'on presse (noires au survol).
-- **Les remerciements défilent dans un bandeau** : une grande case noire
-  « MERCI » (sur téléphone, toute la largeur, au-dessus du bandeau ; sur
+- **Les remerciements défilent dans un bandeau** : une grande case rouge rubis
+  (RAL 3003, texte blanc) « MERCI » (sur téléphone, toute la largeur, au-dessus du bandeau ; sur
   ordinateur, un quart de la ligne), puis les noms en grand, chacun dans sa case,
   séparés d'un trait noir (pas de carrés de couleur). On le fait défiler à
   la main (doigt, pavé, ou en tirant à la souris) et il revient sans fin

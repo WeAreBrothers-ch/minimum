@@ -139,7 +139,7 @@
 }
 
 /* ---------- Les remerciements : un bandeau qu'on fait défiler ---------- */
-/* Une grande case noire « MERCI », puis les noms en grand, chacun dans sa
+/* Une grande case rouge rubis « MERCI », puis les noms en grand, chacun dans sa
    case, séparés d'un trait noir comme les briques. Sur téléphone, MERCI
    occupe toute la largeur, au-dessus du bandeau ; sur ordinateur, il est sur
    la même ligne, dans une case d'un quart. On fait défiler les noms au
@@ -163,8 +163,9 @@
   line-height: 0.9;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
-  color: var(--blanc);
-  background: var(--noir);
+  /* Le rouge le plus foncé des trois, le rubis (RAL 3003), texte blanc. */
+  color: var(--texte-monde);
+  background: var(--rouge-rubis);
 }
 
 .merci__defile {
