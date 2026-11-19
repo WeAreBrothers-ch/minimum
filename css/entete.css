@@ -220,15 +220,10 @@
 }
 
 /* ---------- Le menu ouvert, sur téléphone et tablette ---------- */
-/* Sobre : la surface blanche du site, une case par rubrique. Le nom en
-   grand, ce qu'on y trouve en une ligne simple, la flèche. Un filet de la
-   couleur vive de son monde sur le bord gauche (jaune le cinéma, rose la
-   nuit, bleu la radio). La page où l'on est, ou la rubrique pressée, se
+/* Sobre : la surface blanche du site, une case par rubrique, le nom en
+   grand et la flèche. La page où l'on est, ou la rubrique pressée, se
    remplit de noir. En bas, l'adresse, sous la bande des trois mondes du
    pied de page. */
-.menu__desc {
-  display: none;
-}
 
 /* Menu ouvert : la page ne défile plus derrière, et la barre du haut reste
    en vue même si l'on avait défilé avant de l'ouvrir. */
@@ -247,43 +242,6 @@ html.menu-ouvert .entete {
   /* Les rubriques se partagent la hauteur de l'écran : pas de vide. */
   .menu__item {
     flex: 1 0 auto;
-  }
-
-  .menu__liste .menu__lien {
-    --monde: transparent;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-content: center;
-    column-gap: var(--espace-3);
-    row-gap: 0.25rem;
-    min-height: 5.25rem;
-    padding-block: var(--espace-3);
-    font-size: clamp(1.75rem, 1.2rem + 3vw, 2.75rem);
-    box-shadow: inset 0.375rem 0 0 var(--monde);
-  }
-
-  .menu__liste .menu__lien--cinema { --monde: var(--jaune-vif); }
-  .menu__liste .menu__lien--nuit { --monde: var(--rose-vif); }
-  .menu__liste .menu__lien--radio { --monde: var(--bleu-vif); }
-
-  .menu__mot {
-    grid-column: 1;
-  }
-
-  .menu__desc {
-    display: block;
-    grid-column: 1;
-    font-size: var(--taille-petite);
-    font-weight: var(--graisse-texte);
-    line-height: 1.3;
-    text-transform: none;
-    letter-spacing: 0;
-  }
-
-  .menu__liste .menu__lien::after {
-    grid-column: 2;
-    grid-row: 1 / 3;
-    align-self: center;
   }
 
   .menu__liste .menu__lien[aria-current],
