@@ -12,7 +12,7 @@
      prennent le jaune du cinéma.
    - Une grande case « Toutes les séances » ferme le tableau : elle absorbe
      la place qui reste sur la dernière rangée, jamais de trou.
-   - Les infos pratiques en lignes, dessous. */
+   (Billets et paiement sont sur la page Infos.) */
 
 import { chargerProgramme, filmsALAffiche, filmsAnnonces, seancesAVenir } from "../donnees.js";
 import { duree, echapper, heureCourte, jourCourt } from "../format.js";
@@ -70,13 +70,6 @@ function filmHTML(film, programme, racine, prioritaire) {
   );
 }
 
-/** Les infos pratiques, sous les films : comment acheter son billet. */
-const PRATIQUE =
-  `<dl class="pratique">` +
-  `<div class="pratique__ligne"><dt>Billets</dt><dd>En ligne, sur la fiche de chaque film. Ou à la buvette, 15 minutes avant la séance.</dd></div>` +
-  `<div class="pratique__ligne"><dt>Paiement</dt><dd>Par carte en ligne. En espèces ou par TWINT à la buvette.</dd></div>` +
-  `</dl>`;
-
 /**
  * Remplit la page Cinéma. Renvoie de quoi la démonter.
  * @returns {() => void}
@@ -129,8 +122,7 @@ export function initCinema() {
             .join("") +
           `</div>` +
           `<div class="films">${liste.map((f, i) => filmHTML(f, programme, racine, i < 2)).join("")}` +
-          `<a class="films__agenda" href="${racine}agenda/"><span>Toutes les séances</span><span class="fleche" aria-hidden="true"></span></a></div></div>` +
-          PRATIQUE;
+          `<a class="films__agenda" href="${racine}agenda/"><span>Toutes les séances</span><span class="fleche" aria-hidden="true"></span></a></div></div>`;
       };
 
       auClic = (e) => {

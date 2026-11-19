@@ -22,6 +22,45 @@ let cheminAffiche = location.pathname + location.search;
 /** @type {AuChangement | null} Branché par initNavigation. */
 let surChangement = null;
 
+/** Les pages déjà demandées : le doigt posé sur un lien la fait venir,
+    avant même qu'il se lève. Une page n'est demandée qu'une fois. */
+/** @type {Map<string, Promise<string>>} */
+const pagesDemandees = new Map();
+
+/**
+ * Le HTML d'une page du site, depuis la mémoire ou le réseau.
+ * @param {URL} url
+ * @returns {Promise<string>}
+ */
+function texteDePage(url) {
+  const cle = url.origin + url.pathname + url.search;
+  let demande = pagesDemandees.get(cle);
+  if (!demande) {
+    demande = fetch(url, { headers: { Accept: "text/html" } }).then((reponse) => {
+      if (!reponse.ok) throw new Error(`La page a répondu ${reponse.status}`);
+      return reponse.text();
+    });
+    /* Un échec ne reste pas en mémoire : la prochaine fois, on réessaie. */
+    demande.catch(() => pagesDemandees.delete(cle));
+    pagesDemandees.set(cle, demande);
+  }
+  return demande;
+}
+
+/**
+ * Commence à faire venir la page d'un lien du site, sans l'afficher.
+ * @param {EventTarget | null} cible
+ */
+function precharger(cible) {
+  const lien = cible instanceof Element ? cible.closest("a[href]") : null;
+  if (!(lien instanceof HTMLAnchorElement) || (lien.target && lien.target !== "_self")) return;
+  const url = new URL(lien.href);
+  if (url.origin !== location.origin) return;
+  if (url.pathname === location.pathname && url.search === location.search) return;
+  if (!url.pathname.endsWith("/") && !url.pathname.endsWith(".html")) return;
+  texteDePage(url).catch(() => {});
+}
+
 /**
  * Ce lien mène-t-il à une page du site qu’on peut charger nous-mêmes ?
  * @param {HTMLAnchorElement} lien
@@ -139,9 +178,7 @@ function placer(url) {
  */
 async function charger(url, ajouterAHistorique, auChangement) {
   try {
-    const reponse = await fetch(url, { headers: { Accept: "text/html" } });
-    if (!reponse.ok) throw new Error(`La page a répondu ${reponse.status}`);
-    const suivante = new DOMParser().parseFromString(await reponse.text(), "text/html");
+    const suivante = new DOMParser().parseFromString(await texteDePage(url), "text/html");
     await chargerStyles(suivante, url);
     if (ajouterAHistorique) history.pushState(null, "", url);
     /* Change de page, puis attend qu’elle ait démarré (son code chargé, son
@@ -154,11 +191,14 @@ async function charger(url, ajouterAHistorique, auChangement) {
       await Promise.race([demarrage, new Promise((fin) => setTimeout(fin, 1000))]);
     };
     if (typeof document.startViewTransition === "function" && !MOINS_DE_MOUVEMENT.matches) {
-      /* L’en-tête reste en place, le contenu glisse (css/animations.css).
-         On attend que la page ait démarré, puis une tâche : le programme,
-         déjà chargé, a rempli la page. (Pas requestAnimationFrame :
-         l’affichage est suspendu pendant la transition, il n’arriverait
-         jamais.) */
+      /* La nouvelle page se pose sur l’ancienne (css/animations.css).
+         L’en-tête ne reste immobile que s’il est en vue en haut de l’écran :
+         venu d’une page défilée, il glisserait depuis le haut. On attend que
+         la page ait démarré, puis une tâche : le programme, déjà chargé, a
+         rempli la page. (Pas requestAnimationFrame : l’affichage est
+         suspendu pendant la transition, il n’arriverait jamais.) */
+      const racine = document.documentElement;
+      racine.classList.toggle("vt-entete", window.scrollY < 1);
       const transition = document.startViewTransition(async () => {
         await changer();
         await new Promise((fin) => setTimeout(fin, 0));
@@ -166,7 +206,7 @@ async function charger(url, ajouterAHistorique, auChangement) {
       /* Une transition interrompue (clic rapide sur un autre lien) n’est pas
          une erreur : la page a changé quand même. */
       transition.ready.catch(() => {});
-      transition.finished.catch(() => {});
+      transition.finished.catch(() => {}).finally(() => racine.classList.remove("vt-entete"));
       await transition.updateCallbackDone;
     } else {
       await changer();
@@ -189,6 +229,12 @@ export function initNavigation(auChangement) {
     e.preventDefault();
     void charger(new URL(cible.href), true, auChangement);
   });
+
+  /* Le doigt se pose, la souris s'approche, le clavier arrive sur un lien :
+     la page suivante est déjà en route au moment du clic. */
+  document.addEventListener("pointerdown", (e) => precharger(e.target), { passive: true });
+  document.addEventListener("pointerover", (e) => precharger(e.target), { passive: true });
+  document.addEventListener("focusin", (e) => precharger(e.target));
 
   /* Retour arrière : seulement si la page change, pas pour une ancre. */
   window.addEventListener("popstate", () => {

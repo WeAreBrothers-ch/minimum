@@ -281,14 +281,16 @@ police à chasse fixe) : elle est habillée avec le design du site (demande d'El
 
 ### Mouvement (revu le 18.11.2026 : Eliott demande des animations)
 Des entrées franches et courtes qui suivent le dessin du site, dans
-`css/animations.css` (et `js/animations.js` pour la cascade) :
-- **Changer de page** : l'en-tête reste, l'ancien contenu s'efface, le nouveau
-  glisse en place (View Transitions, sans rechargement ; la radio continue).
+`css/animations.css` :
+- **Changer de page** (revu le 19.11.2026 : « fluide ») : la nouvelle page se
+  pose d'un seul bloc sur l'ancienne, en glissant un peu (View Transitions,
+  sans rechargement ; la radio continue). Aucun morceau de page ne voyage, pas
+  de creux gris ; l'en-tête reste immobile s'il était en vue. La page suivante
+  est déjà en route dès que le doigt se pose sur le lien (préchargement).
 - **Titre de page** : il sort de sous sa ligne (masque).
 - **Lignes de tirets** : elles se tapent, comme sur le programme de 2009.
-- **Cases** (films, soirées, lignes d'agenda et d'infos, cases de la fiche) :
-  elles entrent en cascade quand elles arrivent à l'écran ; l'affiche se
-  dévoile de haut en bas.
+- **Pas de cascade** : les cases sont là dès l'arrivée sur la page (la cascade
+  faisait apparaître des cases en retard pendant le changement de page).
 - **Menu** : sur téléphone, les rubriques arrivent l'une après l'autre ; sur
   ordinateur, la case survolée se remplit de bas en haut. Les flèches avancent
   d'un pas au survol ; une affiche survolée ne change pas.

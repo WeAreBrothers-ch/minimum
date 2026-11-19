@@ -7,7 +7,6 @@
    la radio. Les modules de la page sont annoncés en tête de son HTML
    (npm run precharger), ils arrivent donc en même temps que main.js. */
 
-import { initAnimations } from "./animations.js";
 import { initEntete } from "./entete.js";
 import { initLecteur, rafraichirLecteur } from "./lecteur.js";
 import { initNavigation } from "./navigation.js";
@@ -79,6 +78,5 @@ function sessionStorageEssai() {
 }
 
 initLecteur();
-initAnimations();
 void lancerPage(document.body.dataset.page ?? "");
 initNavigation(lancerPage);

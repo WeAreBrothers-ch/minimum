@@ -5,8 +5,6 @@
    - changer de page : l'en-tête reste, le contenu glisse (View Transitions) ;
    - le titre de la page sort de sous sa ligne ;
    - les lignes de tirets se tapent, comme sur le programme de 2009 ;
-   - les cases apparaissent en cascade quand elles entrent dans l'écran
-     (animations.js pose .a-attente puis .a-entree) ;
    - le menu s'ouvre rubrique après rubrique ; au survol, la case se remplit
      de bas en haut ;
    - les fenêtres de la radio s'ouvrent et se referment.
@@ -17,20 +15,17 @@
 
 @media (prefers-reduced-motion: no-preference) {
   /* ---------- Changer de page ---------- */
-  .entete {
+  /* La page passe d'un seul bloc : l'ancienne reste affichée telle quelle,
+     la nouvelle se pose par-dessus en glissant un peu. Aucun morceau de page
+     ne voyage d'un endroit à l'autre (le pied noir traversait l'écran quand
+     on venait d'une page défilée), jamais de creux gris entre les deux.
+     L'en-tête reste immobile, mais seulement s'il était en vue en haut de
+     l'écran au moment du clic (navigation.js pose alors vt-entete). */
+  html.vt-entete .entete {
     view-transition-name: entete;
   }
 
-  main {
-    view-transition-name: contenu;
-  }
-
-  .pied {
-    view-transition-name: pied;
-  }
-
   ::view-transition-old(root),
-  ::view-transition-new(root),
   ::view-transition-new(entete) {
     animation: none;
   }
@@ -40,14 +35,8 @@
     opacity: 0;
   }
 
-  ::view-transition-old(contenu),
-  ::view-transition-old(pied) {
-    animation: 160ms var(--ease-out) both page-sort;
-  }
-
-  ::view-transition-new(contenu),
-  ::view-transition-new(pied) {
-    animation: var(--duree-page) var(--ease-entree) 60ms both page-entre;
+  ::view-transition-new(root) {
+    animation: var(--duree-page) var(--ease-entree) both page-entre;
   }
 
   /* ---------- Le titre sort de sous sa ligne ---------- */
@@ -73,29 +62,6 @@
   /* ---------- Les tirets se tapent ---------- */
   .tirets::before {
     animation: 900ms steps(36, end) 200ms both tirets-tapes;
-  }
-
-  /* ---------- Les cases en cascade ---------- */
-  .a-attente {
-    opacity: 0;
-    translate: 0 1.5rem;
-  }
-
-  .a-entree {
-    animation: var(--duree-entree) var(--ease-entree) both apparaitre;
-    animation-delay: calc(var(--i, 0) * var(--cascade));
-  }
-
-  /* L'affiche se dévoile de haut en bas, avec sa case. */
-  .a-entree .carreau__affiche img,
-  .a-entree.detail__affiche img {
-    animation: 760ms var(--ease-entree) both affiche-devoile;
-    animation-delay: calc(var(--i, 0) * var(--cascade));
-  }
-
-  /* Sur la fiche d'un film ou d'une soirée, l'affiche entre la première. */
-  .a-entree.detail__affiche {
-    --i: 0 !important;
   }
 
   /* ---------- Le menu ---------- */
@@ -212,17 +178,10 @@
   }
 }
 
-@keyframes page-sort {
-  to {
-    opacity: 0;
-    translate: 0 -0.5rem;
-  }
-}
-
 @keyframes page-entre {
   from {
     opacity: 0;
-    translate: 0 1.25rem;
+    translate: 0 1rem;
   }
 }
 
@@ -246,18 +205,6 @@
 
   to {
     clip-path: inset(0 0 0 0);
-  }
-}
-
-@keyframes affiche-devoile {
-  from {
-    clip-path: inset(0 0 100% 0);
-    scale: 1.08;
-  }
-
-  to {
-    clip-path: inset(0 0 0 0);
-    scale: 1;
   }
 }
 
@@ -328,10 +275,3 @@
   }
 }
 
-/* À l'impression, ou sans mouvement : tout est visible tout de suite. */
-@media print, (prefers-reduced-motion: reduce) {
-  .a-attente {
-    opacity: 1;
-    translate: none;
-  }
-}

@@ -465,45 +465,6 @@ main [data-remplir]:empty {
   border-bottom: var(--trait) solid var(--encre);
 }
 
-/* ---------- Les infos pratiques sous une liste (Cinéma) ---------- */
-/* Une ligne : l'intitulé dans une colonne fixe, la valeur juste à côté,
-   comme sur la page Infos. */
-.pratique {
-  position: relative;
-  margin-top: calc(var(--trait) * -1);
-  border-top: var(--trait) solid var(--encre);
-}
-
-.pratique__ligne {
-  display: grid;
-  grid-template-columns: 6.5rem minmax(0, 1fr);
-  align-items: baseline;
-  gap: var(--espace-3);
-  min-height: 3.25rem;
-  padding: var(--espace-3) var(--marge);
-}
-
-.pratique__ligne + .pratique__ligne {
-  border-top: var(--trait) solid var(--encre);
-}
-
-.pratique dt {
-  font-size: var(--taille-petite);
-  font-weight: var(--graisse-nom);
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
-}
-
-.pratique dd {
-  max-width: var(--mesure);
-}
-
-@media (min-width: 56rem) {
-  .pratique__ligne {
-    grid-template-columns: 10rem minmax(0, 1fr);
-  }
-}
-
 /* ---------- Le pied de page : la fin de la page, sans doute possible ---------- */
 /* Une surface noire, comme la nuit, aux cases jointes d'un trait blanc :
    rien d'autre sur le site ne lui ressemble. En tête, le nom MINIMUM en
