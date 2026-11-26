@@ -3,7 +3,7 @@
    contenu, aucun jeton, aucun réglage n'est partagé entre les deux. */
 
 /** L'identifiant du projet Sanity de Minimum (sanity.io/manage). */
-export const PROJET = "a-creer";
+export const PROJET = "hvxsup1j";
 
 export const JEU = "production";
 

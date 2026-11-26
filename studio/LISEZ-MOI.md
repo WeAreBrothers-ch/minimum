@@ -7,13 +7,25 @@ radio, artistes, événements, billets, réglages.
 son propre projet Sanity, son propre catalogue de films, ses propres jetons.
 `projet.ts` refuse de démarrer sur le projet de Zinéma (`vle63mzm`).
 
-## État
+## État (26.11.2026)
 
-- Le Studio compile, son modèle est validé (`npx sanity schema validate`).
-- **Le projet Sanity n'est pas encore créé** : `projet.ts` contient `a-creer`.
-  Une fois le projet créé sur sanity.io, y écrire son identifiant.
-- Le site (`js/config.js`, `api/`, `.htaccess`) lit encore le projet de
-  Zinéma : à basculer sur le nouveau projet une fois celui-ci créé et rempli.
+- Projet Sanity **`hvxsup1j`** (« minimum »), jeu `production`, dans la même
+  organisation que celui de Zinéma, à côté de lui. Le projet de Zinéma n'a
+  pas été modifié.
+- Les 27 films de Zinéma y ont été copiés une fois, avec leurs affiches
+  (lecture seule chez Zinéma). Ils arrivent marqués « Terminé », hors pages
+  publiques : cocher « À l'affiche » pour en programmer un. L'invité·e, les
+  prix et les séances de Zinéma n'ont pas été copiés.
+- Le site (`js/config.js`, `.htaccess`) et la caisse (`api/`,
+  `serveur/config.exemple.php`) lisent ce projet.
+- Adresses autorisées à lire le projet (CORS) : `localhost:8000`,
+  `localhost:3333` (Studio), `wearebrothers-ch.github.io`, `cineminimum.ch`
+  et `www.cineminimum.ch`.
+- **Le Studio n'est pas encore en ligne.** Il compile et son modèle est
+  validé, mais le mettre en ligne demande un compte qui a les droits sur le
+  projet : `npx sanity login`, puis `npm run deploy` (voir ci-dessous).
+- À remplir dans le Studio avant d'ouvrir la caisse : « Le lieu → Réglages »
+  (tarifs, nombre de places, jauge du club), puis le publier.
 
 ## Lancer
 
@@ -22,7 +34,9 @@ cd studio
 npm install
 npm run dev        # http://localhost:3333
 npm run verifier   # TypeScript
-npm run deploy     # met le Studio en ligne (sanity.studio)
+npx sanity login   # une fois, avec le compte du projet
+npm run deploy     # met le Studio en ligne (sanity.studio) ; choisir son adresse
+npm run schema     # facultatif : publie le modèle pour les outils Sanity
 ```
 
 `package-lock.json` fixe les versions qui marchent : préférer `npm ci`.

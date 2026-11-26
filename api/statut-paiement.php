@@ -27,11 +27,11 @@ if (!preg_match('/^MIN-[A-HJ-NP-Z2-9]{6}$/', $reference)) {
 }
 
 $commande = sanityLire(
-    '*[_type == "commande" && lieu == $lieu && reference == $r][0]{
+    '*[_type == "commande" && reference == $r][0]{
        _id, reference, statut, genre, "evenement": evenement._ref, evenementTitre, evenementDate,
        evenementHeure, billets, montant, sumupCheckoutId
      }',
-    ['r' => $reference, 'lieu' => LIEU]
+    ['r' => $reference]
 );
 if (!is_array($commande)) {
     echec('Billet introuvable.', 404);

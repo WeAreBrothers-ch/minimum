@@ -31,11 +31,12 @@ return [
         'code_marchand' => 'MXXXXXXX',
     ],
 
-    /* Sanity : le projet commun avec Zinéma. Un jeton propre à
-       Minimum (sanity.io → projet → API → Tokens, droits « Editor »),
-       pour pouvoir le retirer sans couper la caisse de Zinéma. */
+    /* Sanity : le projet de Minimum (indépendant de celui de Zinéma).
+       Un jeton réservé à la caisse (sanity.io → projet minimum → API →
+       Tokens, droits « Editor »), pour pouvoir le retirer sans rien
+       couper d'autre. */
     'sanity' => [
-        'projet' => 'vle63mzm',
+        'projet' => 'hvxsup1j',
         'dataset' => 'production',
         'jeton_ecriture' => 'skXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
     ],

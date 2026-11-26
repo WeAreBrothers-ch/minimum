@@ -1,8 +1,8 @@
 // @ts-check
-/* Minimum : compléter un film avec le catalogue commun (saisi pour Zinéma).
-   Ce que Minimum écrit lui-même reste prioritaire ; le catalogue n’apporte
-   que ce qui ne dépend pas du lieu : affiche, titre original, images du
-   film, article de presse. Jamais l’invité·e d’une séance de Zinéma. */
+/* Minimum : compléter un film du programme avec le catalogue de Minimum
+   (Sanity). Ce que le programme écrit lui-même reste prioritaire ; le
+   catalogue n’apporte que l’affiche, le titre original, les images du
+   film et l’article de presse. */
 
 /** @typedef {import("./types.js").Film} Film */
 /** @typedef {import("./types.js").Lien} Lien */

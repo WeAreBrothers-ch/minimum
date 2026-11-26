@@ -58,7 +58,6 @@ $reference = nouvelleReference();
 $idCommande = sanityCreer([
     '_id' => 'prive.minimum-commande-' . bin2hex(random_bytes(10)),
     '_type' => 'commande',
-    'lieu' => LIEU,
     'reference' => $reference,
     'statut' => 'en-attente',
     'genre' => $genre,

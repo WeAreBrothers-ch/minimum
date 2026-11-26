@@ -1,8 +1,8 @@
 <?php
 /* ============================================================
    Minimum : lecture et écriture dans Sanity depuis le serveur.
-   Le projet est partagé avec Zinéma : toute lecture de séance,
-   de soirée ou de commande filtre sur lieu == "minimum".
+   Le projet Sanity est celui de Minimum seul (config.php) : rien
+   n'est partagé avec celui de Zinéma.
    ============================================================ */
 
 declare(strict_types=1);
@@ -10,7 +10,6 @@ declare(strict_types=1);
 require_once __DIR__ . '/_socle.php';
 
 const SANITY_VERSION_API = '2024-01-01';
-const LIEU = 'minimum';
 
 function sanityBase(string $usage): string
 {
