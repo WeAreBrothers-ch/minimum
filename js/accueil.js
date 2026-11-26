@@ -54,8 +54,8 @@ function rubrique(teinte, titre, lien, ligne) {
  * à droite : Agenda (jaune), Musique (rose), Cinéma (rouge), Infos (grenat).
  * Sur ordinateur, chacun en tête de sa colonne ; sur téléphone, Agenda puis
  * Musique dans le mur gauche, Cinéma puis Infos dans le droit, une affiche
- * entre les deux. Jamais alignés : chaque colonne part d’une hauteur
- * différente (DECALAGES). Ils reviennent à la même place à chaque tour.
+ * entre les deux. Jamais alignés ni de même taille (ORDINATEUR, TELEPHONE).
+ * Ils reviennent à la même place à chaque tour.
  * @param {Carte[]} musique
  * @param {Carte[]} cinema
  */
@@ -73,10 +73,22 @@ function onglets(musique, cinema) {
   };
 }
 
-/** Où arrive l’onglet de chaque colonne, en fraction d’affiche sous le haut
-    de l’écran : des hauteurs différentes, jamais une rangée. Tous restent
-    dans l’écran à l’arrivée. */
-const DECALAGES = { ordinateur: [-0.1, -0.62, -0.3, -0.85], telephone: [-0.08, -0.5] };
+/** Chaque colonne : où arrive son onglet (en fraction d’affiche sous le
+    haut de l’écran) et sa hauteur (en largeurs de colonne). Ni rangée, ni
+    zigzag, ni deux onglets de la même taille : le mur reste irrégulier
+    (revu le 26.11.2026 : « pas symétrique »). Tous dans l’écran à
+    l’arrivée sur ordinateur. Ordre : Agenda, Musique, Cinéma, Infos. */
+const ORDINATEUR = [
+  { depart: -0.45, rubrique: 0.6 },
+  { depart: -0.05, rubrique: 0.95 },
+  { depart: -0.75, rubrique: 0.7 },
+  { depart: -0.25, rubrique: 0.85 },
+];
+/** Téléphone : mur gauche (Agenda, Musique), mur droit (Cinéma, Infos). */
+const TELEPHONE = [
+  { depart: -0.3, rubrique: 0.75 },
+  { depart: -0.95, rubrique: 0.6 },
+];
 
 /**
  * Un onglet, une affiche, puis l’autre onglet et le reste des affiches.
@@ -107,18 +119,18 @@ export function initAccueil() {
   /** @param {Carte[]} musique @param {Carte[]} cinema */
   const monter = (musique, cinema) => {
     const o = onglets(musique, cinema);
-    const [d1 = 0, d2 = 0, d3 = 0, d4 = 0] = DECALAGES.ordinateur;
-    const [t1 = 0, t2 = 0] = DECALAGES.telephone;
+    const [c1, c2, c3, c4] = ORDINATEUR;
+    const [t1, t2] = TELEPHONE;
     demontages.push(
       remplir(
         moitieMusique,
         (ordinateur) =>
           ordinateur
             ? [
-                { cartes: [o.agenda, ...musique], depart: d1 },
-                { cartes: [o.musique, ...decaler(musique)], depart: d2 },
+                { cartes: [o.agenda, ...musique], depart: c1?.depart ?? 0, rubrique: c1?.rubrique ?? 0 },
+                { cartes: [o.musique, ...decaler(musique)], depart: c2?.depart ?? 0, rubrique: c2?.rubrique ?? 0 },
               ]
-            : [{ cartes: deuxOnglets(o.agenda, o.musique, musique), depart: t1 }],
+            : [{ cartes: deuxOnglets(o.agenda, o.musique, musique), depart: t1?.depart ?? 0, rubrique: t1?.rubrique ?? 0 }],
         racine
       )
     );
@@ -128,10 +140,10 @@ export function initAccueil() {
         (ordinateur) =>
           ordinateur
             ? [
-                { cartes: [o.cinema, ...cinema], depart: d3 },
-                { cartes: [o.infos, ...decaler(cinema)], depart: d4 },
+                { cartes: [o.cinema, ...cinema], depart: c3?.depart ?? 0, rubrique: c3?.rubrique ?? 0 },
+                { cartes: [o.infos, ...decaler(cinema)], depart: c4?.depart ?? 0, rubrique: c4?.rubrique ?? 0 },
               ]
-            : [{ cartes: deuxOnglets(o.cinema, o.infos, cinema), depart: t2 }],
+            : [{ cartes: deuxOnglets(o.cinema, o.infos, cinema), depart: t2?.depart ?? 0, rubrique: t2?.rubrique ?? 0 }],
         racine
       )
     );

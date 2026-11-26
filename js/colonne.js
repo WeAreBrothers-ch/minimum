@@ -21,7 +21,7 @@ import { carteHTML } from "./carte.js";
 const COPIES = 21;
 const CENTRE = 10;
 const PROPORTION = 1.5;
-/** Une rubrique dans le mur : la moitié de la hauteur d’une affiche. */
+/** Une rubrique dans le mur, par défaut : la moitié de la hauteur d’une affiche. */
 const PROPORTION_RUBRIQUE = 0.75;
 const ATTENTE_ARRET = 120;
 
@@ -31,6 +31,7 @@ const ATTENTE_ARRET = 120;
  * @property {number[]} ordre       L’ordre des affiches dans le cycle (rangs dans `cartes`).
  * @property {string} racine
  * @property {boolean} accessible   Vrai pour la colonne que lisent le clavier et les lecteurs d’écran.
+ * @property {number} rubrique      Hauteur des cases de rubrique de cette colonne, en largeurs de colonne.
  * @property {number} depart        Où la colonne commence, en fraction d’affiche (0 : la première case
  *                                  tout en haut ; −0,5 : elle arrive une demi-affiche plus bas).
  */
@@ -107,7 +108,7 @@ function construire(colonne, options) {
   }
   const joint = parseFloat(getComputedStyle(colonne).rowGap) || 0;
   const hauteurCase = Math.round(largeur * PROPORTION);
-  const hauteurRubrique = Math.round(largeur * PROPORTION_RUBRIQUE);
+  const hauteurRubrique = Math.round(largeur * (options.rubrique || PROPORTION_RUBRIQUE));
   const pas = hauteurCase + joint;
   const hauteur = (/** @type {number} */ place) =>
     (options.cartes[options.ordre[place % options.ordre.length] ?? 0]?.genre === "rubrique" ? hauteurRubrique : hauteurCase) + joint;

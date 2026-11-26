@@ -20,6 +20,7 @@ import { monterColonne } from "./colonne.js";
  * @typedef {Object} Colonne
  * @property {Carte[]} cartes
  * @property {number} depart
+ * @property {number} rubrique  Hauteur de ses cases de rubrique, en largeurs de colonne.
  */
 
 const ORDINATEUR = "(min-width: 56rem)";
@@ -42,13 +43,14 @@ export function monterMur(conteneur, colonnesDe, racine) {
     conteneur.innerHTML = listes.map(() => `<div class="moitie__colonne"></div>`).join("");
     const colonnes = [...conteneur.children].filter((el) => el instanceof HTMLElement);
     demontages = colonnes.map((colonne, rang) => {
-      const { cartes = [], depart = 0 } = listes[rang] ?? {};
+      const { cartes = [], depart = 0, rubrique = 0 } = listes[rang] ?? {};
       return monterColonne(colonne, {
         cartes,
         ordre: cartes.map((_, i) => i),
         racine,
         accessible: rang === 0,
         depart,
+        rubrique,
       });
     });
   };
