@@ -91,7 +91,7 @@
  * @property {string} date   AAAA-MM-JJ
  * @property {string} heure  HH:MM
  * @property {boolean} enDirect
- * @property {string | null} audio   Adresse du fichier ou du flux ; null si pas encore fourni.
+ * @property {string | null} video   Adresse YouTube du live (youtube.com/live/…, watch?v=…) ; null si pas encore en ligne.
  * @property {Image | null} visuel
  */
 
@@ -125,15 +125,6 @@
  * @property {Image | null} image
  * @property {string} ligne       Une ligne d’information (date, réalisation…).
  * @property {string} etat        « À l’affiche », « En direct », « Soirée »…
- * @property {string | null} audio
- */
-
-/**
- * @typedef {Object} Piste
- * @property {string} titre
- * @property {string} etat
- * @property {string | null} audio
- * @property {string} id
  */
 
 export {};

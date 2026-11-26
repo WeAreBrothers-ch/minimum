@@ -1,5 +1,5 @@
 // @ts-check
-/* Minimum : la page Nuit, les soirées du club. Une grille d’affiches :
+/* Minimum : la page Musique, les soirées du club. Une grille d’affiches :
    sous chacune, la date, la case rose du line-up et la case verte des
    billets. Chaque soirée mène à sa fiche. */
 
@@ -26,7 +26,7 @@ function carreauHTML(soiree, racine, prioritaire) {
     `<div class="carreau__texte"><h2 class="carreau__titre"><a href="${lien}">${echapper(soiree.titre)}</a></h2></div>` +
     `<p class="carreau__faits"><span class="carreau__infos">${echapper(jourLongMajuscule(soiree.date))}</span>` +
     `<span class="carreau__quand">${heureCourte(soiree.heure)}${fin}</span></p>` +
-    `<a class="carreau__action carreau__action--nuit" href="${lien}">Line-up <span class="fleche" aria-hidden="true"></span></a>` +
+    `<a class="carreau__action carreau__action--musique" href="${lien}">Line-up <span class="fleche" aria-hidden="true"></span></a>` +
     (soiree.tarifs.length
       ? `<a class="carreau__action carreau__action--argent" href="${lien}#billets">Billets <span class="fleche" aria-hidden="true"></span></a>`
       : `<p class="carreau__action">Billets à l’entrée</p>`) +
@@ -35,10 +35,10 @@ function carreauHTML(soiree, racine, prioritaire) {
 }
 
 /**
- * Remplit la page Nuit. Renvoie de quoi la démonter.
+ * Remplit la page Musique. Renvoie de quoi la démonter.
  * @returns {() => void}
  */
-export function initNuit() {
+export function initMusique() {
   const zone = zoneAremplir();
   if (!zone) return () => {};
   const racine = document.body.dataset.racine ?? "";
@@ -50,7 +50,7 @@ export function initNuit() {
         .filter((s) => s.date >= programme.aujourdhui)
         .sort((a, b) => (a.date + a.heure).localeCompare(b.date + b.heure));
       zone.innerHTML = aVenir.length
-        ? `<ul class="carreaux carreaux--nuit">${aVenir.map((s, i) => carreauHTML(s, racine, i < 2)).join("")}</ul>`
+        ? `<ul class="carreaux carreaux--musique">${aVenir.map((s, i) => carreauHTML(s, racine, i < 2)).join("")}</ul>`
         : '<p class="page__vide">Aucune soirée annoncée pour l’instant.</p>';
       arreter = ajusterGrilles(zone);
     })

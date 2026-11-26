@@ -48,7 +48,7 @@ function lineUpHTML(soiree) {
       .map(
         (p) =>
           `<li class="passage"><span class="passage__heure">${heureCourte(p.debut)}</span>` +
-          `<span class="passage__nom">${echapper(p.nom)}</span><span class="passage__precision pastille pastille--nuit">${echapper(p.precision)}</span></li>`
+          `<span class="passage__nom">${echapper(p.nom)}</span><span class="passage__precision pastille pastille--musique">${echapper(p.precision)}</span></li>`
       )
       .join("")}</ul></div>`
   );
@@ -65,7 +65,7 @@ function ficheHTML(soiree, options) {
   const racine = document.body.dataset.racine ?? "";
   const texte = `${soiree.description ? `<p class="detail__bloc detail__resume">${echapper(soiree.description)}</p>` : ""}${lineUpHTML(soiree)}`;
   return (
-    `<article class="detail">${retourHTML(`${racine}nuit/`, "Toutes les soirées")}` +
+    `<article class="detail">${retourHTML(`${racine}musique/`, "Toutes les soirées")}` +
     `${teteHTML(soiree)}${caseBilletsHTML(options, "Pas de vente en ligne")}` +
     `<div class="detail__affiche">${afficheHTML(soiree.affiche, soiree.titre, { detail: true })}</div>` +
     faitsHTML([
@@ -108,7 +108,7 @@ function introuvable(zone) {
   nommerPage("Soirée introuvable, Minimum Neuchâtel", "Cette soirée n’est pas au programme du club Minimum.");
   zone.innerHTML =
     `<h1 class="page__titre">Soirée introuvable</h1><p class="page__intro">Cette soirée n’est pas, ou plus, au programme.</p>` +
-    `<p class="page__intro"><a href="${racine}nuit/">Voir les soirées à venir</a></p>`;
+    `<p class="page__intro"><a href="${racine}musique/">Voir les soirées à venir</a></p>`;
 }
 
 /**

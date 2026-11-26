@@ -1,7 +1,7 @@
 /* Minimum : la page Agenda. Des filtres par monde, les jours en cases et la
    journée choisie sur téléphone, la semaine en tableau sur grand écran, puis
    ce qui est annoncé plus tard. La couleur d'un rendez-vous est celle de son
-   monde (rouge feu le cinéma, rouge rubis la nuit, rouge tomate la radio). Chargée seulement
+   monde (rouge le cinéma, rose la musique et la radio). Chargée seulement
    sur cette page. */
 
 .agenda > * {
@@ -58,9 +58,9 @@
   border: 1px solid var(--noir);
 }
 
-.repere--cinema { background: var(--rouge-feu); }
-.repere--nuit { background: var(--rouge-rubis); }
-.repere--radio { background: var(--rouge-tomate); }
+.repere--cinema { background: var(--pastille-cinema); }
+.repere--musique { background: var(--pastille-musique); }
+.repere--radio { background: var(--pastille-radio); }
 
 .jour[aria-pressed="true"] {
   color: var(--blanc);
@@ -139,6 +139,7 @@
 
 .rdv {
   --teinte: var(--pastille-cinema);
+  --texte-monde: var(--texte-cinema);
   display: grid;
   grid-template-columns: 5rem minmax(0, 1fr);
   gap: var(--trait);
@@ -148,8 +149,8 @@
   background: var(--encre);
 }
 
-.rdv--nuit { --teinte: var(--pastille-nuit); }
-.rdv--radio { --teinte: var(--pastille-radio); }
+.rdv--musique { --teinte: var(--pastille-musique); --texte-monde: var(--texte-musique); }
+.rdv--radio { --teinte: var(--pastille-radio); --texte-monde: var(--texte-radio); }
 
 .rdv > * {
   min-width: 0;
@@ -258,6 +259,7 @@
 
 .bloc-rdv {
   --teinte: var(--pastille-cinema);
+  --texte-monde: var(--texte-cinema);
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -268,8 +270,8 @@
   background: var(--teinte);
 }
 
-.bloc-rdv--nuit { --teinte: var(--pastille-nuit); }
-.bloc-rdv--radio { --teinte: var(--pastille-radio); }
+.bloc-rdv--musique { --teinte: var(--pastille-musique); --texte-monde: var(--texte-musique); }
+.bloc-rdv--radio { --teinte: var(--pastille-radio); --texte-monde: var(--texte-radio); }
 
 .bloc-rdv__haut {
   display: flex;

@@ -101,13 +101,13 @@
 }
 
 .film:focus-visible .film__case {
-  color: var(--texte-monde);
+  color: var(--texte-cinema);
   background: var(--pastille-cinema);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .film:hover .film__case {
-    color: var(--texte-monde);
+    color: var(--texte-cinema);
     background: var(--pastille-cinema);
   }
 }

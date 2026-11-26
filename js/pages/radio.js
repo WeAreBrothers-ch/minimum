@@ -1,72 +1,209 @@
 // @ts-check
-/* Minimum : la page Radio. Un bureau d'ordinateur des années 90, dans le
-   style de soso radio : un fond d'écran que l'on change, des icônes, des
-   fenêtres que l'on ouvre, déplace et réduit, un lecteur avec sa playlist,
-   une barre des tâches avec « Start » et l'horloge.
+/* Minimum : la page Radio. La radio, ce sont des lives filmés et diffusés
+   en direct sur YouTube (demande du client, 26.11.2026) : une page simple,
+   en cases comme le reste du site.
 
-   Le lecteur de la fenêtre pilote le lecteur du site (lecteur.js, la case
-   radio de la barre du haut), qui ne s'arrête pas quand on change de page. */
+   - Le lecteur, en grand : le live en cours de la chaîne, sinon le dernier
+     live mis en ligne. À côté, ce qu’il montre (« En direct », le titre, le
+     jour) et le lien vers la chaîne.
+   - Les prochains lives, une ligne chacun.
+   - Les lives à revoir : un toucher sur la ligne le met dans le lecteur.
 
+   Le lecteur YouTube est celui « sans cookie » ; le son ne part jamais
+   tout seul. */
+
+import { CHAINE_YOUTUBE } from "../config.js";
 import { chargerProgramme } from "../donnees.js";
-import { echapper } from "../format.js";
-import { trouver } from "../bureau/dom.js";
-import { fenetreApropos, fenetreEcrire, fenetrePhotos, fenetreReglages } from "../bureau/fenetres-annexes.js";
-import { fenetreLecteur } from "../bureau/fenetre-lecteur.js";
-import { creerFenetres } from "../bureau/fenetres.js";
-import { appliquerCouleur, appliquerFond, couleurChoisie, fondChoisi } from "../bureau/fonds.js";
-import { icone } from "../bureau/icones.js";
-import { plages } from "../bureau/plages.js";
+import { echapper, heureCourte, jourCourt, jourLongMajuscule } from "../format.js";
+import { lireVideo } from "./bande-annonce.js";
 import { afficherErreur, zoneAremplir } from "./commun.js";
 
+/** @typedef {import("../types.js").Emission} Emission */
 /** @typedef {import("../types.js").Programme} Programme */
-/** @typedef {import("../bureau/fenetres.js").Definition} Definition */
 
-/** Les icônes du bureau, dans l'ordre : fenêtre ouverte, icône, légende. */
-const ICONES = [
-  { id: "lecteur", dessin: "cassette", nom: "minimum radio", marque: true },
-  { id: "photos", dessin: "photos", nom: "Photos", marque: false },
-  { id: "ecrire", dessin: "lettre", nom: "Écrire", marque: false },
-  { id: "apropos", dessin: "info", nom: "À propos", marque: false },
-  { id: "reglages", dessin: "reglages", nom: "Réglages", marque: false },
-];
+/** L’identifiant d’une chaîne YouTube : « UC » et 22 caractères. */
+const ID_CHAINE = /^UC[A-Za-z0-9_-]{22}$/;
 
-/** Les pages du site, dans le menu Start. */
-const PAGES = [
-  { href: "cinema/", nom: "Cinéma" },
-  { href: "nuit/", nom: "Nuit" },
-  { href: "agenda/", nom: "Agenda" },
-  { href: "infos/", nom: "Infos" },
-  { href: "", nom: "Accueil" },
-];
+/** @returns {string | null} */
+function chaine() {
+  return CHAINE_YOUTUBE && ID_CHAINE.test(CHAINE_YOUTUBE) ? CHAINE_YOUTUBE : null;
+}
 
 /**
- * @param {string} racine
+ * Ce que montre le lecteur.
+ * @typedef {Object} Ecran
+ * @property {string | null} source   Adresse du lecteur à intégrer, ou null.
+ * @property {string} etat            « En direct », « Dernier live », « À revoir »…
+ * @property {boolean} direct
+ * @property {Emission | null} live
+ */
+
+/**
+ * Les lives rangés : celui en cours, ceux à venir (le plus proche
+ * d’abord), ceux passés (le plus récent d’abord).
+ * @param {Programme} programme
+ */
+function ranger(programme) {
+  const enCours = programme.emissions.find((e) => e.enDirect) ?? null;
+  const aVenir = programme.emissions
+    .filter((e) => !e.enDirect && e.date >= programme.aujourdhui)
+    .sort((a, b) => (a.date + a.heure).localeCompare(b.date + b.heure));
+  const passes = programme.emissions
+    .filter((e) => !e.enDirect && e.date < programme.aujourdhui)
+    .sort((a, b) => (b.date + b.heure).localeCompare(a.date + a.heure));
+  return { enCours, aVenir, passes };
+}
+
+/**
+ * Le lecteur d’un live mis en ligne, ou null.
+ * @param {Emission} e
+ * @returns {string | null}
+ */
+function lecteurDe(e) {
+  const video = e.video ? lireVideo(e.video) : null;
+  return video && video.fournisseur === "YouTube" ? video.lecteur : null;
+}
+
+/**
+ * Ce que le lecteur montre en arrivant sur la page.
+ * @param {ReturnType<typeof ranger>} lives
+ * @returns {Ecran}
+ */
+function ecranDeDepart(lives) {
+  const id = chaine();
+  const direct = id ? `https://www.youtube.com/embed/live_stream?channel=${id}&playsinline=1` : null;
+  if (lives.enCours) {
+    return { source: direct ?? lecteurDe(lives.enCours), etat: "En direct", direct: true, live: lives.enCours };
+  }
+  const dernier = lives.passes.find((e) => lecteurDe(e));
+  if (dernier) return { source: lecteurDe(dernier), etat: "Dernier live", direct: false, live: dernier };
+  return { source: direct, etat: "Prochain live", direct: false, live: lives.aVenir[0] ?? null };
+}
+
+/**
+ * La phrase de la case noire, quand il n’y a pas encore de vidéo à montrer.
+ * @param {Ecran} ecran
  * @returns {string}
  */
-function bureauHTML(racine) {
-  const icones = ICONES.map(
-    (i) =>
-      `<li><button type="button" class="icone-bureau${i.marque ? " icone-bureau--marque" : ""}" data-fenetre="${i.id}">` +
-      `${icone(i.dessin)}<span>${echapper(i.nom)}</span></button></li>`
-  ).join("");
-  const raccourcis = ICONES.map(
-      (i) =>
-        `<li><button type="button" class="demarrer__item" data-fenetre="${i.id}">${icone(i.dessin, "demarrer__icone")}${echapper(i.id === "lecteur" ? "Minimum radio" : i.nom)}</button></li>`
-    )
-    .join("");
-  const pages = PAGES.map((p) => `<li><a class="demarrer__item" href="${racine}${p.href}">${echapper(p.nom)}</a></li>`).join("");
+function vide(ecran) {
+  if (!ecran.live) return "Dès le prochain rendez-vous de la radio.";
+  if (ecran.direct) return `En direct depuis ${heureCourte(ecran.live.heure)}.`;
+  return `Prochain rendez-vous : ${echapper(jourLongMajuscule(ecran.live.date))}, ${heureCourte(ecran.live.heure)}.`;
+}
+
+/**
+ * Le lecteur : la vidéo, ou une case noire qui dit quand revenir.
+ * @param {Ecran} ecran
+ * @returns {string}
+ */
+function lecteurHTML(ecran) {
+  if (ecran.source) {
+    const titre = ecran.live ? `${ecran.etat} : ${ecran.live.titre}` : "Le live de la radio";
+    return (
+      `<iframe class="live__video" src="${echapper(ecran.source)}" title="${echapper(titre)}" ` +
+      `allow="fullscreen; picture-in-picture; encrypted-media" allowfullscreen ` +
+      `referrerpolicy="strict-origin-when-cross-origin"></iframe>`
+    );
+  }
   return (
-    `<div class="bureau__ecran"><ul class="bureau__icones">${icones}</ul>` +
-    `<div class="bureau__fenetres"></div>` +
-    `<nav class="demarrer" aria-label="Menu Start" hidden><ul>${raccourcis}</ul><div class="demarrer__trait"></div><ul>${pages}</ul></nav></div>` +
-    `<div class="barre"><button type="button" class="barre__start" aria-expanded="false" aria-haspopup="true">Start</button>` +
-    `<div class="barre__onglets"></div><time class="barre__heure"></time></div>`
+    `<div class="live__vide"><p class="live__vide-titre">Le live s’affiche ici</p>` +
+    `<p>${vide(ecran)}</p></div>`
   );
 }
 
-/** @returns {string} */
-function heureLocale() {
-  return new Date().toLocaleTimeString("fr-CH", { hour: "2-digit", minute: "2-digit" });
+/**
+ * La case à côté du lecteur : ce qu’il montre, et le lien vers la chaîne.
+ * @param {Ecran} ecran
+ * @returns {string}
+ */
+function infosHTML(ecran) {
+  const id = chaine();
+  const etat = ecran.direct
+    ? `<span class="pastille pastille--etat en-direct">En direct</span>`
+    : `<span class="pastille pastille--etat">${echapper(ecran.etat)}</span>`;
+  const live = ecran.live
+    ? `<p class="live__titre">${echapper(ecran.live.titre)}</p>` +
+      `<p class="live__quand">${echapper(jourLongMajuscule(ecran.live.date))}, ${heureCourte(ecran.live.heure)}</p>`
+    : `<p class="live__titre">Aucun live annoncé</p>`;
+  const lien = id
+    ? `<a class="live__chaine" href="https://www.youtube.com/channel/${echapper(id)}" rel="noopener">` +
+      `La chaîne YouTube <span class="fleche fleche--sortie" aria-hidden="true"></span></a>`
+    : "";
+  return `<div class="live__etat">${etat}</div>${live}${lien}`;
+}
+
+/**
+ * Une ligne de live : le jour et l’heure dans la couleur de la radio, le
+ * titre ; « Revoir » quand la vidéo est en ligne.
+ * @param {Emission} e
+ * @param {boolean} passe
+ * @returns {string}
+ */
+function ligneHTML(e, passe) {
+  const quand =
+    `<span class="ligne-live__quand"><span>${echapper(jourCourt(e.date).replace(/ /g, " "))}</span>` +
+    `<span>${heureCourte(e.heure)}</span></span>`;
+  const titre = `<span class="ligne-live__titre">${echapper(e.titre)}</span>`;
+  if (!passe) {
+    return `<li id="${echapper(e.id)}"><div class="ligne-live">${quand}${titre}<span class="ligne-live__action">Sur YouTube</span></div></li>`;
+  }
+  if (!lecteurDe(e)) {
+    return `<li id="${echapper(e.id)}"><div class="ligne-live">${quand}${titre}<span class="ligne-live__action">Bientôt en ligne</span></div></li>`;
+  }
+  return (
+    `<li id="${echapper(e.id)}"><button type="button" class="ligne-live ligne-live--revoir" data-live="${echapper(e.id)}">` +
+    `${quand}${titre}<span class="ligne-live__action">Revoir <span class="fleche" aria-hidden="true"></span></span></button></li>`
+  );
+}
+
+/**
+ * @param {string} titre
+ * @param {Emission[]} liste
+ * @param {boolean} passe
+ * @returns {string}
+ */
+function sectionHTML(titre, liste, passe) {
+  if (liste.length === 0) return "";
+  return (
+    `<section class="lives" aria-label="${echapper(titre)}"><h2 class="rubrique">${echapper(titre)}</h2>` +
+    `<ul class="lives__liste">${liste.map((e) => ligneHTML(e, passe)).join("")}</ul></section>`
+  );
+}
+
+/**
+ * @param {Programme} programme
+ * @returns {{ html: string, lives: ReturnType<typeof ranger> }}
+ */
+function pageHTML(programme) {
+  const lives = ranger(programme);
+  const ecran = ecranDeDepart(lives);
+  const html =
+    `<section class="live" aria-label="Le lecteur">` +
+    `<div class="live__ecran">${lecteurHTML(ecran)}</div>` +
+    `<div class="live__infos" aria-live="polite">${infosHTML(ecran)}</div></section>` +
+    sectionHTML("Prochains lives", lives.aVenir, false) +
+    sectionHTML("À revoir", lives.passes, true);
+  return { html, lives };
+}
+
+/**
+ * Met un live passé dans le lecteur.
+ * @param {HTMLElement} zone
+ * @param {Emission} e
+ */
+function revoir(zone, e) {
+  const source = lecteurDe(e);
+  const cadre = zone.querySelector(".live__ecran");
+  const infos = zone.querySelector(".live__infos");
+  if (!source || !(cadre instanceof HTMLElement) || !(infos instanceof HTMLElement)) return;
+  /** @type {Ecran} */
+  const ecran = { source, etat: "À revoir", direct: false, live: e };
+  cadre.innerHTML = lecteurHTML(ecran);
+  infos.innerHTML = infosHTML(ecran);
+  for (const b of zone.querySelectorAll("[data-live]")) {
+    if (b instanceof HTMLElement) b.setAttribute("aria-current", String(b.dataset.live === e.id));
+  }
+  cadre.scrollIntoView({ block: "nearest", behavior: "smooth" });
 }
 
 /**
@@ -74,92 +211,31 @@ function heureLocale() {
  * @returns {() => void}
  */
 export function initRadio() {
+  const fin = new AbortController();
   const zone = zoneAremplir();
-  if (!zone) return () => {};
-  const racine = document.body.dataset.racine ?? "";
-  zone.innerHTML = bureauHTML(racine);
-
-  const ecran = trouver(zone, ".bureau__ecran", HTMLElement);
-  const calque = trouver(zone, ".bureau__fenetres", HTMLElement);
-  const onglets = trouver(zone, ".barre__onglets", HTMLElement);
-  const heure = trouver(zone, ".barre__heure", HTMLElement);
-  const start = trouver(zone, ".barre__start", HTMLButtonElement);
-  const demarrer = trouver(zone, ".demarrer", HTMLElement);
-
-  appliquerFond(ecran, fondChoisi(), racine);
-  appliquerCouleur(zone, couleurChoisie());
-
-  const fenetres = creerFenetres({ fenetres: calque, onglets });
-  /** @type {Map<string, Definition>} */
-  const definitions = new Map();
-
-  /** @param {string} id */
-  const ouvrir = (id) => {
-    const def = definitions.get(id);
-    if (def) fenetres.ouvrir(def);
-  };
-
-  /** @param {boolean} ouvert */
-  const basculerStart = (ouvert) => {
-    demarrer.hidden = !ouvert;
-    start.setAttribute("aria-expanded", String(ouvert));
-  };
-
-  /** @param {MouseEvent} e */
-  const auClic = (e) => {
-    const cible = e.target instanceof Element ? e.target : null;
-    if (!cible) return;
-    const ouvre = cible.closest("[data-fenetre]");
-    if (ouvre instanceof HTMLElement && ouvre.dataset.fenetre) ouvrir(ouvre.dataset.fenetre);
-    if (cible.closest(".barre__start")) return basculerStart(demarrer.hidden);
-    /* Un clic ailleurs, ou sur un choix du menu, referme le menu Start. */
-    if (!demarrer.hidden) basculerStart(false);
-  };
-
-  /** @param {KeyboardEvent} e */
-  const auClavier = (e) => {
-    if (e.key === "Escape" && !demarrer.hidden) {
-      basculerStart(false);
-      start.focus();
-    }
-  };
-
-  zone.addEventListener("click", auClic);
-  document.addEventListener("keydown", auClavier);
-  heure.textContent = heureLocale();
-  const horloge = window.setInterval(() => (heure.textContent = heureLocale()), 20_000);
-
-  let actif = true;
+  if (!zone) return () => fin.abort();
   chargerProgramme()
-    .catch((/** @type {unknown} */ erreur) => {
-      console.warn("Minimum : programme indisponible, le bureau n’a que le direct.", erreur);
-      return null;
-    })
     .then((programme) => {
-      if (!actif) return;
-      /** @type {Programme | null} */
-      const p = programme;
-      const photos = (p?.soirees ?? [])
-        .filter((s) => s.affiche)
-        .map((s) => ({ image: /** @type {import("../types.js").Image} */ (s.affiche), nom: `${s.titre}, ${s.date}` }));
-      /** @type {Definition[]} */
-      const toutes = [
-        fenetreLecteur(plages(p), ouvrir),
-        fenetrePhotos(photos),
-        fenetreEcrire(),
-        fenetreApropos(racine),
-        fenetreReglages({ ecran, bureau: zone, racine }),
-      ];
-      for (const def of toutes) definitions.set(def.id, def);
-      ouvrir("lecteur");
+      if (fin.signal.aborted) return;
+      const { html, lives } = pageHTML(programme);
+      zone.innerHTML = html;
+      zone.addEventListener(
+        "click",
+        (ev) => {
+          const bouton = ev.target instanceof Element ? ev.target.closest("[data-live]") : null;
+          if (!(bouton instanceof HTMLElement)) return;
+          const live = lives.passes.find((e) => e.id === bouton.dataset.live);
+          if (live) revoir(zone, live);
+        },
+        { signal: fin.signal }
+      );
+      /* Arrivé depuis l’accueil ou l’agenda sur un live (radio/#live-…) :
+         un live passé se met dans le lecteur, les autres sont montrés. */
+      const id = decodeURIComponent(location.hash.slice(1));
+      const passe = lives.passes.find((e) => e.id === id && lecteurDe(e));
+      if (passe) revoir(zone, passe);
+      else if (id && id !== lives.enCours?.id) document.getElementById(id)?.scrollIntoView();
     })
     .catch((/** @type {unknown} */ erreur) => afficherErreur(zone, erreur));
-
-  return () => {
-    actif = false;
-    window.clearInterval(horloge);
-    zone.removeEventListener("click", auClic);
-    document.removeEventListener("keydown", auClavier);
-    fenetres.detruire();
-  };
+  return () => fin.abort();
 }

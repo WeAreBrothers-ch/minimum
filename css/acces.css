@@ -1,0 +1,227 @@
+/* Minimum : aller d'une rubrique à l'autre, sans barre de menu (demande du
+   client, 26.11.2026). Trois choses seulement :
+   - sur l'accueil, des rectangles de la couleur de chaque rubrique, posés
+     sur les murs d'affiches (mur.css les place) ;
+   - en haut de chaque page, le nom MINIMUM, qui ramène à l'accueil, dans la
+     case du titre, elle-même de la couleur de la rubrique ;
+   - en bas, dans le pied de page, une rangée de cases vers les rubriques,
+     la page où l'on est pleine de sa couleur.
+   Couleurs : jetons.css (rouge le cinéma, rose la musique et la radio, jaune
+   l'agenda, grenat les infos). */
+
+/* ---------- Les rectangles de l'accueil ---------- */
+.acces {
+  --acces-fond: var(--blanc);
+  --acces-texte: var(--noir);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 0.125rem var(--espace-2);
+  padding: var(--espace-1) var(--espace-2) var(--espace-2);
+  text-decoration: none;
+  color: var(--acces-texte);
+  background: var(--acces-fond);
+  border: var(--trait) solid var(--noir);
+}
+
+.acces--cinema { --acces-fond: var(--pastille-cinema); --acces-texte: var(--texte-cinema); }
+.acces--musique { --acces-fond: var(--pastille-musique); --acces-texte: var(--texte-musique); }
+.acces--radio { --acces-fond: var(--pastille-radio); --acces-texte: var(--texte-radio); }
+.acces--agenda { --acces-fond: var(--pastille-agenda); --acces-texte: var(--texte-agenda); }
+.acces--infos { --acces-fond: var(--pastille-infos); --acces-texte: var(--texte-infos); }
+
+.acces__nom {
+  grid-column: 1;
+  font-size: clamp(1rem, 0.7rem + 1.2vw, 1.5rem);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+/* Le grand rectangle d'un monde (Musique, Cinéma) : son nom en très grand,
+   à la mesure de sa colonne (mur.css en fait un conteneur). */
+.acces--grand .acces__nom {
+  font-size: clamp(1.125rem, 14cqi, 3.25rem);
+}
+
+/* Ce que contient la rubrique (« 8 films ») : sous le nom, en petit. */
+.acces__detail {
+  grid-column: 1;
+  grid-row: 2;
+  font-size: 0.75rem;
+  font-weight: var(--graisse-nom);
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.acces .fleche {
+  /* Téléphone : le nom prend toute la largeur du rectangle (voir plus bas). */
+  display: none;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  margin: 0;
+}
+
+.acces:focus-visible {
+  outline: var(--trait) solid var(--acces-texte);
+  outline-offset: calc(var(--trait) * -4);
+}
+
+.acces:active {
+  scale: 0.98;
+  transition: scale var(--duree-pression) var(--ease-out);
+}
+
+/* Plus large qu'un téléphone : la flèche, et plus d'air. */
+@media (min-width: 40rem) {
+  .acces {
+    padding: var(--espace-2) var(--espace-3);
+  }
+
+  .acces .fleche {
+    display: inline-block;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .acces:hover {
+    color: var(--blanc);
+    background: var(--noir);
+  }
+}
+
+/* ---------- La case du titre, sur chaque page ---------- */
+/* Le nom MINIMUM en haut de la case : le chemin du retour à l'accueil. */
+.page__accueil {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--cible);
+  margin-bottom: var(--espace-3);
+  font-size: var(--taille-texte);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  text-decoration: none;
+  color: inherit;
+}
+
+.page__accueil .fleche {
+  margin: 0 0.4em 0 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .page__accueil:hover {
+    text-decoration: underline;
+    text-decoration-thickness: var(--trait);
+    text-underline-offset: 0.2em;
+  }
+}
+
+.page--cases .page__tete:has(.page__accueil) {
+  padding-top: var(--espace-1);
+}
+
+/* La case du titre prend la couleur de sa rubrique, comme son rectangle
+   sur l'accueil : on sait où l'on est sans lire. */
+.page__tete[class*="page__tete--"] {
+  color: var(--tete-texte);
+  background: var(--tete-fond);
+}
+
+.page__tete--cinema { --tete-fond: var(--pastille-cinema); --tete-texte: var(--texte-cinema); }
+.page__tete--musique { --tete-fond: var(--pastille-musique); --tete-texte: var(--texte-musique); }
+.page__tete--radio { --tete-fond: var(--pastille-radio); --tete-texte: var(--texte-radio); }
+.page__tete--agenda { --tete-fond: var(--pastille-agenda); --tete-texte: var(--texte-agenda); }
+.page__tete--infos { --tete-fond: var(--pastille-infos); --tete-texte: var(--texte-infos); }
+
+.page__tete[class*="page__tete--"] .page__accueil:focus-visible {
+  outline-color: var(--tete-texte);
+}
+
+/* ---------- Le pied de page : une case par rubrique ---------- */
+/* Sur le noir du pied, chaque rubrique est une case au trait blanc, un
+   carré de sa couleur devant son nom ; au survol, et pour la page où l'on
+   est, la case se remplit de sa couleur. Téléphone : Cinéma et Musique sur
+   une ligne, Radio, Agenda et Infos sur la suivante ; aucune case vide. */
+.pied__rubriques {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--joint);
+  background: var(--blanc);
+}
+
+.pied__rubrique {
+  --case-fond: var(--blanc);
+  --case-texte: var(--noir);
+  display: flex;
+  grid-column: span 2;
+  align-items: center;
+  gap: var(--espace-2);
+  min-width: 0;
+  min-height: 3.5rem;
+  padding: var(--espace-2) var(--marge);
+  font-size: clamp(0.8125rem, 0.7rem + 0.5vw, 1rem);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  color: var(--blanc);
+  background: var(--noir);
+}
+
+.pied__rubrique:nth-child(-n + 2) {
+  grid-column: span 3;
+}
+
+.pied__rubrique::before {
+  content: "";
+  flex: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  background: var(--case-fond);
+  border: var(--trait) solid var(--blanc);
+}
+
+.pied__rubrique--cinema { --case-fond: var(--pastille-cinema); --case-texte: var(--texte-cinema); }
+.pied__rubrique--musique { --case-fond: var(--pastille-musique); --case-texte: var(--texte-musique); }
+.pied__rubrique--radio { --case-fond: var(--pastille-radio); --case-texte: var(--texte-radio); }
+.pied__rubrique--agenda { --case-fond: var(--pastille-agenda); --case-texte: var(--texte-agenda); }
+.pied__rubrique--infos { --case-fond: var(--pastille-infos); --case-texte: var(--texte-infos); }
+
+.pied__rubrique[aria-current],
+.pied__rubrique:focus-visible {
+  outline: none;
+  color: var(--case-texte);
+  background: var(--case-fond);
+}
+
+.pied__rubrique[aria-current]::before,
+.pied__rubrique:focus-visible::before {
+  border-color: var(--case-texte);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pied .pied__rubrique:hover {
+    text-decoration: none;
+    color: var(--case-texte);
+    background: var(--case-fond);
+  }
+
+  .pied__rubrique:hover::before {
+    border-color: var(--case-texte);
+  }
+}
+
+@media (min-width: 40rem) {
+  .pied__rubriques {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .pied__rubrique,
+  .pied__rubrique:nth-child(-n + 2) {
+    grid-column: auto;
+  }
+}

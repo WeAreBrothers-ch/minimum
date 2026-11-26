@@ -3,19 +3,13 @@
 #fff | #000 | courant
 #fff | #000 | ui
 #000 | #fff | ui
-# Pastilles : texte noir sur chaque couleur, douce (Cinéma) et vive (Nuit)
-#000 | #8fe5ac | ui
-#000 | #22d66b | ui
-#000 | #f5ec8a | ui
-#000 | #ffe23a | ui
-#000 | #afcbff | ui
-#000 | #5b97ff | ui
-#000 | #f8b9db | ui
-#000 | #ff62b4 | ui
+# Rubriques (26.11.2026) : rouge le cinéma et grenat les infos (texte blanc),
+# rose la musique et la radio, jaune l'agenda (texte noir)
+#fff | #a72920 | ui
+#fff | #6b1222 | ui
+#000 | #f48fbf | ui
+#000 | #f6d82b | ui
+# L'argent (vert) et un problème (orange) : texte noir
+#000 | #3cab64 | ui
 #000 | #ffc394 | courant
 #000 | #ff7a2f | courant
-# Bureau de la radio : texte noir sur les couleurs d'accent (bleu, rose, jaune vifs), blanc sur noir
-#000 | #5b97ff | ui
-#000 | #ff62b4 | ui
-#000 | #ffe23a | ui
-#fff | #000 | ui

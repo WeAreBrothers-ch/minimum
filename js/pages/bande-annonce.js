@@ -3,12 +3,9 @@
 
    Le lecteur est là tout de suite, avec l’image de la vidéo : un toucher
    la lance (le son ne démarre jamais tout seul). Il se charge en mode
-   « sans cookie » (youtube-nocookie, Vimeo dnt=1). Quand on entre dans
-   le lecteur pour le lancer, la radio se met en pause : les deux sons ne
-   se chevauchent pas. */
+   « sans cookie » (youtube-nocookie, Vimeo dnt=1). */
 
 import { echapper } from "../format.js";
-import { mettreRadioEnPause } from "../lecteur.js";
 
 /**
  * @typedef {Object} Video
@@ -32,7 +29,10 @@ export function lireVideo(adresse) {
     return null;
   }
   const hote = url.hostname.replace(/^(www|m)\./, "");
-  const idYoutube = hote === "youtu.be" ? url.pathname.slice(1) : hote === "youtube.com" ? url.searchParams.get("v") : null;
+  /* youtu.be/ID, youtube.com/watch?v=ID, et l’adresse d’un live : youtube.com/live/ID. */
+  const live = url.pathname.match(/^\/live\/([^/]+)/);
+  const idYoutube =
+    hote === "youtu.be" ? url.pathname.slice(1) : hote === "youtube.com" ? url.searchParams.get("v") ?? live?.[1] ?? null : null;
   if (idYoutube && ID_YOUTUBE.test(idYoutube)) {
     return { fournisseur: "YouTube", lecteur: `https://www.youtube-nocookie.com/embed/${idYoutube}?rel=0&playsinline=1` };
   }
@@ -57,19 +57,4 @@ export function bandeAnnonceHTML(adresse, titre) {
     `title="${echapper(`Bande-annonce : ${titre}`)}" allow="fullscreen; picture-in-picture; encrypted-media" allowfullscreen ` +
     `referrerpolicy="strict-origin-when-cross-origin" loading="lazy"></iframe></div>`
   );
-}
-
-/**
- * Met la radio en pause quand on entre dans le lecteur pour le lancer :
- * la page perd alors la main au profit de la vidéo.
- * @param {HTMLElement} zone
- * @param {AbortSignal} signal
- */
-export function monterBandesAnnonces(zone, signal) {
-  window.addEventListener("blur", () => {
-    const actif = document.activeElement;
-    if (actif instanceof HTMLIFrameElement && zone.contains(actif) && actif.classList.contains("bande-annonce__lecteur")) {
-      mettreRadioEnPause();
-    }
-  }, { signal });
 }

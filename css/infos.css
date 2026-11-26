@@ -164,8 +164,8 @@
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
   /* Le rouge le plus foncé des trois, le rubis (RAL 3003), texte blanc. */
-  color: var(--texte-monde);
-  background: var(--rouge-rubis);
+  color: var(--texte-infos);
+  background: var(--pastille-infos);
 }
 
 .merci__defile {

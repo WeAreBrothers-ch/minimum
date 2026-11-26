@@ -36,7 +36,6 @@ export function cartesCinema(programme) {
       image: film.affiche,
       ligne: seance ? `${jourLongMajuscule(seance.date)}, ${heureCourte(seance.heure)}` : film.realisation,
       etat: "À l’affiche",
-      audio: null,
     }));
 
   /** @type {Carte[]} */
@@ -48,19 +47,18 @@ export function cartesCinema(programme) {
     image: film.affiche,
     ligne: film.sortie ? `Sortie le ${jourLong(film.sortie)}` : film.realisation,
     etat: "Prochainement",
-    audio: null,
   }));
 
   return [...aLAffiche, ...annonces];
 }
 
 /**
- * Le mur Nuit : les soirées à venir et les émissions de la radio, mêlées
+ * Le mur Musique : les soirées à venir et les lives de la radio, mêlés
  * une à une pour que la radio ne disparaisse pas sous les affiches.
  * @param {Programme} programme
  * @returns {Carte[]}
  */
-export function cartesNuit(programme) {
+export function cartesMusique(programme) {
   /** @type {Carte[]} */
   const soirees = programme.soirees
     .filter((s) => s.date >= programme.aujourdhui)
@@ -73,12 +71,16 @@ export function cartesNuit(programme) {
       image: s.affiche,
       ligne: `${jourLongMajuscule(s.date)}, ${heureCourte(s.heure)}`,
       etat: "Soirée",
-      audio: null,
     }));
 
+  /* Les lives de la radio : celui en cours, puis ceux à venir. Les lives
+     passés restent sur la page Radio, à revoir. */
+  const rang = (/** @type {import("./types.js").Emission} */ e) =>
+    e.enDirect ? 0 : e.date >= programme.aujourdhui ? 1 : 2;
   /** @type {Carte[]} */
   const emissions = [...programme.emissions]
-    .sort((a, b) => Number(b.enDirect) - Number(a.enDirect) || b.date.localeCompare(a.date))
+    .filter((e) => rang(e) < 2)
+    .sort((a, b) => rang(a) - rang(b) || (a.date + a.heure).localeCompare(b.date + b.heure))
     .map((e) => ({
       genre: "emission",
       id: e.id,
@@ -86,8 +88,7 @@ export function cartesNuit(programme) {
       lien: `radio/#${e.id}`,
       image: e.visuel,
       ligne: `${jourLongMajuscule(e.date)}, ${heureCourte(e.heure)}`,
-      etat: e.enDirect ? "En direct" : "À réécouter",
-      audio: e.audio,
+      etat: rang(e) === 0 ? "En direct" : "Live à venir",
     }));
 
   /** @type {Carte[]} */
@@ -116,9 +117,8 @@ export function carteHTML(carte, racine, accessible, prioritaire) {
   const classes = `carte${typo ? " carte--typo" : ""}${carte.genre === "film" ? "" : ` carte--${carte.genre}`}`;
   const contenu = typo ? contenuTypographique(carte) : imageHTML(carte, racine, prioritaire);
 
-  /* Une émission mène à la page Radio, où le lecteur se place sur elle. */
-  const piste = carte.genre === "emission" ? ` data-piste="${echapper(carte.id)}"` : "";
-  return `<a class="${classes}" href="${echapper(racine + carte.lien)}"${piste}${cache}>${contenu}</a>`;
+  /* Un live mène à la page Radio, sur sa ligne. */
+  return `<a class="${classes}" href="${echapper(racine + carte.lien)}"${cache}>${contenu}</a>`;
 }
 
 /**
@@ -145,7 +145,7 @@ function imageHTML(carte, racine, prioritaire) {
   const { src, srcset, sizes } = sourcesImage(carte.image, racine, [320, 480, 720, 960], "(min-width: 56rem) 25vw, 50vw");
   /* Pas de chargement différé : le mur répète les mêmes affiches de copie en
      copie, et une affiche qui n'arrive qu'au moment de passer à l'écran
-     laisserait une case vide (noire côté Nuit) quand on défile vite. Le
+     laisserait une case vide (noire côté Musique) quand on défile vite. Le
      navigateur ne télécharge chaque image qu'une fois. */
   const chargement = prioritaire ? ' fetchpriority="high"' : "";
   const variantes = srcset ? ` srcset="${echapper(srcset)}" sizes="${echapper(sizes)}"` : "";

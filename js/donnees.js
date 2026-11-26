@@ -6,7 +6,7 @@ import { isoLocal } from "./format.js";
 import { completerFilm } from "./catalogue.js";
 import { fichesParTitre } from "./sanity.js";
 import { FILMS_DEMO, SEANCES_DEMO, TARIFS_CINEMA_DEMO } from "./demo/films.js";
-import { EMISSIONS_DEMO, SOIREES_DEMO } from "./demo/nuit.js";
+import { EMISSIONS_DEMO, SOIREES_DEMO } from "./demo/musique.js";
 
 /** @typedef {import("./types.js").Programme} Programme */
 /** @typedef {import("./types.js").Film} Film */

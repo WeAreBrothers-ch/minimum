@@ -110,7 +110,7 @@ async function suivreCommande(zone, reference, signal, essai) {
     if (encore) setTimeout(() => void suivreCommande(zone, reference, signal, essai + 1), ATTENTE_ENTRE_ESSAIS);
     return;
   }
-  const rubrique = etat.billet.genre === "seance" ? "cinema/" : "nuit/";
+  const rubrique = etat.billet.genre === "seance" ? "cinema/" : "musique/";
   zone.innerHTML = messageHTML(
     "Paiement non abouti",
     "Rien n’a été débité. Vous pouvez reprendre votre achat.",

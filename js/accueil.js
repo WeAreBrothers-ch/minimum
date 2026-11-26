@@ -1,10 +1,9 @@
 // @ts-check
-/* Minimum : l’accueil, deux murs (Nuit et Cinéma) dont chaque colonne défile seule. */
+/* Minimum : l’accueil, deux murs (Musique et Cinéma) dont chaque colonne défile seule. */
 
-import { cartesCinema, cartesNuit } from "./carte.js";
+import { cartesCinema, cartesMusique } from "./carte.js";
 import { chargerProgramme } from "./donnees.js";
 import { echapper } from "./format.js";
-import { EVENEMENT_PISTE, pisteQuiJoue } from "./lecteur.js";
 import { monterMur } from "./mur.js";
 
 /** @typedef {import("./types.js").Programme} Programme */
@@ -39,7 +38,7 @@ function remplir(moitie, cartes, vide, racine) {
 }
 
 /**
- * Écrit dans la tête d’un mur ce qu’il contient : « 7 soirées · 3 émissions ».
+ * Écrit dans la tête d’un mur ce qu’il contient : « 7 soirées · 5 lives ».
  * @param {HTMLElement | null} moitie
  * @param {Carte[]} cartes
  * @param {Array<[Carte["genre"], string, string]>} genres  Genre, singulier, pluriel.
@@ -57,29 +56,14 @@ function compter(moitie, cartes, genres) {
 }
 
 /**
- * Marque les cases de l’émission qui joue.
- * @param {string | null} id
- */
-function marquerPiste(id) {
-  for (const carte of document.querySelectorAll("[data-piste]")) {
-    if (carte instanceof HTMLElement) carte.dataset.joue = String(carte.dataset.piste === id);
-  }
-}
-
-/** @param {Event} e */
-function auChangementDePiste(e) {
-  if (e instanceof CustomEvent) marquerPiste(e.detail?.id ?? null);
-}
-
-/**
  * Lance l’accueil. Renvoie de quoi le démonter avant de changer de page.
  * @returns {() => void}
  */
 export function initAccueil() {
   const racine = document.body.dataset.racine ?? "";
-  const nuit = document.querySelector('[data-monde="nuit"]');
+  const musique = document.querySelector('[data-monde="musique"]');
   const cinema = document.querySelector('[data-monde="cinema"]');
-  const moitieNuit = nuit instanceof HTMLElement ? nuit : null;
+  const moitieMusique = musique instanceof HTMLElement ? musique : null;
   const moitieCinema = cinema instanceof HTMLElement ? cinema : null;
 
   /** @type {Array<() => void>} */
@@ -89,29 +73,25 @@ export function initAccueil() {
   chargerProgramme()
     .then((programme) => {
       if (!actif) return;
-      const nuit = cartesNuit(programme);
+      const cartesM = cartesMusique(programme);
       const cinema = cartesCinema(programme);
-      compter(moitieNuit, nuit, [
+      compter(moitieMusique, cartesM, [
         ["soiree", "soirée", "soirées"],
-        ["emission", "émission", "émissions"],
+        ["emission", "live", "lives"],
       ]);
       compter(moitieCinema, cinema, [["film", "film", "films"]]);
-      demontages.push(remplir(moitieNuit, nuit, "Aucune soirée ni émission annoncée pour l’instant.", racine));
+      demontages.push(remplir(moitieMusique, cartesM, "Aucune soirée ni live annoncé pour l’instant.", racine));
       demontages.push(remplir(moitieCinema, cinema, "Aucun film programmé pour l’instant.", racine));
-      marquerPiste(pisteQuiJoue());
     })
     .catch((/** @type {unknown} */ erreur) => {
       console.warn("Minimum : programme indisponible.", erreur);
       const message = "Le programme n’a pas pu être chargé. Rechargez la page dans un instant.";
-      if (moitieNuit) afficherMessage(moitieNuit, message);
+      if (moitieMusique) afficherMessage(moitieMusique, message);
       if (moitieCinema) afficherMessage(moitieCinema, message);
     });
 
-  document.addEventListener(EVENEMENT_PISTE, auChangementDePiste);
-
   return () => {
     actif = false;
-    document.removeEventListener(EVENEMENT_PISTE, auChangementDePiste);
     for (const demonter of demontages) demonter();
   };
 }

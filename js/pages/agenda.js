@@ -1,7 +1,7 @@
 // @ts-check
 /* Minimum : l’agenda, tout ce qui se passe à Minimum.
 
-   - Des filtres par monde : Tout, Cinéma, Nuit, Radio, chacun de sa couleur.
+   - Des filtres par monde : Tout, Cinéma, Musique, Radio, chacun de sa couleur.
    - Téléphone : un jour à la fois. Les sept jours en cases, avec un repère
      de couleur par monde ce jour-là ; dessous, les rendez-vous du jour, et
      de quoi passer au jour suivant.
@@ -16,7 +16,7 @@ import { lienFilm } from "./film-commun.js";
 
 /** @typedef {import("../types.js").Programme} Programme */
 
-/** @typedef {"cinema" | "nuit" | "radio"} Monde */
+/** @typedef {"cinema" | "musique" | "radio"} Monde */
 /** @typedef {"tout" | Monde} Filtre */
 
 /**
@@ -27,11 +27,11 @@ import { lienFilm } from "./film-commun.js";
  * @property {string} sous     Une ligne de plus : réalisation, horaires, état.
  * @property {string} lien
  * @property {Monde} monde
- * @property {string} action   « Le film », « La soirée », « Écouter » : la fiche s’ouvre en haut.
+ * @property {string} action   « Le film », « La soirée », « Regarder » : la fiche s’ouvre en haut.
  */
 
 /** @type {Record<Monde, string>} */
-const NOMS = { cinema: "Cinéma", nuit: "Nuit", radio: "Radio" };
+const NOMS = { cinema: "Cinéma", musique: "Musique", radio: "Radio" };
 
 const SEMAINE = 7;
 const ABREGES = ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."];
@@ -66,7 +66,7 @@ function rendezVous(programme) {
       titre: s.titre,
       sous: `${heureCourte(s.heure)}${fin}${s.lineUp.length ? `, ${s.lineUp.length} passages` : ""}`,
       lien: `soiree/?id=${encodeURIComponent(s.id)}`,
-      monde: "nuit",
+      monde: "musique",
       action: "La soirée",
     });
   }
@@ -75,10 +75,10 @@ function rendezVous(programme) {
       date: e.date,
       heure: e.heure,
       titre: e.titre,
-      sous: e.enDirect ? "En direct sur Minimum radio" : "À réécouter",
+      sous: e.enDirect ? "En direct sur YouTube" : "Live sur YouTube",
       lien: `radio/#${e.id}`,
       monde: "radio",
-      action: "Écouter",
+      action: "Regarder",
     });
   }
   return liste
@@ -110,7 +110,7 @@ function ligneHTML(r, racine, avecDate) {
  */
 function filtresHTML(filtre) {
   /** @type {Filtre[]} */
-  const filtres = ["tout", "cinema", "nuit", "radio"];
+  const filtres = ["tout", "cinema", "musique", "radio"];
   return (
     `<div class="filtres filtres--4" role="group" aria-label="Afficher">` +
     filtres

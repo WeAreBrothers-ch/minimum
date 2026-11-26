@@ -1,11 +1,10 @@
 // @ts-check
-/* Minimum : changer de page sans couper la radio.
+/* Minimum : changer de page sans recharger.
 
-   Un clic sur un lien du site va chercher la page suivante et remplace
-   l’en-tête, le contenu et le pied de page ; le son de la radio, lui, vit
-   dans lecteur.js et ne s’arrête pas.
-   Si quoi que ce soit échoue, on retombe sur une navigation classique :
-   la page change quand même (le son, lui, s’arrête). */
+   Un clic sur un lien du site va chercher la page suivante et remplace le
+   contenu et le pied de page : la page change d’un seul bloc, sans écran
+   blanc (css/animations.css). Si quoi que ce soit échoue, on retombe sur
+   une navigation classique : la page change quand même. */
 
 /**
  * @callback AuChangement
@@ -125,19 +124,16 @@ async function chargerStyles(suivante, url) {
 }
 
 /**
- * Remplace l’en-tête, le contenu et les réglages de page.
+ * Remplace le contenu, le pied de page et les réglages de page.
  * @param {Document} suivante
  * @returns {string} La nouvelle page.
  */
 function remplacer(suivante) {
-  const entete = document.querySelector(".entete");
   const contenu = document.querySelector("main");
-  const nouvelEntete = suivante.querySelector(".entete");
   const nouveauContenu = suivante.querySelector("main");
-  if (!entete || !contenu || !nouvelEntete || !nouveauContenu) {
-    throw new Error("Page incomplète : en-tête ou contenu introuvable.");
+  if (!contenu || !nouveauContenu) {
+    throw new Error("Page incomplète : contenu introuvable.");
   }
-  entete.replaceWith(document.adoptNode(nouvelEntete));
   contenu.replaceWith(document.adoptNode(nouveauContenu));
   /* Le pied de page vit hors du contenu, et l'accueil n'en a pas. */
   const pied = document.querySelector(".pied");
@@ -191,14 +187,10 @@ async function charger(url, ajouterAHistorique, auChangement) {
       await Promise.race([demarrage, new Promise((fin) => setTimeout(fin, 1000))]);
     };
     if (typeof document.startViewTransition === "function" && !MOINS_DE_MOUVEMENT.matches) {
-      /* La nouvelle page se pose sur l’ancienne (css/animations.css).
-         L’en-tête ne reste immobile que s’il est en vue en haut de l’écran :
-         venu d’une page défilée, il glisserait depuis le haut. On attend que
-         la page ait démarré, puis une tâche : le programme, déjà chargé, a
-         rempli la page. (Pas requestAnimationFrame : l’affichage est
-         suspendu pendant la transition, il n’arriverait jamais.) */
-      const racine = document.documentElement;
-      racine.classList.toggle("vt-entete", window.scrollY < 1);
+      /* La nouvelle page se pose sur l’ancienne (css/animations.css). On
+         attend que la page ait démarré, puis une tâche : le programme, déjà
+         chargé, a rempli la page. (Pas requestAnimationFrame : l’affichage
+         est suspendu pendant la transition, il n’arriverait jamais.) */
       const transition = document.startViewTransition(async () => {
         await changer();
         await new Promise((fin) => setTimeout(fin, 0));
@@ -206,7 +198,7 @@ async function charger(url, ajouterAHistorique, auChangement) {
       /* Une transition interrompue (clic rapide sur un autre lien) n’est pas
          une erreur : la page a changé quand même. */
       transition.ready.catch(() => {});
-      transition.finished.catch(() => {}).finally(() => racine.classList.remove("vt-entete"));
+      transition.finished.catch(() => {});
       await transition.updateCallbackDone;
     } else {
       await changer();
@@ -218,7 +210,7 @@ async function charger(url, ajouterAHistorique, auChangement) {
 }
 
 /**
- * Active la navigation qui garde la radio.
+ * Active la navigation sans rechargement.
  * @param {AuChangement} auChangement Appelé après chaque changement de page.
  */
 export function initNavigation(auChangement) {
@@ -244,7 +236,7 @@ export function initNavigation(auChangement) {
 }
 
 /**
- * Change de page depuis le code, comme un clic sur un lien : la radio continue.
+ * Change de page depuis le code, comme un clic sur un lien.
  * @param {string} adresse  Relative à la page actuelle.
  */
 export function naviguer(adresse) {

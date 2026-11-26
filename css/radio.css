@@ -1,0 +1,206 @@
+/* Minimum : la page Radio, les lives sur YouTube (demande du client,
+   26.11.2026 : « plus simple, mais vraiment clean »). Des cases jointes d'un
+   trait, comme le reste du site, sur le noir de la musique : le lecteur en
+   grand, ce qu'il montre à côté, puis les prochains lives et ceux à revoir,
+   une ligne chacun, le jour dans le rose de la radio. */
+
+/* ---------- Le lecteur et sa case ---------- */
+.live {
+  display: grid;
+  gap: var(--trait);
+  background: var(--encre);
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.live > * {
+  min-width: 0;
+  background: var(--fond);
+}
+
+.live__ecran {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: var(--noir);
+}
+
+.live__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Pas encore de vidéo : la case noire dit quand revenir. */
+.live__vide {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: var(--espace-2);
+  padding: var(--espace-3) var(--marge);
+  text-align: center;
+  color: var(--blanc);
+}
+
+.live__vide-titre {
+  font-size: var(--taille-carte);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.live__infos {
+  display: grid;
+  align-content: start;
+  gap: var(--espace-2);
+  padding: var(--espace-4) var(--marge);
+}
+
+.live__etat {
+  display: flex;
+}
+
+.live__titre {
+  font-size: var(--taille-carte);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.live__chaine {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espace-2);
+  min-height: var(--cible);
+  margin-top: var(--espace-2);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  text-decoration: none;
+}
+
+/* « En direct » : un point qui clignote devant (animations.css). */
+.en-direct::before {
+  content: "";
+  width: 0.45em;
+  height: 0.45em;
+  margin-right: 0.45em;
+  background: var(--pastille-radio);
+}
+
+/* ---------- Les lignes de lives ---------- */
+.lives__liste > li {
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.ligne-live {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr) auto;
+  gap: var(--trait);
+  width: 100%;
+  min-height: 4.5rem;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  color: var(--encre);
+  background: var(--encre);
+  border: 0;
+}
+
+.ligne-live > * {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: var(--espace-2) var(--marge);
+  background: var(--fond);
+}
+
+/* Le jour et l'heure, dans le rose de la radio. */
+.ligne-live__quand {
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.125rem;
+  padding-inline: var(--espace-1);
+  font-size: var(--taille-petite);
+  font-weight: var(--graisse-nom);
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--texte-radio);
+  background: var(--pastille-radio);
+}
+
+.ligne-live__titre {
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.ligne-live__action {
+  justify-content: flex-end;
+  gap: var(--espace-2);
+  max-width: 9rem;
+  font-size: 0.75rem;
+  font-weight: var(--graisse-nom);
+  line-height: 1.2;
+  text-align: right;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.ligne-live--revoir {
+  cursor: pointer;
+}
+
+.ligne-live--revoir:focus-visible {
+  outline: var(--trait) solid var(--pastille-radio);
+  outline-offset: calc(var(--trait) * -2);
+}
+
+/* Le live qui est dans le lecteur : sa case d'action se remplit de rose. */
+.ligne-live--revoir[aria-current="true"] .ligne-live__action {
+  color: var(--texte-radio);
+  background: var(--pastille-radio);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ligne-live--revoir:hover .ligne-live__titre,
+  .live__chaine:hover {
+    text-decoration: underline;
+    text-decoration-thickness: var(--trait);
+    text-underline-offset: 0.2em;
+  }
+}
+
+@media (min-width: 40rem) {
+  .ligne-live {
+    grid-template-columns: 7rem minmax(0, 1fr) auto;
+  }
+
+  .ligne-live__quand {
+    flex-direction: row;
+    gap: 0.4em;
+  }
+
+  .ligne-live__action {
+    max-width: none;
+    min-width: 11rem;
+  }
+}
+
+/* Ordinateur : le lecteur sur trois quarts, sa case sur le dernier quart. */
+@media (min-width: 56rem) {
+  .live {
+    grid-template-columns: 3fr 1fr;
+  }
+
+  .ligne-live {
+    grid-template-columns: 12rem minmax(0, 1fr) 13rem;
+  }
+}

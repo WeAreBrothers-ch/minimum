@@ -128,7 +128,7 @@ main [data-remplir]:empty {
   border-bottom: var(--trait) solid var(--encre);
 }
 
-.carreaux--nuit .carreau {
+.carreaux--musique .carreau {
   grid-template-rows: auto minmax(0, 1fr) auto auto;
 }
 
@@ -169,7 +169,7 @@ main [data-remplir]:empty {
     max-width: calc(var(--colonnes, 4) * 22rem);
   }
 
-  .carreaux--nuit:not([data-liste]) {
+  .carreaux--musique:not([data-liste]) {
     --rangees: 5;
   }
 
@@ -343,9 +343,9 @@ main [data-remplir]:empty {
   background: var(--pastille-argent);
 }
 
-.carreau__action--nuit {
-  color: var(--texte-monde);
-  background: var(--pastille-nuit);
+.carreau__action--musique {
+  color: var(--texte-musique);
+  background: var(--pastille-musique);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -389,16 +389,17 @@ main [data-remplir]:empty {
 }
 
 /* « Tout » actif : jamais une case noire (elle se souderait à la case noire
-   du jour, juste dessous) ; la case reste blanche, soulignée des trois
-   couleurs, celles de tous les mondes. */
+   du jour, juste dessous) ; la case reste blanche, soulignée des couleurs
+   de toutes les rubriques. */
 .filtre--tout {
   --remplissage: var(--fond);
   --texte-plein: var(--encre);
   background-image: linear-gradient(
     90deg,
-    var(--rouge-feu) 0 33.34%,
-    var(--rouge-rubis) 33.34% 66.67%,
-    var(--rouge-tomate) 66.67%
+    var(--pastille-cinema) 0 25%,
+    var(--pastille-musique) 25% 50%,
+    var(--pastille-agenda) 50% 75%,
+    var(--pastille-infos) 75%
   );
   background-position: bottom;
   background-repeat: no-repeat;
@@ -410,9 +411,9 @@ main [data-remplir]:empty {
   background-size: 100% 0.375rem;
 }
 
-.filtre--cinema { --remplissage: var(--pastille-cinema); --texte-plein: var(--texte-monde); }
-.filtre--nuit { --remplissage: var(--pastille-nuit); --texte-plein: var(--texte-monde); }
-.filtre--radio { --remplissage: var(--pastille-radio); --texte-plein: var(--texte-monde); }
+.filtre--cinema { --remplissage: var(--pastille-cinema); --texte-plein: var(--texte-cinema); }
+.filtre--musique { --remplissage: var(--pastille-musique); --texte-plein: var(--texte-musique); }
+.filtre--radio { --remplissage: var(--pastille-radio); --texte-plein: var(--texte-radio); }
 
 /* Agenda : une pastille de couleur devant chaque monde, le filtre sert de
    légende aux repères des jours. */
@@ -466,7 +467,7 @@ main [data-remplir]:empty {
 }
 
 /* ---------- Le pied de page : la fin de la page, sans doute possible ---------- */
-/* Une surface noire, comme la nuit, aux cases jointes d'un trait blanc :
+/* Une surface noire, comme la musique, aux cases jointes d'un trait blanc :
    rien d'autre sur le site ne lui ressemble. En tête, le nom MINIMUM en
    très grand, d'un bord à l'autre ; puis l'adresse et le contact côte à
    côte ; la signature. Il remonte d'une épaisseur de trait (règle de
@@ -481,9 +482,9 @@ main [data-remplir]:empty {
   background: var(--blanc);
 }
 
-/* La démarcation : la bande des trois mondes, rouge feu le cinéma, rouge
-   rubis la nuit, rouge tomate la radio, celle qui souligne « Tout » dans
-   l'agenda. Elle
+/* La démarcation : la bande des couleurs des rubriques (rouge le cinéma,
+   rose la musique, jaune l'agenda, grenat les infos), celle qui souligne
+   « Tout » dans l'agenda. Elle
    ferme la page, blanche ou noire, d'un trait franc avant le noir du pied. */
 .pied::before {
   content: "";
@@ -492,9 +493,10 @@ main [data-remplir]:empty {
   margin-bottom: calc(var(--joint) * -1);
   background: linear-gradient(
     90deg,
-    var(--rouge-feu) 0 33.34%,
-    var(--rouge-rubis) 33.34% 66.67%,
-    var(--rouge-tomate) 66.67%
+    var(--pastille-cinema) 0 25%,
+    var(--pastille-musique) 25% 50%,
+    var(--pastille-agenda) 50% 75%,
+    var(--pastille-infos) 75%
   );
 }
 

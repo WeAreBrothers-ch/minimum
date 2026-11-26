@@ -16,7 +16,7 @@ const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..");
 const PAGES = {
   "index.html": "js/accueil.js",
   "cinema/index.html": "js/pages/cinema.js",
-  "nuit/index.html": "js/pages/nuit.js",
+  "musique/index.html": "js/pages/musique.js",
   "radio/index.html": "js/pages/radio.js",
   "agenda/index.html": "js/pages/agenda.js",
   "infos/index.html": "js/pages/infos.js",

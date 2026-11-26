@@ -1,7 +1,15 @@
 /* Minimum : l'accueil, deux murs d'affiches dont chaque colonne défile de son côté.
-   Nuit à gauche sur fond noir, Cinéma à droite sur fond blanc (D1). */
+   Musique à gauche sur fond noir, Cinéma à droite sur fond blanc (D1).
+
+   Pas de barre de menu (demande du client, 26.11.2026) : les murs prennent
+   tout l'écran, et les rubriques sont des rectangles posés dessus
+   (acces.css). En haut de chaque mur, son monde : Musique et Radio à
+   gauche, Cinéma à droite. En bas, à cheval sur le partage des deux murs,
+   le nom MINIMUM, l'Agenda et les Infos. Entre les rectangles, les
+   affiches défilent comme avant. */
 
 .mur {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   min-height: 0;
@@ -9,87 +17,38 @@
 }
 
 .moitie {
+  position: relative;
   display: grid;
-  grid-template-rows: var(--hauteur-tete-mur) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   min-width: 0;
   min-height: 0;
   color: var(--encre);
   background: var(--fond);
 }
 
-/* Le trait entre les deux murs est porté par la tête et la première colonne
-   de Cinéma, pas par le mur entier : toutes les colonnes ont ainsi la même
-   largeur, et leurs traits tombent sur ceux de la barre du haut (entete.css). */
-.moitie + .moitie .moitie__tete,
+/* Le trait entre les deux murs est porté par la première colonne de
+   Cinéma, pas par le mur entier : toutes les colonnes ont la même largeur. */
 .moitie + .moitie .moitie__colonne:first-child {
   border-left: var(--trait) solid var(--noir);
 }
 
-/* La tête d'un mur : une case de la couleur de son monde (rose la nuit,
-   rouge feu le cinéma, comme dans le menu), son nom en capitales grasses, ce
-   qu'il contient et une flèche. Toute la case mène à la page. */
-.moitie__tete {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--espace-3);
-  min-width: 0;
-  padding-inline: var(--espace-3);
-  color: var(--texte-monde);
-  text-decoration: none;
-  background: var(--teinte-monde);
-  border-bottom: var(--trait) solid var(--noir);
+/* Les rectangles d'un monde, en haut de son mur, par-dessus les affiches.
+   Seuls les rectangles prennent le clic : à côté, le doigt et la molette
+   font défiler les colonnes. */
+.moitie__acces {
+  position: absolute;
+  z-index: 2;
+  top: var(--espace-2);
+  left: var(--espace-2);
+  right: var(--espace-2);
+  display: grid;
+  gap: var(--espace-1);
+  pointer-events: none;
+  container-type: inline-size;
 }
 
-[data-monde="nuit"] .moitie__tete {
-  --teinte-monde: var(--pastille-nuit);
-}
-
-[data-monde="cinema"] .moitie__tete {
-  --teinte-monde: var(--pastille-cinema);
-}
-
-.moitie__tete:focus-visible {
-  outline: var(--trait) solid var(--noir);
-  outline-offset: calc(var(--trait) * -3);
-}
-
-.moitie__nom {
-  font-size: var(--taille-texte);
-  font-weight: var(--graisse-nom);
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
-}
-
-.moitie__suite {
-  display: flex;
-  align-items: baseline;
-  gap: var(--espace-3);
-  min-width: 0;
-}
-
-/* Ce que contient le mur : seulement là où il y a la place. */
-.moitie__compte {
-  display: none;
-  overflow: hidden;
-  font-size: var(--taille-petite);
-  font-weight: var(--graisse-nom);
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
-  white-space: nowrap;
-}
-
-.moitie__fleche {
-  margin: 0;
-  font-size: var(--taille-texte);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .moitie__tete:hover .moitie__nom {
-    text-decoration: underline;
-    text-decoration-thickness: var(--trait);
-    text-underline-offset: 0.2em;
-  }
+.moitie__acces .acces {
+  pointer-events: auto;
 }
 
 /* Les colonnes d'une moitié, côte à côte : une sur téléphone, deux sur
@@ -127,14 +86,50 @@
   display: none;
 }
 
-/* Mur vide ou injoignable : une phrase, sur la surface de la moitié. */
+/* Mur vide ou injoignable : une phrase, sous les rectangles. */
 .moitie__message {
+  align-self: center;
   padding: var(--espace-3);
   max-width: var(--mesure);
 }
 
-@media (min-width: 56rem) {
-  .moitie__compte {
-    display: block;
+/* En bas, au milieu, à cheval sur les deux murs : le nom du lieu, puis
+   l'Agenda et les Infos côte à côte. */
+.mur__pied {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: calc(var(--espace-2) + env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espace-1);
+  width: min(26rem, calc(100% - 2 * var(--espace-2)));
+  translate: -50% 0;
+}
+
+.mur__nom {
+  grid-column: 1 / -1;
+  padding: var(--espace-1) var(--espace-2) 0.125rem;
+  font-size: clamp(2rem, 1.2rem + 3.6vw, 3.75rem);
+  font-weight: var(--graisse-nom);
+  line-height: 0.95;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--noir);
+  background: var(--blanc);
+  border: var(--trait) solid var(--noir);
+}
+
+@media (min-width: 40rem) {
+  .moitie__acces {
+    top: var(--espace-3);
+    left: var(--espace-3);
+    right: auto;
+    width: min(24rem, calc(100% - 2 * var(--espace-3)));
+  }
+
+  .mur__pied {
+    bottom: calc(var(--espace-3) + env(safe-area-inset-bottom));
   }
 }

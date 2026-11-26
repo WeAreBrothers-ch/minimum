@@ -1,14 +1,12 @@
 // @ts-check
 /* Minimum : point d’entrée. Lance la page affichée, puis garde la main
-   sur la navigation pour que la radio ne s’arrête jamais.
+   sur la navigation : on change de page sans recharger.
 
    Chaque page charge son propre code, et seulement le sien (import()) :
-   l’agenda n’attend pas la billetterie, l’accueil n’attend pas le bureau de
-   la radio. Les modules de la page sont annoncés en tête de son HTML
-   (npm run precharger), ils arrivent donc en même temps que main.js. */
+   l’agenda n’attend pas la billetterie, l’accueil n’attend pas la radio.
+   Les modules de la page sont annoncés en tête de son HTML (npm run
+   precharger), ils arrivent donc en même temps que main.js. */
 
-import { initEntete } from "./entete.js";
-import { initLecteur, rafraichirLecteur } from "./lecteur.js";
 import { initNavigation } from "./navigation.js";
 
 /** @typedef {() => (void | (() => void))} InitPage */
@@ -17,7 +15,7 @@ import { initNavigation } from "./navigation.js";
 const PAGES = {
   accueil: () => import("./accueil.js").then((m) => m.initAccueil),
   cinema: () => import("./pages/cinema.js").then((m) => m.initCinema),
-  nuit: () => import("./pages/nuit.js").then((m) => m.initNuit),
+  musique: () => import("./pages/musique.js").then((m) => m.initMusique),
   radio: () => import("./pages/radio.js").then((m) => m.initRadio),
   agenda: () => import("./pages/agenda.js").then((m) => m.initAgenda),
   film: () => import("./pages/film.js").then((m) => m.initFilm),
@@ -39,8 +37,7 @@ let demande = 0;
  */
 async function lancerPage(page) {
   for (const demonter of demontages) demonter();
-  demontages = [initEntete()];
-  rafraichirLecteur();
+  demontages = [];
   /* Numéroté avant tout : même une page sans code propre rend caduque une
      page précédente dont le code arrive encore. */
   const numero = ++demande;
@@ -78,6 +75,5 @@ function sessionStorageEssai() {
   }
 }
 
-initLecteur();
 void lancerPage(document.body.dataset.page ?? "");
 initNavigation(lancerPage);

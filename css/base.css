@@ -4,7 +4,7 @@ body {
   min-height: 100dvh;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: minmax(0, 1fr) auto;
   font-family: var(--police);
   font-weight: var(--graisse-texte);
   font-size: var(--taille-texte);
@@ -122,7 +122,7 @@ main:focus {
   mask-image: var(--fleche-sortie);
 }
 
-/* La même flèche, quand elle ne peut être qu'un ::after (menu de téléphone). */
+/* La même flèche, quand elle ne peut être qu'un ::after. */
 .fleche-apres::after {
   content: "";
   flex: none;

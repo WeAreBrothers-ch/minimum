@@ -36,9 +36,10 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
 - HTML, CSS et JavaScript sans étape de construction. Le code est typé par
   TypeScript (`// @ts-check` et annotations JSDoc, `tsconfig.json` en mode strict).
 - `js/main.js` lance la page affichée. `js/navigation.js` change de page sans
-  recharger : la radio continue de jouer. Le lecteur de la radio est une case de
-  la barre du haut (`js/lecteur.js`, `css/lecteur.css`) : il ne recouvre rien.
-- `js/mur.js` : un mur d'affiches par moitié de l'accueil (Nuit, Cinéma), fait de
+  recharger. Pas de barre de menu : on circule par les rectangles de l'accueil,
+  le nom MINIMUM en haut de chaque page et la rangée des rubriques du pied de
+  page (`css/acces.css`).
+- `js/mur.js` : un mur d'affiches par moitié de l'accueil (Musique, Cinéma), fait de
   colonnes qui défilent chacune seule et sans fin (`js/colonne.js`) : 1 colonne
   par mur sur téléphone, 2 sur ordinateur, soit 4 colonnes indépendantes.
 - `js/donnees.js` charge le programme une seule fois pour tout le site.
@@ -62,12 +63,12 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
 - Billetterie : la liste des séances et la caisse sont dans `js/billetterie/`
   (`panneau-html.js` pour le dessin, `panneau.js` pour la marche), le serveur dans
   `api/` (PHP). Mode d'emploi et liste avant ouverture : `BILLETTERIE.md`.
-- Page Radio : un faux bureau d'ordinateur dans le style de soso radio
-  (`js/pages/radio.js`, `js/bureau/`, `css/bureau.css`) : fenêtres, lecteur,
-  Réglages pour changer le fond d'écran. Il pilote le lecteur de la barre du haut ;
-  voir `DIRECTION-ARTISTIQUE.md`, « Le bureau de la radio ».
+- Page Radio : les lives YouTube (`js/pages/radio.js`, `css/radio.css`) : le
+  lecteur (live en cours de la chaîne, sinon le dernier live en ligne), les
+  prochains lives et ceux à revoir. Chaque live a son adresse YouTube dans le
+  programme (`video`).
 - Design : celui de Zinéma, déguisé (tableau de cases, `css/cases.css`,
-  `css/entete.css`) ; voir `DIRECTION-ARTISTIQUE.md`.
+  `css/acces.css`) ; voir `DIRECTION-ARTISTIQUE.md`.
 - Toutes les valeurs de style sont dans `css/jetons.css`.
 
 ## État : démonstration
@@ -75,7 +76,7 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
 `js/config.js`, `DEMONSTRATION = true` :
 - **Cinéma** : programme réel de la semaine du 11 au 17 novembre 2026, repris de
   cineminimum.ch, avec les affiches du catalogue Sanity commun quand elles y sont.
-- **Nuit et Radio** : soirées et émissions d'essai, sans mention « exemple » à
+- **Musique et Radio** : soirées et lives d'essai, sans mention « exemple » à
   l'écran (choix d'Eliott, 16.11.2026). Les affiches de soirée viennent d'images
   du Bureau d'Eliott, pas de Minimum : **à remplacer avant la mise en ligne**
   (droits d'auteur). Avec `DEMONSTRATION = false`, aucune n'est plus utilisée.
@@ -90,7 +91,8 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
 3. Billetterie : construite et essayée, en mode démonstration. Avant de
    l'ouvrir : compte SumUp au nom de Minimum, champs Sanity, e-mail de
    confirmation. Tout est listé dans `BILLETTERIE.md`.
-4. Flux de la radio (`FLUX_RADIO` dans `config.js`) et émissions à réécouter.
+4. Chaîne YouTube de la radio (`CHAINE_YOUTUBE` dans `config.js`, l'identifiant
+   « UC… ») et l'adresse YouTube de chaque live.
 5. Matière à fournir par le client : voir `DIRECTION-ARTISTIQUE.md`.
 6. Avant la mise en ligne : ajouter l'adresse définitive aux origines autorisées
    (CORS) du projet Sanity, sinon le contenu ne se charge pas ; favicon à partir

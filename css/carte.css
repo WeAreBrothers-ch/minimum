@@ -98,15 +98,15 @@
 }
 
 .carte--typo.carte--emission {
-  color: var(--texte-monde);
+  color: var(--texte-radio);
   background: var(--pastille-radio);
 }
 
-/* Une soirée sans affiche : rose, la couleur de la nuit. Noire, elle se
+/* Une soirée sans affiche : rose, la couleur de la musique. Noire, elle se
    confondrait avec les joints noirs du mur. */
 .carte--typo.carte--soiree {
-  color: var(--texte-monde);
-  background: var(--pastille-nuit);
+  color: var(--texte-musique);
+  background: var(--pastille-musique);
 }
 
 /* L'état (« En direct », « À l'affiche ») : la pastille noire du site

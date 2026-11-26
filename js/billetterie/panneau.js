@@ -4,7 +4,7 @@
    la séance choisie. Dedans : compter les billets, vérifier l’adresse
    e-mail, puis emmener le visiteur payer chez SumUp (ou, en démonstration,
    passer directement au billet). L’adresse …#billets ouvre la caisse dès
-   l’arrivée (lien « Billets » de l’agenda ou de la page Nuit). */
+   l’arrivée (lien « Billets » de l’agenda ou de la page Musique). */
 
 import { BILLETTERIE, MAX_BILLETS } from "../config.js";
 import { prix } from "../format.js";

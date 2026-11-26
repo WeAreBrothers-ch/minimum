@@ -65,9 +65,6 @@
   --espace-4: 1.75rem;
   --espace-5: 3rem;
 
-  /* Hauteurs fixes de la mise en page de l'accueil */
-  --hauteur-entete: 3.5rem;
-  --hauteur-tete-mur: 3.25rem;
   --cible: 2.75rem;
 
   /* Proportion des cases du mur : celle d'une affiche de cinéma. */
@@ -86,15 +83,17 @@
   --duree-entree: 640ms;
   --duree-page: 340ms;
 
-  /* Code couleur (demande d'Eliott, 19.11.2026) : les trois mondes ont
-     chacun un rouge RAL, ceux de la salle : Rouge feu (RAL 3000) le cinéma,
-     Rouge rubis (RAL 3003) la nuit, Rouge tomate (RAL 3013) la radio. Ils
-     sont foncés : le texte posé dessus est toujours blanc (--texte-monde,
-     contraste de 7:1 au moins). Le vert reste celui de l'argent, l'orange
-     celui d'un problème, avec un texte noir (--pastille-texte). */
-  --rouge-feu: #a72920;
-  --rouge-rubis: #861a22;
-  --rouge-tomate: #972e25;
+  /* Code couleur (demande du client, 26.11.2026) : une couleur par rubrique,
+     la même partout (accueil, titres de page, agenda, pied de page).
+     Rouge le cinéma (le rouge feu RAL 3000 de la salle, gardé), rose la
+     musique (soirées du club et lives de la radio), jaune l'agenda, grenat
+     les infos. Le texte posé dessus est blanc sur le rouge et le grenat,
+     noir sur le rose et le jaune : 7:1 au moins partout (paires.txt).
+     Le vert reste celui de l'argent, l'orange celui d'un problème. */
+  --rouge: #a72920;
+  --rose: #f48fbf;
+  --jaune: #f6d82b;
+  --grenat: #6b1222;
   /* Le vert de l'argent (19.11.2026) : plus soutenu que l'ancien vert pâle,
      pour ressortir à côté des rouges ; texte noir, contraste de 7:1. Au
      survol, un cran plus foncé (5:1). */
@@ -103,20 +102,27 @@
   --orange-doux: #ffc394;
   --orange-vif: #ff7a2f;
 
-  --texte-monde: var(--blanc);
   --pastille-texte: var(--noir);
   --pastille-argent: var(--vert);
-  --pastille-cinema: var(--rouge-feu);
-  --pastille-radio: var(--rouge-tomate);
-  --pastille-nuit: var(--rouge-rubis);
   --pastille-probleme: var(--orange-doux);
+
+  /* Chaque rubrique : sa couleur, et le texte qui se lit dessus. */
+  --pastille-cinema: var(--rouge);
+  --texte-cinema: var(--blanc);
+  --pastille-musique: var(--rose);
+  --texte-musique: var(--noir);
+  --pastille-radio: var(--rose);
+  --texte-radio: var(--noir);
+  --pastille-agenda: var(--jaune);
+  --texte-agenda: var(--noir);
+  --pastille-infos: var(--grenat);
+  --texte-infos: var(--blanc);
+  /* Le texte d'une case de couleur, quand le monde n'est pas précisé. */
+  --texte-monde: var(--blanc);
 
   /* Aucun arrondi sur le site : les pastilles sont à angle droit, comme
      les cases de la fiche (demande d'Eliott, 17.11.2026). */
   --hauteur-pastille: 1.75rem;
-  /* L'anneau noir autour de la pastille de la page courante (menu). */
-  --anneau: 2px;
-  --anneau-ecart: 3px;
 
   /* Les flèches du site, dessinées (pas un caractère de la police) : une
      tige aussi épaisse qu'une lettre d'Archivo 900, une pointe à angle
@@ -127,7 +133,7 @@
   --fleche-sortie: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 21L19 5M7 4h13v13' fill='none' stroke='%23000' stroke-width='4'/%3E%3C/svg%3E");
 }
 
-/* La nuit et le lecteur : surfaces inversées ; l'orange y est vif, le vert
+/* La musique et la radio : surfaces inversées ; l'orange y est vif, le vert
    et les rouges restent les mêmes. */
 .surface-nuit {
   --encre: var(--blanc);

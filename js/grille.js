@@ -1,5 +1,5 @@
 // @ts-check
-/* Minimum : la disposition d’une grille d’affiches (Cinéma, Nuit), sur grand
+/* Minimum : la disposition d’une grille d’affiches (Cinéma, Musique), sur grand
    écran. Règle : jamais de case vide en fin de grille.
 
    - On cherche un nombre de colonnes qui remplit la dernière rangée, avec des

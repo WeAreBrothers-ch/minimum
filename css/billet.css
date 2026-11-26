@@ -43,8 +43,6 @@
 
 /* À l'impression, le billet seul. */
 @media print {
-  .entete,
-  .lecteur,
   .evitement,
   .avis,
   .billet__imprimer {

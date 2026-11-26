@@ -12,14 +12,16 @@ export const SANITY = Object.freeze({
 /** Le lieu, tel qu’il est noté sur les séances et les soirées dans Sanity. */
 export const LIEU = "minimum";
 
-/** Le flux en direct de la radio. null tant que le client ne l’a pas fourni :
-    le lecteur l’annonce au lieu de faire semblant de jouer.
+/** La radio, ce sont des lives YouTube. L’identifiant de la chaîne
+    (« UC… », dans l’adresse youtube.com/channel/UC…) : la page Radio montre
+    le live en cours de la chaîne. null tant que le client ne l’a pas
+    fourni : la page le dit au lieu de montrer un lecteur vide.
     @type {string | null} */
-export const FLUX_RADIO = null;
+export const CHAINE_YOUTUBE = null;
 
 /** Tant que Minimum n’a pas ses séances dans Sanity, le site montre le
     programme réel de la semaine du 11 au 17 novembre 2026, repris de
-    cineminimum.ch, et des soirées et émissions d’essai.
+    cineminimum.ch, et des soirées et des lives d’essai.
     Passer à false le jour où le Studio est branché. */
 export const DEMONSTRATION = true;
 
@@ -40,7 +42,3 @@ export const MAX_BILLETS = 10;
 
 /** Où se trouve le lieu, tel qu’écrit sur les billets. */
 export const ADRESSE_BILLET = "Minimum, La Case à Chocs, quai Philippe-Godet 20, Neuchâtel";
-
-/** L'adresse où écrire à la radio (demander un titre, proposer une émission).
-    La fenêtre « Écrire » de la page Radio ouvre la messagerie du visiteur. */
-export const MAIL_RADIO = "cineminimum@gmail.com";

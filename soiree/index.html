@@ -20,15 +20,14 @@
   <meta property="og:image" content="https://www.cineminimum.ch/assets/img/partage.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Minimum : cinéma, nuit et radio à La Case à Chocs, Neuchâtel" />
+  <meta property="og:image:alt" content="Minimum : cinéma, musique et radio à La Case à Chocs, Neuchâtel" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="preload" href="../assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="../css/jetons.css" />
   <link rel="stylesheet" href="../css/reset.css" />
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/pastilles.css" />
-  <link rel="stylesheet" href="../css/entete.css" />
-  <link rel="stylesheet" href="../css/lecteur.css" />
+  <link rel="stylesheet" href="../css/acces.css" />
   <link rel="stylesheet" href="../css/pages.css" />
   <link rel="stylesheet" href="../css/detail.css" />
   <link rel="stylesheet" href="../css/detail-grille.css" />
@@ -41,8 +40,6 @@
   <!-- modules : npm run precharger -->
   <link rel="modulepreload" href="../js/main.js" />
   <link rel="modulepreload" href="../js/pages/soiree.js" />
-  <link rel="modulepreload" href="../js/entete.js" />
-  <link rel="modulepreload" href="../js/lecteur.js" />
   <link rel="modulepreload" href="../js/navigation.js" />
   <link rel="modulepreload" href="../js/billetterie/panneau-html.js" />
   <link rel="modulepreload" href="../js/billetterie/panneau.js" />
@@ -56,35 +53,23 @@
   <link rel="modulepreload" href="../js/catalogue.js" />
   <link rel="modulepreload" href="../js/sanity.js" />
   <link rel="modulepreload" href="../js/demo/films.js" />
-  <link rel="modulepreload" href="../js/demo/nuit.js" />
+  <link rel="modulepreload" href="../js/demo/musique.js" />
   <link rel="modulepreload" href="../js/images.js" />
   <!-- /modules -->
 </head>
 <body data-page="soiree" data-racine="../">
   <a class="evitement" href="#contenu">Aller au contenu</a>
-  <header class="entete">
-    <nav class="menu" aria-label="Menu principal" data-ouvert="false">
-      <a class="menu__nom" href="../">Minimum</a>
-      <button class="menu__ouvrir" type="button" aria-expanded="false" aria-controls="menu-liste" aria-label="Ouvrir le menu"><span class="menu__barres" aria-hidden="true"></span></button>
-      <ul class="menu__liste" id="menu-liste">
-        <li class="menu__item"><a class="menu__lien menu__lien--cinema" href="../cinema/">Cinéma</a></li>
-        <li class="menu__item"><a class="menu__lien menu__lien--nuit" href="../nuit/" aria-current="true">Nuit</a></li>
-        <li class="menu__item"><a class="menu__lien menu__lien--radio" href="../radio/">Radio</a></li>
-        <li class="menu__item"><a class="menu__lien" href="../agenda/">Agenda</a></li>
-        <li class="menu__item"><a class="menu__lien" href="../infos/">Infos</a></li>
-        <li class="menu__pied"><span>Minimum, La Case à Chocs<br />Quai Philippe-Godet 20, 2000 Neuchâtel</span><a href="tel:+41325453737">032 545 37 37</a></li>
-      </ul>
-      <button class="lecteur__bouton" type="button" aria-pressed="false" aria-label="Radio : pas encore à l’antenne" disabled>
-        <span class="lecteur__icone" aria-hidden="true"></span>
-        <span class="lecteur__etat">Radio</span>
-        <span class="lecteur__titre">Pas encore à l’antenne</span>
-      </button>
-    </nav>
-  </header>
   <main id="contenu" class="page surface-nuit" tabindex="-1">
     <div data-remplir></div>
   </main>
   <footer class="pied">
+    <nav class="pied__rubriques" aria-label="Les rubriques">
+      <a class="pied__rubrique pied__rubrique--cinema" href="../cinema/">Cinéma</a>
+      <a class="pied__rubrique pied__rubrique--musique" href="../musique/" aria-current="page">Musique</a>
+      <a class="pied__rubrique pied__rubrique--radio" href="../radio/">Radio</a>
+      <a class="pied__rubrique pied__rubrique--agenda" href="../agenda/">Agenda</a>
+      <a class="pied__rubrique pied__rubrique--infos" href="../infos/">Infos</a>
+    </nav>
     <div class="pied__tete">
       <a class="pied__marque" href="../">Minimum</a>
       <p class="pied__devise">Cinéma, club et radio à La Case à Chocs, Neuchâtel</p>

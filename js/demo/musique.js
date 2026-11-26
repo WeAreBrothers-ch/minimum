@@ -50,9 +50,12 @@ export const SOIREES_DEMO = AFFICHES.map(([date, largeur, hauteur, description],
   },
 }));
 
-/** @type {Emission[]} */
+/** Des lives d’essai : un en cours, deux à venir, deux passés. Pas encore
+    de vidéo : la page Radio le dit. @type {Emission[]} */
 export const EMISSIONS_DEMO = [
-  { id: "emission-2026-11-11", titre: "Émission en direct", date: "2026-11-11", heure: "18:00", enDirect: true, audio: null, visuel: null },
-  { id: "emission-2026-11-07", titre: "Émission à réécouter", date: "2026-11-07", heure: "20:00", enDirect: false, audio: null, visuel: null },
-  { id: "emission-2026-11-04", titre: "Émission à réécouter", date: "2026-11-04", heure: "20:00", enDirect: false, audio: null, visuel: null },
+  { id: "live-2026-11-11", titre: "Live au studio", date: "2026-11-11", heure: "18:00", enDirect: true, video: null, visuel: null },
+  { id: "live-2026-11-13", titre: "Live au studio", date: "2026-11-13", heure: "20:00", enDirect: false, video: null, visuel: null },
+  { id: "live-2026-11-19", titre: "Live au studio", date: "2026-11-19", heure: "20:00", enDirect: false, video: null, visuel: null },
+  { id: "live-2026-11-07", titre: "Live au studio", date: "2026-11-07", heure: "20:00", enDirect: false, video: null, visuel: null },
+  { id: "live-2026-11-04", titre: "Live au studio", date: "2026-11-04", heure: "20:00", enDirect: false, video: null, visuel: null },
 ];

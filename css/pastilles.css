@@ -33,14 +33,17 @@
 
 .pastille--cinema {
   --teinte: var(--pastille-cinema);
+  --texte-monde: var(--texte-cinema);
 }
 
 .pastille--radio {
   --teinte: var(--pastille-radio);
+  --texte-monde: var(--texte-radio);
 }
 
-.pastille--nuit {
-  --teinte: var(--pastille-nuit);
+.pastille--musique {
+  --teinte: var(--pastille-musique);
+  --texte-monde: var(--texte-musique);
 }
 
 /* L'état d'un film ou d'une émission (« À l'affiche », « En direct ») :
@@ -57,7 +60,7 @@
 .pastille--argent,
 .pastille--cinema,
 .pastille--radio,
-.pastille--nuit {
+.pastille--musique {
   color: var(--texte-monde);
   background: var(--teinte);
   border-color: var(--teinte);

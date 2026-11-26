@@ -25,9 +25,9 @@ Même famille que Zinéma (Lausanne) : mêmes exploitants, même catalogue de fi
 | D5 | Tarifs, paiement, projections privées, contacts, remerciements, crédits | La page Infos, mot pour mot |
 
 **À FOURNIR par le client**
-- Les affiches des soirées (côté Nuit, il n'y a encore que des exemples marqués comme tels).
-- Les noms des émissions et l'adresse du flux de la radio (service de diffusion à choisir).
-- Les fichiers audio ou les liens des émissions à réécouter.
+- Les affiches des soirées (côté Musique, il n'y a encore que des exemples marqués comme tels).
+- La chaîne YouTube de la radio (son identifiant « UC… ») et les noms des lives.
+- L'adresse YouTube de chaque live, pour « À revoir ».
 - La police exacte du logo (graphisme : Karen Ichters) et le logo en vectoriel.
 - Des photos du lieu (salle, club, studio radio).
 - Un compte SumUp au nom de Minimum, pour la billetterie en ligne.
@@ -79,6 +79,62 @@ mécanique se reprend, la surface (police, couleurs, épaisseurs) vient de Minim
 - T6 marque : La Case à Chocs a sa propre identité ; on ne la reprend pas.
 
 ## Système
+
+### Navigation, couleurs et radio (demande du client, 26.11.2026)
+Cette section remplace ce qui la contredit plus bas (menu, trois rouges, bureau
+de la radio, lecteur dans la barre du haut).
+
+**Le code couleur.** Une couleur par rubrique, la même partout : rectangles de
+l'accueil, case du titre de chaque page, agenda, pied de page.
+
+| Couleur | Rubrique | Texte posé dessus |
+|---|---|---|
+| Rouge (`--rouge`, #a72920, le rouge feu RAL 3000 de la salle) | Cinéma | blanc, 7:1 |
+| Rose (`--rose`, #f48fbf) | Musique (l'ancienne « Nuit » : les soirées du club) et Radio, qui en fait partie | noir, 9,5:1 |
+| Jaune (`--jaune`, #f6d82b) | Agenda | noir, 14,8:1 |
+| Grenat (`--grenat`, #6b1222) | Infos (et la case MERCI) | blanc, 12:1 |
+| Vert (#3cab64) | L'argent, inchangé | noir, 7,2:1 |
+| Orange | Un problème, inchangé | noir |
+
+Le rouge tomate et le rouge rubis disparaissent. La Radio n'a pas de couleur à
+elle : elle prend le rose de la musique. La rubrique « Nuit » s'appelle
+désormais **Musique** (adresse `musique/`).
+
+**Pas de barre de menu.** La barre du haut (nom, rubriques, lecteur radio) est
+supprimée sur tout le site. On circule par :
+- **l'accueil** : les deux murs prennent tout l'écran (Musique à gauche, Cinéma à
+  droite ; quatre colonnes sur ordinateur, deux sur téléphone). Des rectangles
+  de couleur sont posés dessus, d'un trait noir : en haut du mur gauche
+  MUSIQUE (avec le compte « 7 soirées · 3 lives ») et RADIO, en haut du mur
+  droit CINÉMA (« 8 films ») ; en bas, à cheval sur les deux murs, le nom
+  MINIMUM, puis AGENDA et INFOS côte à côte. Entre les rectangles, les
+  affiches défilent comme avant ; seuls les rectangles prennent le clic.
+  Sur téléphone, les rectangles perdent leur flèche pour laisser la place au nom ;
+- **la case du titre** de chaque rubrique : pleine de sa couleur, avec en haut
+  « ← MINIMUM » qui ramène à l'accueil ;
+- **le pied de page** : une rangée de cases, une par rubrique, un carré de sa
+  couleur devant le nom ; la page où l'on est se remplit de sa couleur, les
+  autres au survol. Sur téléphone, Cinéma et Musique sur une ligne, Radio,
+  Agenda et Infos sur la suivante. La bande de couleur au-dessus reprend les
+  quatre couleurs (rouge, rose, jaune, grenat).
+Rien d'autre : pas de bouton menu, pas de liens en plus dans les pages.
+
+**La fiche d'un film ne change pas** (le client la trouve très bien) : seule la
+barre du haut disparaît, et le pied de page reçoit la rangée des rubriques.
+
+**La radio, ce sont des lives YouTube.** Le bureau d'ordinateur (soso radio),
+le lecteur audio et sa case dans la barre du haut sont retirés. La page Radio
+est en cases, sur le noir de la musique :
+- la case du titre, rose ;
+- le lecteur YouTube en grand (trois quarts de la largeur sur ordinateur) : le
+  live en cours de la chaîne, sinon le dernier live mis en ligne. Tant que la
+  chaîne n'est pas branchée (`CHAINE_YOUTUBE` dans `js/config.js`), la case
+  noire dit « Le live s'affiche ici » et quand revenir ;
+- à côté, ce qu'il montre : « En direct » (un point rose qui clignote), le
+  titre, le jour, et le lien vers la chaîne ;
+- « Prochains lives » puis « À revoir » : une ligne par live, le jour dans le
+  rose de la radio ; un toucher sur un live à revoir le met dans le lecteur.
+Sur l'accueil, seuls le live en cours et les lives à venir montent sur le mur.
 
 ### Couleur
 - `--noir` #000 et `--blanc` #fff, relevés sur le logo (D1), pour tout le site.
@@ -418,6 +474,6 @@ les boutons « Billets » (page Nuit, fiche) ouvrent la caisse directement.
 La ligne de tirets du programme de 2009 (D2), tapée en vrais caractères.
 
 ## Hypothèses à valider
-- Le service de diffusion de la radio (le lecteur accepte n'importe quel flux audio HTTPS).
+- La Radio prend le rose de la Musique (le client n'a pas donné de couleur à la radio).
 - Les soirées affichées sur le mur : seulement celles à venir, ou aussi les archives.
 - La police définitive (celle du logo, si elle existe en version web).

@@ -22,7 +22,7 @@ import { caisseHTML, seancesHTML } from "../billetterie/panneau-html.js";
 import { monterPanneau } from "../billetterie/panneau.js";
 import { chargerProgrammeComplet, filmParId, seancesAVenir } from "../donnees.js";
 import { duree, echapper, heureCourte, jourCourt, jourLong, jourLongMajuscule } from "../format.js";
-import { bandeAnnonceHTML, monterBandesAnnonces } from "./bande-annonce.js";
+import { bandeAnnonceHTML } from "./bande-annonce.js";
 import { afficheHTML, afficherErreur, allerALAncre, nommerPage, zoneAremplir } from "./commun.js";
 import { caseBilletsHTML, faitsHTML, retourHTML } from "./detail-cases.js";
 import { liensHTML, photosHTML } from "./film-commun.js";
@@ -170,7 +170,6 @@ export function initFilm() {
         `${film.titre}, de ${film.realisation} (${film.pays}, ${film.annee}). Séances et billets au cinéma Minimum, à Neuchâtel.`
       );
       zone.innerHTML = ficheHTML(film, programme, options);
-      monterBandesAnnonces(zone, fin.signal);
       monterPanneau(zone, options, fin.signal);
       allerALAncre();
     })
