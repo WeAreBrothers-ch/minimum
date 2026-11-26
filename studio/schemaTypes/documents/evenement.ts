@@ -41,7 +41,7 @@ export const evenement = defineType({
       name: "dateDebut",
       title: "Premier jour",
       type: "date",
-      options: { dateFormat: "dddd D MMMM YYYY" },
+      options: { dateFormat: "DD.MM.YYYY" },
       description: "L'événement est visible dès sa publication, même avant ce jour : on peut l'annoncer à l'avance.",
       validation: (rule) => rule.required().error("Indiquez le premier jour."),
     }),
@@ -49,7 +49,7 @@ export const evenement = defineType({
       name: "dateFin",
       title: "Dernier jour",
       type: "date",
-      options: { dateFormat: "dddd D MMMM YYYY" },
+      options: { dateFormat: "DD.MM.YYYY" },
       description:
         "Passé ce jour, l'événement quitte tout seul les pages publiques. Pour un seul jour, remettez la même date. Laissé vide, il reste en ligne jusqu'à ce qu'on le supprime.",
       validation: (rule) =>
@@ -76,7 +76,7 @@ export const evenement = defineType({
               name: "date",
               title: "Jour",
               type: "date",
-              options: { dateFormat: "dddd D MMMM YYYY" },
+              options: { dateFormat: "DD.MM.YYYY" },
               validation: (rule) => rule.required().error("Indiquez le jour."),
             }),
             defineField({ name: "heure", type: "string", placeholder: "20:00", validation: heureValide }),

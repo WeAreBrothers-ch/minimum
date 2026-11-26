@@ -1,7 +1,9 @@
 import { DocumentVideoIcon } from "@sanity/icons/DocumentVideo";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { PROJECTIONS } from "../../actions/projection";
 import { SeancesDuFilm } from "../../composants/seances-du-film";
 import { champAdresse, FIELDSET_ADRESSE } from "../shared/adresse";
+import { heureValide } from "../shared/heure";
 
 const STATUTS = [
   { title: "À l'affiche", value: "a-laffiche" },
@@ -13,6 +15,10 @@ const STATUTS = [
   { title: "Terminé", value: "passe" },
 ];
 
+/** La fiche annonce-t-elle une avant-première, une première ou une projection extraordinaire ? */
+const annonceUneProjection = (document: Record<string, unknown> | undefined) =>
+  Array.isArray(document?.statuts) && document.statuts.some((statut) => PROJECTIONS.includes(statut));
+
 export const film = defineType({
   name: "film",
   type: "document",
@@ -22,7 +28,17 @@ export const film = defineType({
     { name: "seances", title: "Séances" },
     { name: "medias", title: "Images et liens" },
   ],
-  fieldsets: [FIELDSET_ADRESSE],
+  fieldsets: [
+    FIELDSET_ADRESSE,
+    {
+      name: "projection",
+      title: "Jour et heure de la projection",
+      description:
+        "Publiez la fiche : la séance est créée toute seule, dans les séances, le planning, l'agenda et la billetterie. Pour la déplacer, changez-la ici puis republiez.",
+      options: { columns: 2 },
+      hidden: ({ document }) => !annonceUneProjection(document),
+    },
+  ],
   fields: [
     defineField({
       name: "title",
@@ -139,7 +155,7 @@ export const film = defineType({
       options: { list: STATUTS, layout: "grid" },
       initialValue: ["a-laffiche"],
       description:
-        "Cochez une ou plusieurs cases : le film apparaît dans chaque rubrique cochée. « Terminé » ne se combine avec rien : le film sort des pages publiques mais reste consultable ici.",
+        "Cochez une ou plusieurs cases : le film apparaît dans chaque rubrique cochée. Une avant-première, une première ou une projection extraordinaire se date juste en dessous (jour, heure) : sa séance se crée toute seule à la publication. « Terminé » ne se combine avec rien : le film sort des pages publiques mais reste consultable ici.",
       validation: (rule) =>
         rule
           .required()
@@ -152,11 +168,37 @@ export const film = defineType({
           ),
     }),
     defineField({
+      name: "projectionDate",
+      title: "Jour",
+      type: "date",
+      group: "fiche",
+      fieldset: "projection",
+      options: { dateFormat: "DD.MM.YYYY" },
+      validation: (rule) =>
+        rule
+          .custom((jour, contexte) => (annonceUneProjection(contexte.document) && !jour ? "Indiquez le jour : sans lui, aucune séance n'est créée." : true))
+          .warning(),
+    }),
+    defineField({
+      name: "projectionHeure",
+      title: "Heure",
+      type: "string",
+      group: "fiche",
+      fieldset: "projection",
+      placeholder: "20:00",
+      validation: (rule) => [
+        heureValide(rule),
+        rule
+          .custom((heure, contexte) => (annonceUneProjection(contexte.document) && !heure ? "Indiquez l'heure : sans elle, aucune séance n'est créée." : true))
+          .warning(),
+      ],
+    }),
+    defineField({
       name: "releaseDate",
       title: "Date de sortie",
       type: "date",
       group: "fiche",
-      options: { dateFormat: "DD/MM/YYYY" },
+      options: { dateFormat: "DD.MM.YYYY" },
       description:
         "Le jour où le film arrive chez nous. La fiche annonce alors « À partir du mercredi 12 mars ». Laissez vide si la date n'est pas encore connue.",
       hidden: ({ document }) => !(Array.isArray(document?.statuts) && document.statuts.includes("prochainement")),
@@ -183,7 +225,7 @@ export const film = defineType({
       title: "Jour de cette séance",
       type: "date",
       group: "seances",
-      options: { dateFormat: "DD/MM/YYYY" },
+      options: { dateFormat: "DD.MM.YYYY" },
       description: "Le jour où l'invité·e sera là. Laissez vide s'il est présent à toutes les séances.",
       hidden: ({ document }) => !document?.presence,
     }),

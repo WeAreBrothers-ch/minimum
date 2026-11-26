@@ -34,7 +34,7 @@ export const emission = defineType({
       title: "Jour",
       type: "date",
       fieldset: "horaire",
-      options: { dateFormat: "dddd D MMMM YYYY" },
+      options: { dateFormat: "DD.MM.YYYY" },
       validation: (rule) => rule.required().error("Indiquez le jour du live."),
     }),
     defineField({

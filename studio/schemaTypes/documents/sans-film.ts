@@ -24,7 +24,7 @@ export const sansFilm = defineType({
       name: "date",
       title: "Jour",
       type: "date",
-      options: { dateFormat: "dddd D MMMM YYYY" },
+      options: { dateFormat: "DD.MM.YYYY" },
       validation: (rule) => rule.required().error("Indiquez le jour."),
     }),
     defineField({

@@ -43,6 +43,11 @@ npm run schema     # facultatif : publie le modèle pour les outils Sanity
 
 ## Ce qu'il contient
 
+En haut du Studio, à côté de « Structure », l'outil **Planning** montre la
+semaine de cinéma (du mercredi au mardi) : séances, soirées, lives, cases sans
+film et événements, jour par jour. Un clic ouvre la fiche, « + » en crée une à
+la bonne date, deux séances qui se chevauchent sont signalées.
+
 | Rubrique du menu | Fiches |
 |---|---|
 | Cinéma | Films, séances (avec alerte si deux séances se chevauchent), cases sans film (privé, vacances) |
@@ -52,7 +57,11 @@ npm run schema     # facultatif : publie le modèle pour les outils Sanity
 | Le lieu | Réglages (contact, tarifs, jauges, chaîne YouTube, Instagram), cartes de membre, location, histoire |
 
 Repris de Zinéma : films, séances, cases sans film, événements, commandes,
-abonnements, location, histoire, réglages. Les noms des champs des films et
+abonnements, location, histoire, réglages ; les cases à cocher « Où en est ce
+film ? » ; les séances d'un film dans sa fiche ; et la projection datée : une
+avant-première, une première ou une projection extraordinaire se date dans la
+fiche du film, et sa séance se crée (ou se déplace) toute seule à la
+publication (`actions/projection.ts`, vérifié par `node outils/verifier-projection.mjs`). Les noms des champs des films et
 des séances sont les mêmes (`title`, `poster`, `director`, `time`…), pour
 pouvoir copier le catalogue une fois.
 
@@ -86,9 +95,28 @@ La publication se fait à la main dans Instagram : le Studio prépare l'image
 et la légende. Publier directement demanderait un compte Instagram
 professionnel relié à une page Facebook et une application Meta.
 
+## Ce qui a été essayé, et ce qui ne l'a pas été
+
+Essayé dans le vrai Studio, dans un navigateur, le 26.11.2026, avec des fiches
+d'essai (supprimées depuis) : le menu et chacune de ses listes ; l'ouverture de
+chaque type de fiche ; l'onglet Instagram d'un film, d'un artiste, d'une
+soirée, d'un live et d'un événement, dans les trois formats ; le bouton « 1
+clic » (image enregistrée, légende copiée) ; les séances dans la fiche d'un
+film et « Ajouter une séance » ; le planning, sa navigation et « + » ; l'alerte
+de chevauchement ; le bouton « + » du Studio ; les tarifs proposés d'office
+dans les réglages. Aucune erreur du Studio relevée.
+
+**Pas essayé** : tout ce qui écrit. Le compte utilisé pour ces essais ne
+pouvait que lire. Restent donc à essayer avec un vrai compte : saisir et
+publier une fiche, la création automatique de la séance d'une avant-première
+(sa règle est vérifiée à part, pas son branchement sur « Publier »), et les
+boutons « Billet contrôlé » et « Marquer comme remboursée » d'une commande.
+
 ## Pas repris de Zinéma
 
-Le code du Studio de Zinéma n'est dans aucun dépôt lu ici : seul son modèle
-de contenu a servi de référence. Ne sont donc pas repris ses réglages
-internes (planification, création automatique d'une séance à la publication
-d'une avant-première, newsletter).
+Le code du Studio de Zinéma n'a pas pu être lu : seul son modèle de contenu,
+avec ses textes d'aide, a servi de référence. Le planning est donc celui de
+Minimum, pas une copie de la « Planification » de Zinéma. Ne sont pas repris :
+la newsletter (rappel d'un événement), l'envoi du billet par e-mail, le prix
+particulier d'un film ou d'une séance et les liens de paiement SumUp par film
+(la caisse de Minimum encaisse les tarifs des réglages et des soirées).

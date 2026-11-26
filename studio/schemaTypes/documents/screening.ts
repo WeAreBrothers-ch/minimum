@@ -10,6 +10,15 @@ interface Voisine {
   titre?: string;
 }
 
+const PROJECTIONS_DU_FILM = [
+  { title: "Avant-première", value: "avant-premiere" },
+  { title: "Première", value: "premiere" },
+  { title: "Projection extraordinaire", value: "projection-extraordinaire" },
+];
+
+/** Une séance annoncée par la fiche du film se règle là-bas : ici, son film, son jour et son heure sont figés. */
+const regleeDansLeFilm = ({ document }: { document?: Record<string, unknown> }) => Boolean(document?.evenementDuFilm);
+
 /** Durée retenue quand la fiche du film n'en donne pas. */
 const DUREE_PAR_DEFAUT = 100;
 
@@ -50,13 +59,15 @@ export const screening = defineType({
       type: "reference",
       to: [{ type: "film" }],
       description: "Le titre, l'affiche, la durée et la version sont repris de la fiche du film : rien à recopier ici.",
+      readOnly: regleeDansLeFilm,
       validation: (rule) => rule.required().error("Choisissez le film projeté."),
     }),
     defineField({
       name: "date",
       title: "Date de la séance",
       type: "date",
-      options: { dateFormat: "dddd D MMMM YYYY" },
+      options: { dateFormat: "DD.MM.YYYY" },
+      readOnly: regleeDansLeFilm,
       validation: (rule) => rule.required().error("Indiquez la date de la séance."),
     }),
     defineField({
@@ -65,6 +76,7 @@ export const screening = defineType({
       type: "string",
       placeholder: "19:00",
       description: "Sur 24 heures, avec deux points. Ex. 20:30 pour 20 h 30.",
+      readOnly: regleeDansLeFilm,
       validation: (rule) => heureValide(rule.required()),
     }),
     defineField({
@@ -75,6 +87,16 @@ export const screening = defineType({
       initialValue: "disponible",
       description: "« Complet » et « Annulée » s'affichent sur l'agenda et ferment la vente en ligne.",
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "evenementDuFilm",
+      title: "Projection annoncée par la fiche du film",
+      type: "string",
+      options: { list: PROJECTIONS_DU_FILM },
+      description:
+        "Cette séance est une avant-première, une première ou une projection extraordinaire : son jour et son heure se règlent dans la fiche du film (« Jour et heure de la projection »).",
+      readOnly: true,
+      hidden: ({ value }) => !value,
     }),
     defineField({
       name: "versionNote",

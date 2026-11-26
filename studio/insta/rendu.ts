@@ -37,6 +37,8 @@ export interface Visuel {
   sousTitre: string | null;
   /** Fiche : les lignes sous les tirets (séances, dates). */
   lignes: string[];
+  /** Fiche d'un film : les repères (Durée, Version, Âge…), en cases à côté de l'affiche, comme sur le site. */
+  reperes?: Array<{ nom: string; valeur: string }>;
   /** Flyer : la date (AAAA-MM-JJ) et l'heure (HH:MM), écrites « 24.12.26 » et « 19H00 ». */
   quand: { date: string; heure: string | null } | null;
   /** À droite du nom du lieu, en bas : le compte Instagram ou le lieu. */
@@ -349,10 +351,31 @@ function dessinerFiche(ctx: CanvasRenderingContext2D, visuel: Visuel, format: Fo
       const l = Math.round(image.naturalWidth * echelle);
       const h = Math.round(image.naturalHeight * echelle);
       const y = zone.y + zone.h - h;
-      ctx.drawImage(image, zone.x, y, l, h);
+      const reperes = (visuel.reperes ?? []).slice(0, 6);
+      const colonne = zone.l - l;
+      /* Assez de place à droite : les repères en cases jointes d'un trait ; sinon l'affiche se centre. */
+      const enCases = reperes.length > 0 && colonne >= 300;
+      const x = enCases ? zone.x : zone.x + Math.round(colonne / 2);
+      ctx.drawImage(image, x, y, l, h);
       ctx.strokeStyle = NOIR;
-      ctx.lineWidth = 2;
-      ctx.strokeRect(zone.x + 1, y + 1, l - 2, h - 2);
+      ctx.fillStyle = NOIR;
+      ctx.lineWidth = TRAIT;
+      ctx.strokeRect(x + TRAIT / 2, y + TRAIT / 2, l - TRAIT, h - TRAIT);
+      if (enCases) {
+        const xCases = x + l - TRAIT;
+        ctx.strokeRect(xCases + TRAIT / 2, y + TRAIT / 2, colonne, h - TRAIT);
+        const hauteurCase = (h - TRAIT) / reperes.length;
+        const dedans = colonne - 2 * 30;
+        reperes.forEach((repere, rang) => {
+          const haut = y + rang * hauteurCase;
+          if (rang > 0) ctx.fillRect(xCases, Math.round(haut), colonne + TRAIT, TRAIT);
+          const milieu = haut + TRAIT / 2 + hauteurCase / 2;
+          police(ctx, 560, 24, 1.2);
+          ctx.fillText(tenir(ctx, capitales(repere.nom), dedans), xCases + TRAIT + 26, milieu - 12);
+          police(ctx, GRAS, 40, 0.4);
+          ctx.fillText(tenir(ctx, capitales(repere.valeur), dedans), xCases + TRAIT + 24, milieu + 34);
+        });
+      }
     } else {
       const pleine = { x: 0, y: 0, l: largeur, h: Math.max(0, yTexte - 40) };
       couvrir(ctx, image, pleine, visuel.image.fx, visuel.image.fy);

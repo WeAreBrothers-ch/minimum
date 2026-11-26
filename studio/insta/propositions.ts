@@ -21,6 +21,19 @@ interface ImageLue {
   url?: string | null;
   fx?: number | null;
   fy?: number | null;
+  /** Largeur du fichier d'origine, en pixels. */
+  largeur?: number | null;
+}
+
+/** Un post fait 1080 px de large : en dessous de cette largeur, l'image s'étire et devient floue. */
+const LARGEUR_NETTE = 800;
+
+/** Prévient quand l'image est trop petite pour sortir nette. */
+function conseilNettete(lue: ImageLue | null | undefined, quoi: string): string[] {
+  const largeur = lue?.largeur;
+  return typeof largeur === "number" && largeur < LARGEUR_NETTE
+    ? [`${quoi} ne fait que ${largeur} px de large : le post sortira flou. Remplacez-la par un fichier d'au moins 1080 px.`]
+    : [];
 }
 
 export interface Reglages {
@@ -61,6 +74,7 @@ export interface FilmLu {
   country?: string | null;
   duration?: number | null;
   language?: string | null;
+  ageRating?: string | null;
   typeDeFilm?: string | null;
   synopsis?: string | null;
   mention?: string | null;
@@ -93,6 +107,13 @@ export interface EvenementLu {
 }
 
 const LIEU = "Minimum, La Case à Chocs, Neuchâtel";
+
+/** Tant que les réglages ne sont pas publiés, les posts prennent les valeurs proposées par le Studio. */
+export const REGLAGES_PAR_DEFAUT: Required<Pick<Reglages, "hashtags" | "mentionBillets" | "nomRadio">> = {
+  hashtags: ["minimum", "caseachocs", "neuchatel"],
+  mentionBillets: "Billets : cineminimum.ch (lien en bio)",
+  nomRadio: "Minimum Radio",
+};
 const PIED = "La Case à Chocs · Neuchâtel";
 
 const texte = (valeur: unknown): string | null => (typeof valeur === "string" && valeur.trim() ? valeur.trim() : null);
@@ -178,6 +199,7 @@ export function propositionsSoiree(soiree: SoireeLue, reglages: Reglages, prefix
   if (!jour) conseils.push("La soirée n'a pas encore de date.");
   if (!affiche) conseils.push("Sans affiche, le visuel de la soirée est typographique : ajoutez l'affiche dans l'onglet « La soirée ».");
   if (passages.length === 0) conseils.push("Le line-up est vide : ajoutez les artistes pour avoir un post par DJ.");
+  conseils.push(...conseilNettete(soiree.affiche, "L'affiche de la soirée"));
 
   const lineUp = passages
     .map((p) => [texte(p.debut), texte(p.artiste?.nom), compte(p.artiste?.instagram), texte(p.precision) ? `(${p.precision})` : null].filter(Boolean).join(" "))
@@ -222,6 +244,7 @@ export function propositionsSoiree(soiree: SoireeLue, reglages: Reglages, prefix
     const manque: string[] = [];
     if (!photo) manque.push(`${nom} n'a pas de photo : le visuel reprend l'affiche de la soirée.`);
     if (!compte(artiste.instagram)) manque.push(`${nom} n'a pas de compte Instagram dans sa fiche : la légende ne le mentionne pas.`);
+    manque.push(...conseilNettete(photo ? artiste.photo : soiree.affiche, photo ? `La photo de ${nom}` : "L'affiche de la soirée"));
     propositions.push({
       cle: `${prefixe}artiste-${rang}`,
       nom: `${prefixe ? `${jour || titre} : ` : ""}${nom} (${precision})`,
@@ -310,10 +333,20 @@ export function propositionsFilm(film: FilmLu, reglages: Reglages): Proposition[
   const faits = [texte(film.country), film.year, film.duration ? `${film.duration} min` : null, texte(film.language)].filter(Boolean).join(" · ");
   const conseils: string[] = [];
   if (lignes.length === 0) conseils.push("Ce film n'a aucune séance à venir : le post n'annonce pas de date.");
+  conseils.push(...conseilNettete(film.poster, "L'affiche du film"));
   const base = {
     gabarit: "fiche" as const,
     etiquette: { texte: etiquette, teinte: "cinema" as const },
     quand: null,
+    /* Les repères de la fiche du site, dans le même ordre. */
+    reperes: [
+      { nom: "Durée", valeur: film.duration ? `${film.duration} min` : "" },
+      { nom: "Version", valeur: texte(film.language) ?? "" },
+      { nom: "Âge", valeur: texte(film.ageRating) ?? "" },
+      { nom: "Genre", valeur: texte(film.typeDeFilm) ?? "" },
+      { nom: "Année", valeur: film.year ? String(film.year) : "" },
+      { nom: "Pays", valeur: texte(film.country) ?? "" },
+    ].filter((repere) => repere.valeur !== ""),
     titre,
     sousTitre: texte(film.director) ? `de ${film.director}` : null,
     lignes,
@@ -355,6 +388,7 @@ export function propositionsEmission(live: EmissionLue, reglages: Reglages): Pro
   const conseils: string[] = [];
   if (!visuel) conseils.push("Sans portrait, le flyer est typographique, tout rose : ajoutez le portrait de l'artiste.");
   if (!jour) conseils.push("Le live n'a pas encore de date.");
+  conseils.push(...conseilNettete(live.visuel ?? artiste.photo, "Le portrait"));
   if (passe && !aRevoir) conseils.push("Ce live est passé et n'a pas d'adresse YouTube : le post l'annonce encore comme à venir.");
   return [
     {

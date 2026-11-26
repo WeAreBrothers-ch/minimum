@@ -32,7 +32,7 @@ function unique(S: StructureBuilder, type: string, titre: string, icone: Compone
     .id(type)
     .title(titre)
     .icon(icone)
-    .child(S.document().schemaType(type).documentId(type).title(titre));
+    .child(S.document().schemaType(type).documentId(type).initialValueTemplate(type).title(titre));
 }
 
 /** Une liste filtrée d'un type de fiche. */

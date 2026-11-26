@@ -4,6 +4,7 @@ import type { SanityClient } from "sanity";
 import { aujourdhui } from "../schemaTypes/shared/heure";
 import {
   type Proposition,
+  REGLAGES_PAR_DEFAUT,
   type Reglages,
   propositionsArtiste,
   propositionsEmission,
@@ -12,7 +13,7 @@ import {
   propositionsSoiree,
 } from "./propositions";
 
-const IMAGE = '{"url": asset->url, "fx": hotspot.x, "fy": hotspot.y}';
+const IMAGE = '{"url": asset->url, "fx": hotspot.x, "fy": hotspot.y, "largeur": asset->metadata.dimensions.width}';
 const ARTISTE = `{nom, role, instagram, bio, origine, styles, "photo": photo${IMAGE}}`;
 const SOIREE = `{title, date, ouverture, fin, age, genreMusical, description, status, "affiche": affiche${IMAGE},
   "lineUp": lineUp[]{debut, precision, "artiste": artiste->${ARTISTE}}, "tarifs": tarifs[]{libelle, prix}}`;
@@ -22,7 +23,7 @@ const REQUETES: Record<string, string> = {
   artiste: `*[_type == "artiste" && _id == $id][0]{nom, role, instagram, bio, origine, styles, "photo": photo${IMAGE},
     "soirees": *[_type == "soiree" && references(^._id) && date >= $jour] | order(date asc)[0...6]${SOIREE}}`,
   film: `*[_type == "film" && _id == $id][0]{title, director, year, country, duration, language, typeDeFilm, synopsis, mention,
-    statuts, releaseDate, presence, "poster": poster${IMAGE}, "photo": stillImages[0]${IMAGE},
+    statuts, releaseDate, presence, ageRating, "poster": poster${IMAGE}, "photo": stillImages[0]${IMAGE},
     "seances": *[_type == "screening" && film._ref == ^._id && date >= $jour && status != "annule"] | order(date asc, time asc)[0...12]{date, time, versionNote}}`,
   emission: `*[_type == "emission" && _id == $id][0]{title, date, heure, description, video,
     "visuel": visuel${IMAGE}, "artiste": artiste->${ARTISTE}}`,
@@ -48,7 +49,12 @@ export async function chargerPropositions(client: SanityClient, type: string, id
     { perspective: "drafts" },
   );
   if (!fiche) return null;
-  const r = reglages ?? {};
+  const r: Reglages = {
+    compteInstagram: reglages?.compteInstagram,
+    hashtags: reglages?.hashtags ?? REGLAGES_PAR_DEFAUT.hashtags,
+    mentionBillets: reglages?.mentionBillets ?? REGLAGES_PAR_DEFAUT.mentionBillets,
+    nomRadio: reglages?.nomRadio ?? REGLAGES_PAR_DEFAUT.nomRadio,
+  };
   switch (type) {
     case "soiree":
       return propositionsSoiree(fiche, r);

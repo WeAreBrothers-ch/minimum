@@ -40,7 +40,7 @@ export const soiree = defineType({
       type: "date",
       group: "soiree",
       fieldset: "horaire",
-      options: { dateFormat: "dddd D MMMM YYYY" },
+      options: { dateFormat: "DD.MM.YYYY" },
       description: "Le soir où les portes ouvrent, même si la soirée finit après minuit.",
       validation: (rule) => rule.required().error("Indiquez la date."),
     }),
