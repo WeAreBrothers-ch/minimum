@@ -2,7 +2,7 @@
    Pour lancer :  npm test */
 import {spawnSync} from 'node:child_process'
 
-const FICHIERS = ['une-salle.mjs', 'projection.mjs', 'historique.mjs', 'impression.mjs', 'actions-studio.mjs']
+const FICHIERS = ['une-salle.mjs', 'projection.mjs', 'banque.mjs', 'historique.mjs', 'impression.mjs', 'actions-studio.mjs']
 let echecs = 0
 for (const fichier of FICHIERS) {
   const chemin = new URL(fichier, import.meta.url).pathname

@@ -7,6 +7,7 @@ import {
   CreditCardIcon,
   HomeIcon,
   ImageIcon,
+  InsertAboveIcon,
   MoonIcon,
   PlayIcon,
   RemoveCircleIcon,
@@ -16,6 +17,8 @@ import {
   VideoIcon,
 } from "@sanity/icons";
 
+import { BanqueDeFilms } from "./minimum/banque/BanqueDeFilms";
+import { AUTRE } from "./minimum/banque/reglages";
 import { TYPES_INSTAGRAM } from "./minimum/insta/requetes";
 import { VueInstagram } from "./minimum/insta/vue-instagram";
 
@@ -71,6 +74,16 @@ export const deskStructure: StructureResolver = (S) =>
             .title("Films")
             .defaultOrdering([{ field: "title", direction: "asc" }])
         ),
+
+      /* ---------------- Banque de films ----------------
+         Juste sous « Films » : le catalogue de l'autre cinéma, où
+         l'on pioche un film déjà saisi là-bas au lieu de le retaper
+         (minimum/banque). */
+      S.listItem()
+        .id("banque-de-films")
+        .title(`Banque de films (${AUTRE.nom})`)
+        .icon(InsertAboveIcon)
+        .child(S.component(BanqueDeFilms).id("banque-de-films").title(`Banque de films (${AUTRE.nom})`)),
 
       /* ---------------- Agenda ----------------
          Séparé en deux parce qu'il y en a beaucoup, et qu'on ne

@@ -421,6 +421,17 @@ export const film = defineType({
         "Facultatif. Collez l'adresse de l'article : la fiche du film affiche alors une grande case « PRESSE », cliquable. Rien d'autre à remplir.",
     }),
 
+    /* La marque d'un film pioché dans la banque de films (minimum/banque) :
+       « zinema:<identifiant> ». Elle sert à reconnaître qu'il est déjà ici ;
+       personne n'a à la lire ni à la modifier. */
+    defineField({
+      name: "origineBanque",
+      title: "Pioché dans la banque de films",
+      type: "string",
+      readOnly: true,
+      hidden: true,
+    }),
+
     /* ---------------- Encadrés repliables ---------------- */
     defineField({
       name: "slug",

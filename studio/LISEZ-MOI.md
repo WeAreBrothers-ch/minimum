@@ -34,6 +34,11 @@ adaptée le moins possible. Ce qui est propre à Minimum est dans
 
 - **Musique**, dans le menu « Contenu », après l'Agenda : soirées à venir,
   soirées passées, lives de la radio, artistes et DJ.
+- **Banque de films (Zinéma)**, dans le menu « Contenu », juste sous
+  « Films » : le catalogue de Zinéma, où l'on pioche. « Piocher » copie la
+  fiche et l'affiche d'un film dans Minimum, où il arrive « À l'affiche »,
+  prêt pour la Planification ; un film déjà là le dit. Voir « La banque de
+  films » plus bas.
 - **Posts**, en haut, à côté de « Planification » : tout ce qui peut se poster
   dans les quatre semaines qui viennent (soirées, DJ, lives, films qui ont une
   séance, événements), avec le visuel déjà composé. « Post » ou « Story » :
@@ -77,6 +82,31 @@ adaptée le moins possible. Ce qui est propre à Minimum est dans
   ne règle rien.
 - Le lien d'un événement, dans la newsletter, mène à l'agenda : le site de
   Minimum n'a pas de page par événement.
+
+## La banque de films
+
+Les deux cinémas ont les mêmes exploitants et passent souvent les mêmes
+films. Chacun garde son projet Sanity et son catalogue, mais peut piocher
+dans celui de l'autre (demande d'Eliott, 26.11.2026) : la fiche du film et
+son affiche sont copiées, rien à retaper.
+
+- **Ce qui est copié** : ce qui décrit le film (titre, réalisation, durée,
+  année, pays, version, âge, type, synopsis, bande-annonce, presse, affiche,
+  photos). **Ce qui ne l'est pas** : ce qui tient à un cinéma (où en est le
+  film là-bas, ses séances, sa date de sortie, son invité).
+- Une fois pioché, le film est une fiche de Minimum comme les autres : une
+  correction faite ensuite chez l'un n'arrive pas chez l'autre.
+- Un film pioché porte une marque invisible (`origineBanque`,
+  « zinema:<identifiant> ») ; un film est aussi reconnu par son titre.
+- **Zinéma est lu sans jeton ni identifiants**, par son API publique, comme
+  le fait son site : rien ne peut y être écrit d'ici. Le seul réglage fait
+  chez Zinéma : l'adresse `https://cine-minimum.sanity.studio` est autorisée
+  à le LIRE (CORS, sans identifiants), avec l'accord d'Eliott.
+- **Dans l'autre sens** (piocher depuis Zinéma dans le catalogue de Minimum),
+  rien n'est fait : il faut ajouter cet écran au Studio de Zinéma, donc
+  modifier son code. Le dossier `sanity/minimum/banque` est écrit pour y
+  servir tel quel : seul `reglages.ts` change (qui est « ici », qui est
+  « l'autre », le type des images).
 
 ## Les exemples (26.11.2026)
 
@@ -128,13 +158,17 @@ Essayé dans le Studio, dans un navigateur, le 26.11.2026, sur les exemples :
   relues (aucune mention de Zinéma, liens vers cineminimum.ch, tarifs des
   réglages) et affichées ;
 - la feuille à imprimer : le logo de Minimum, pas de « Salle » répété ;
+- la banque de films : les 27 films de Zinéma listés avec leurs affiches,
+  tous reconnus comme déjà dans Minimum, la recherche ; et, hors du Studio,
+  une vraie pioche d'un film de Zinéma dans Minimum (fiche et affiche
+  copiées, puis fiche d'essai retirée), Zinéma inchangé après coup ;
 - l'onglet Posts : 34 posts composés, « Post » et « Story » (image
   enregistrée, légende copiée).
 
 Vérifié par `npm test` : 6206 vérifications de la Planification à une salle
 (semaine remplie, aucun chevauchement, 21 h après la fin du film de 19 h,
 dimanche à 17 h, rien d'écrasé, rien au Club), 17 sur la séance d'une
-avant-première, et celles de Zinéma sur l'historique, la feuille à imprimer
+avant-première, 22 sur la banque de films, et celles de Zinéma sur l'historique, la feuille à imprimer
 et les actions du Studio.
 
 **Pas essayé.** Le compte disponible pour ces essais ne pouvait que lire, et
