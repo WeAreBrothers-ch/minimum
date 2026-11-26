@@ -138,15 +138,28 @@ de Zinéma ».
 - Pour couper l'arrivée automatique : `ARRIVEE_AUTOMATIQUE = false` dans
   `sanity/minimum/banque/reglages.ts` (l'écran garde alors ses boutons).
 
-**Dans l'autre sens, rien n'est fait.** Un film créé à Minimum n'arrive PAS
-encore à Zinéma : il faut pour cela ajouter ce même dossier au Studio de
-Zinéma (donc modifier son code et le remettre en ligne) et autoriser
-`https://cincin-zinema.sanity.studio` à lire le projet de Minimum. Le dossier
-`sanity/minimum/banque` est écrit pour y servir tel quel : seul `reglages.ts`
-change (qui est « ici », qui est « l'autre », le type des images) ; s'y
-ajoutent le type `journalBanque`, le champ `origineBanque` du film et la ligne
-`studio.components.layout` de `sanity.config.ts`. À ne faire qu'avec l'accord
-d'Eliott : la consigne est de ne rien toucher à Zinéma.
+**Dans l'autre sens, c'est prêt mais pas en place.** Un film créé à Minimum
+n'arrive PAS encore à Zinéma : il faut pour cela modifier le Studio de Zinéma,
+et la consigne est de ne rien y toucher sans l'accord d'Eliott.
+
+Le changement est préparé et vérifié dans `studio/pour-zinema/films-partages.patch`
+(27.11.2026), à appliquer sur le dépôt `Mouknardine/Cin-Cin-` (commit
+`70bb203`) : le même dossier, rangé dans `sanity/partage`, avec « ici » et
+« l'autre » échangés. Sur une copie du dépôt de Zinéma, il se compile, le
+Studio se construit, et toutes les vérifications de Zinéma passent, plus les
+67 du partage. Rien n'a été envoyé à ce dépôt.
+
+Ce que sa mise en place change à Zinéma, à dire avant de la faire :
+- fusionner dans `main` republie le Studio de Zinéma tout seul (workflow
+  `deploy-studio.yml`) ;
+- le menu reçoit une ligne « Films partagés (Minimum) » sous « Films » ;
+- au premier passage, chaque fiche de film de Zinéma reçoit un repère
+  invisible (`banqueEmpreinte`), et un carnet `banque.minimum` est créé ;
+- les films saisis seulement à Minimum y arrivent, pas à l'affiche
+  (aujourd'hui : Garance, Nicole Nicole, Une usine en Catalogne) ;
+- les 6 fiches réécrites à Minimum y sont marquées « Fiche différente ».
+Il faut aussi autoriser `https://cincin-zinema.sanity.studio` à LIRE le projet
+de Minimum (CORS, sans identifiants) : pas encore fait.
 
 ## Les exemples (26.11.2026)
 
