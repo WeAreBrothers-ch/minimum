@@ -1,28 +1,26 @@
 {
   "name": "minimum-studio",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.1.0",
-  "description": "Studio Sanity de Minimum (cinéma, club, radio). Projet indépendant de celui de Zinéma.",
-  "type": "module",
+  "description": "Studio Sanity de Minimum (cinéma, club, radio). Même outil que celui de Zinéma, sur un projet Sanity indépendant.",
   "scripts": {
     "dev": "sanity dev",
     "build": "sanity build",
     "deploy": "sanity deploy",
-    "verifier": "tsc --noEmit",
-    "schema": "sanity schemas deploy"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node verifications/tout.mjs"
   },
   "dependencies": {
-    "@sanity/icons": "5.4.0",
-    "@sanity/locale-fr-fr": "1.2.37",
-    "@sanity/ui": "4.4.12",
-    "@sanity/vision": "6.25.0",
-    "react": "19.3.1",
-    "react-dom": "19.3.1",
-    "sanity": "6.25.0",
-    "styled-components": "6.7.0"
+    "@sanity/client": "^6.24.1",
+    "@sanity/vision": "^3.68.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sanity": "^3.68.3",
+    "styled-components": "^6.1.15"
   },
   "devDependencies": {
-    "@types/react": "^19",
-    "typescript": "5.9.3"
+    "@types/node": "^20.16.11",
+    "esbuild": "^0.25.6",
+    "typescript": "^5.6.3"
   }
 }

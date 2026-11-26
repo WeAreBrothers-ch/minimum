@@ -93,9 +93,10 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
    26.11.2026 : rien n'est partagé avec le projet de Zinéma, qui ne doit pas
    être modifié). Le Studio est dans `studio/` (voir `studio/LISEZ-MOI.md`).
    Fait le 26.11.2026 : projet `hvxsup1j` créé, les 27 films de Zinéma copiés
-   une fois (marqués « Terminé », hors pages publiques), le site et la caisse
-   lisent ce projet. Reste à mettre le Studio en ligne (`npm run deploy` dans
-   `studio/`, avec un compte qui a les droits sur le projet).
+   une fois (marqués « Terminé »), le site et la caisse lisent ce projet. Le
+   Studio est en ligne (https://cine-minimum.sanity.studio) : c'est celui de
+   Zinéma (même Planification, même menu), avec la Musique et les posts
+   Instagram en plus.
 2. Brancher `donnees.js` sur Sanity, puis `DEMONSTRATION = false`.
 3. Billetterie : construite et essayée, en mode démonstration. Avant de
    l'ouvrir : compte SumUp au nom de Minimum, champs Sanity, e-mail de

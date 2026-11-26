@@ -1,0 +1,227 @@
+import {
+  type ConditionalPropertyCallback,
+  defineField,
+  defineType,
+  type SanityDocument,
+} from "sanity";
+
+import { heureDeFin, intervallesSeChevauchent } from "../plugins/planification/utils/conflits";
+import { NOM_DE_LA_PROJECTION } from "../plugins/planification/utils/projection-de-la-fiche";
+import { listeDesSalles, SALLES } from "../salles";
+
+/* ============================================================
+   Une séance : un film, une date, une heure, une salle.
+
+   Presque tout est hérité du film (titre, affiche, durée, prix,
+   lien de paiement) : il n'y a donc que quatre champs à remplir.
+   L'onglet « Planification » en haut du Studio permet d'en créer
+   des dizaines d'un coup plutôt qu'une par une.
+   ============================================================ */
+
+interface ScreeningEnCours extends SanityDocument {
+  film?: { _ref?: string };
+  date?: string;
+  time?: string;
+  room?: string;
+}
+
+/* La séance d'une avant-première ou d'une première se règle dans la
+   fiche de son film : ici, son film, son jour, son heure et sa salle
+   sont en lecture seule — sinon la prochaine publication de la fiche
+   la remettrait à l'horaire écrit là-bas, sans prévenir. */
+const TENUE_PAR_LA_FICHE: ConditionalPropertyCallback = ({ document }) =>
+  Boolean(document?.evenementDuFilm);
+const DIT_PAR_LA_FICHE =
+  "Cette séance est une avant-première ou une première : elle se règle dans la fiche du film (« Jour et heure de la projection »).";
+
+const JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
+const MOIS = [
+  "janvier", "février", "mars", "avril", "mai", "juin",
+  "juillet", "août", "septembre", "octobre", "novembre", "décembre",
+];
+
+function dateEnFrancais(iso?: string): string {
+  if (!iso) return "";
+  const [a, m, j] = iso.split("-").map(Number);
+  if (!a || !m || !j) return iso;
+  const d = new Date(Date.UTC(a, m - 1, j));
+  return `${JOURS[d.getUTCDay()]} ${j} ${MOIS[m - 1]}`;
+}
+
+export const screening = defineType({
+  name: "screening",
+  title: "Séance",
+  type: "document",
+  // Avertit (sans bloquer) si une autre séance occupe déjà la même salle
+  // au même moment. Une salle est prise de l'heure de début jusqu'à la
+  // minute exacte de fin du film, et pas une minute de plus : aucun
+  // battement n'est imposé, deux séances peuvent s'enchaîner
+  // directement (voir plugins/planification/utils/conflits.ts).
+  validation: (Rule) =>
+    Rule.custom(async (document, contexte) => {
+      const seance = document as ScreeningEnCours | undefined;
+      const { date, time, room } = seance ?? {};
+      const filmRef = seance?.film?._ref;
+      if (!date || !time || !room || !filmRef) return true;
+
+      const client = contexte.getClient({ apiVersion: "2024-06-01" });
+      const idPublie = (seance?._id ?? "").replace(/^drafts\./, "");
+      const { duree, autres } = await client.fetch<{
+        duree: number | null;
+        autres: { heure: string; duree: number | null; titre: string | null }[];
+      }>(
+        `{
+          "duree": *[_id == $filmRef][0].duration,
+          "autres": *[_type == "screening" && date == $date && room == $room
+            && !(_id in [$idPublie, $idBrouillon])]{
+            "heure": time, "duree": film->duration, "titre": film->title
+          }
+        }`,
+        { filmRef, date, room, idPublie, idBrouillon: `drafts.${idPublie}` }
+      );
+
+      const genante = autres.find((autre) =>
+        intervallesSeChevauchent(time, duree, autre.heure, autre.duree)
+      );
+      if (genante) {
+        const titreGenant = genante.titre ?? "un autre film";
+        /* Dire jusqu'à quand la salle est prise, pas seulement qu'elle
+           l'est : c'est ce qui permet de corriger l'heure du premier
+           coup. La salle se libère à la minute exacte de fin du film.
+
+           Sans durée connue, l'outil suppose deux heures pour repérer
+           le chevauchement — mais il ne l'ANNONCE pas comme une heure
+           de fin : une heure inventée serait pire que pas d'heure. */
+        const fin =
+          typeof genante.duree === "number" ? heureDeFin(genante.heure, genante.duree) : null;
+        return fin
+          ? `Attention : « ${titreGenant} » occupe déjà cette salle de ${genante.heure} à ${fin.heure}${fin.lendemain ? " (le lendemain)" : ""}, et elle se libère à ${fin.heure} pile. Choisissez une autre heure ou l'autre salle.`
+          : `Attention : « ${titreGenant} » occupe déjà cette salle à ${genante.heure}. Choisissez une autre heure ou l'autre salle.`;
+      }
+      return true;
+    }).warning(),
+  fields: [
+    defineField({
+      name: "film",
+      title: "Quel film ?",
+      type: "reference",
+      to: [{ type: "film" }],
+      readOnly: TENUE_PAR_LA_FICHE,
+      description:
+        "Le titre, l'affiche, la durée et la version sont repris automatiquement de la fiche du film — rien à recopier ici.",
+      validation: (Rule) => Rule.required().error("Choisissez le film projeté."),
+    }),
+    defineField({
+      name: "date",
+      title: "Date de la séance",
+      type: "date",
+      options: { dateFormat: "dddd D MMMM YYYY" },
+      readOnly: TENUE_PAR_LA_FICHE,
+      validation: (Rule) => Rule.required().error("Indiquez la date de la séance."),
+    }),
+    defineField({
+      name: "time",
+      title: "Heure de début",
+      type: "string",
+      description: "Sur 24 heures, avec deux points. Ex. 20:30 pour 20 h 30.",
+      readOnly: TENUE_PAR_LA_FICHE,
+      validation: (Rule) =>
+        Rule.required()
+          .regex(/^([01]\d|2[0-3]):[0-5]\d$/, { name: "heure (HH:MM)" })
+          .error("Écrivez l'heure sous la forme 20:30."),
+    }),
+    defineField({
+      name: "room",
+      title: "Salle",
+      type: "string",
+      description:
+        "Le nombre de places de chaque salle se règle dans « Réglages du cinéma → Tarifs & salles ».",
+      options: { list: listeDesSalles, layout: "radio" },
+      readOnly: TENUE_PAR_LA_FICHE,
+      initialValue: SALLES[0],
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "status",
+      title: "État de la séance",
+      type: "string",
+      description:
+        "« Complet » et « Annulé » s'affichent sur l'agenda et désactivent l'achat de billets.",
+      options: {
+        list: [
+          { title: "Places disponibles", value: "disponible" },
+          { title: "Complet", value: "complet" },
+          { title: "Annulée", value: "annule" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "disponible",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "versionNote",
+      title: "Mention particulière",
+      type: "string",
+      description:
+        "S'affiche à côté de l'heure sur l'agenda. Ex. « Séance suivie d'une rencontre », « Ciné-goûter dès 6 ans », « Copie restaurée ». Laissez vide pour une séance normale.",
+    }),
+    /* Posée par la publication de la fiche du film, jamais à la main :
+       c'est elle qui fait de cette séance l'avant-première ou la
+       première du film. Voir plugins/planification/utils/
+       projection-de-la-fiche.ts. */
+    defineField({
+      name: "evenementDuFilm",
+      title: "Projection annoncée par la fiche du film",
+      type: "string",
+      readOnly: true,
+      hidden: ({ document }) => !document?.evenementDuFilm,
+      description: DIT_PAR_LA_FICHE,
+      options: {
+        list: Object.entries(NOM_DE_LA_PROJECTION).map(([value, title]) => ({ title, value })),
+      },
+    }),
+  ],
+  orderings: [
+    {
+      title: "De la plus proche à la plus lointaine",
+      name: "dateTimeAsc",
+      by: [
+        { field: "date", direction: "asc" },
+        { field: "time", direction: "asc" },
+      ],
+    },
+    {
+      title: "De la plus récente à la plus ancienne",
+      name: "dateTimeDesc",
+      by: [
+        { field: "date", direction: "desc" },
+        { field: "time", direction: "desc" },
+      ],
+    },
+  ],
+  preview: {
+    select: {
+      titre: "film.title",
+      media: "film.poster",
+      date: "date",
+      time: "time",
+      room: "room",
+      status: "status",
+      mention: "versionNote",
+      evenement: "evenementDuFilm",
+    },
+    prepare({ titre, media, date, time, room, status, mention, evenement }) {
+      const etat =
+        status === "complet" ? "COMPLET" : status === "annule" ? "ANNULÉE" : null;
+      const projection =
+        NOM_DE_LA_PROJECTION[evenement as keyof typeof NOM_DE_LA_PROJECTION] ?? null;
+      return {
+        title: `${time || "??:??"} — ${titre || "Film à choisir"}`,
+        subtitle: [dateEnFrancais(date), room, projection, etat, mention]
+          .filter(Boolean)
+          .join(" · "),
+        media,
+      };
+    },
+  },
+});

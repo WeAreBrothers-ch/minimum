@@ -1,10 +1,11 @@
 import { defineCliConfig } from "sanity/cli";
-import { JEU, PROJET } from "./projet";
+import { JEU, PROJET } from "./sanity/projet";
 
+/* Le projet Sanity de Minimum est FIXE (voir sanity/projet.ts), comme celui
+   de Zinéma l'est dans son propre dépôt : un réglage oublié sur une machine
+   ne doit jamais pouvoir faire éditer le mauvais projet sans prévenir. */
 export default defineCliConfig({
   api: { projectId: PROJET, dataset: JEU },
-  /* L'adresse du Studio en ligne : https://cine-minimum.sanity.studio */
+  /** Adresse en ligne du Studio : https://cine-minimum.sanity.studio */
   studioHost: "cine-minimum",
-  /* appId : l'identifiant du Studio en ligne, pour que « npm run deploy » le mette à jour au lieu d'en créer un autre. */
-  deployment: { autoUpdates: true, appId: "zatp3vqamn0brwy2qkqoa4rv" },
 });

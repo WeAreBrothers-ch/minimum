@@ -1,122 +1,127 @@
 # Studio Sanity de Minimum
 
-Le Studio où Minimum saisit son contenu : films, séances, soirées, lives de la
-radio, artistes, événements, billets, réglages.
+**C'est le Studio de Zinéma**, sur un projet Sanity indépendant : même menu
+« Contenu », même onglet « Planification », mêmes fiches, mêmes gestes. La
+même personne gère les deux cinémas ; elle ne doit pas avoir à réapprendre.
+S'y ajoute ce qui n'existe qu'à Minimum : la Musique et les posts Instagram.
 
-**Projet indépendant de celui de Zinéma** (décision d'Eliott, 26.11.2026) :
-son propre projet Sanity, son propre catalogue de films, ses propres jetons.
-`projet.ts` refuse de démarrer sur le projet de Zinéma (`vle63mzm`).
+- Studio en ligne : <https://cine-minimum.sanity.studio>
+- Projet Sanity : `hvxsup1j` (« minimum »), jeu `production`. Rien n'est
+  partagé avec le projet de Zinéma (`vle63mzm`), sur lequel ce Studio refuse
+  de démarrer (`sanity/projet.ts`).
+- Mode d'emploi : celui de Zinéma (`SANITY.md` du dépôt Cin-Cin-), à ceci
+  près — voir « Ce qui diffère de Zinéma ».
 
-## État (26.11.2026)
+## D'où vient le code
 
-- Projet Sanity **`hvxsup1j`** (« minimum »), jeu `production`, dans la même
-  organisation que celui de Zinéma, à côté de lui. Le projet de Zinéma n'a
-  pas été modifié.
-- Les 27 films de Zinéma y ont été copiés une fois, avec leurs affiches
-  (lecture seule chez Zinéma). Ils arrivent marqués « Terminé », hors pages
-  publiques : cocher « À l'affiche » pour en programmer un. L'invité·e, les
-  prix et les séances de Zinéma n'ont pas été copiés.
-- Le site (`js/config.js`, `.htaccess`) et la caisse (`api/`,
-  `serveur/config.exemple.php`) lisent ce projet.
-- Adresses autorisées à lire le projet (CORS) : `localhost:8000`,
-  `localhost:3333` et `cine-minimum.sanity.studio` (Studio),
-  `wearebrothers-ch.github.io`, `cineminimum.ch` et `www.cineminimum.ch`.
-- **Le Studio est en ligne : https://cine-minimum.sanity.studio** (mis en
-  ligne le 26.11.2026). On s'y connecte avec un compte Sanity membre du
-  projet « minimum ». Il apparaît aussi dans le tableau de bord sanity.io.
-- À remplir dans le Studio avant d'ouvrir la caisse : « Le lieu → Réglages »
-  (tarifs, nombre de places, jauge du club), puis le publier.
+`sanity/` est une copie du Studio de Zinéma (dépôt `Mouknardine/Cin-Cin-`,
+commit `70bb203`, 18.11.2026), avec les mêmes versions (Sanity 3.99, React 18),
+adaptée le moins possible. Ce qui est propre à Minimum est dans
+`sanity/minimum/`.
+
+| Dossier | Ce que c'est |
+|---|---|
+| `sanity/schemaTypes`, `sanity/deskStructure.ts`, `sanity/salles.ts`… | Le Studio de Zinéma, adapté |
+| `sanity/plugins/planification` | L'onglet Planification de Zinéma, tel quel ou presque |
+| `sanity/minimum/schema` | Soirées, lives de la radio, artistes |
+| `sanity/minimum/insta` | Les visuels et les légendes Instagram |
+| `sanity/minimum/posts` | L'onglet « Posts » |
+| `sanity/minimum/actions` | Post en un clic ; contrôle et remboursement d'un billet |
+
+## Ce qui diffère de Zinéma
+
+**En plus**
+
+- **Musique**, dans le menu « Contenu », après l'Agenda : soirées à venir,
+  soirées passées, lives de la radio, artistes et DJ.
+- **Posts**, en haut, à côté de « Planification » : tout ce qui peut se poster
+  dans les quatre semaines qui viennent (soirées, DJ, lives, films qui ont une
+  séance, événements), avec le visuel déjà composé. « Post » ou « Story » :
+  l'image est enregistrée et la légende copiée.
+- **Onglet « Instagram »** sur une fiche (film, soirée, live, artiste,
+  événement), et **« Post Insta en 1 clic »** dans le menu ⋮ à côté de
+  Publish : la même chose pour une fiche, avec la légende modifiable et le
+  format carré.
+- **Billets vendus** : deux boutons sur une commande, « Billet contrôlé » et
+  « Marquer comme remboursée » (à Zinéma, une commande ne se touche pas).
+- **Réglages du cinéma** : un groupe « Radio & Instagram » (chaîne YouTube,
+  compte Instagram, hashtags, phrase des billets).
+
+**Adapté**
+
+- **Une salle au lieu de deux.** La grille de la Planification tient la
+  « Salle » (19 h et 21 h, 17 h et 19 h le dimanche : quatorze cases par
+  semaine). Le « Club » joue le rôle du Hall-Bar : ses séances s'affichent
+  sous la grille et aucun assistant n'en invente. Le menu « Passer ce film en
+  Salle 2 » n'existe donc pas.
+- **Tarifs** : une liste (Ordinaire, AVS, Réduit) au lieu de plein tarif et
+  tarif réduit, et deux nombres (places de la salle, jauge du club). Ce sont
+  les champs que lit la caisse du site (`api/_evenement.php`). La fiche des
+  réglages a l'identifiant `reglagesMinimum`.
+- **Commandes** : les champs qu'écrit la caisse de Minimum (une séance ou une
+  soirée, des lignes de billets par tarif).
+
+**Retiré, pour l'instant**
+
+- **Newsletter** et **Piqûre de rappel** : leur code est là
+  (`sanity/plugins/planification/newsletter`), mais il est encore dessiné pour
+  Zinéma : logo, couleurs, liens vers zinema.ch, parrains des salles, ligne de
+  fondation. Leurs deux boutons ne s'affichent donc pas. Pour les rendre :
+  les mettre aux couleurs et aux adresses de Minimum, puis passer
+  `NEWSLETTER_ACTIVE` à `true` (`sanity/minimum/reglages-du-studio.ts`).
+- **Prix particulier** et **lien SumUp** d'un film ou d'une séance : la caisse
+  de Minimum ne les lit pas ; les laisser aurait fait croire à un réglage qui
+  ne règle rien.
 
 ## Lancer
 
 ```
 cd studio
-npm install
-npm run dev        # http://localhost:3333
-npm run verifier   # TypeScript
-npx sanity login   # une fois, avec le compte du projet
-npm run deploy     # met le Studio en ligne (sanity.studio) ; choisir son adresse
-npm run schema     # facultatif : publie le modèle pour les outils Sanity
+npm ci
+npm run dev         # Studio local sur http://localhost:3333
+npm run typecheck   # vérifie les schémas
+npm test            # vérifie la Planification à une salle, la projection
+                    # d'une avant-première, l'historique, l'impression
+npm run deploy      # met en ligne https://cine-minimum.sanity.studio
 ```
 
-`package-lock.json` fixe les versions qui marchent : préférer `npm ci`.
-
-## Ce qu'il contient
-
-En haut du Studio, à côté de « Structure », l'outil **Planning** montre la
-semaine de cinéma (du mercredi au mardi) : séances, soirées, lives, cases sans
-film et événements, jour par jour. Un clic ouvre la fiche, « + » en crée une à
-la bonne date, deux séances qui se chevauchent sont signalées.
-
-| Rubrique du menu | Fiches |
-|---|---|
-| Cinéma | Films, séances (avec alerte si deux séances se chevauchent), cases sans film (privé, vacances) |
-| Musique | Soirées (line-up, tarifs, jauge), lives YouTube de la radio, artistes et DJ |
-| Événements | Festivals, cycles, rendez-vous en plusieurs soirs |
-| Billetterie | Commandes écrites par la caisse du site ; contrôle à l'entrée et remboursement en un bouton |
-| Le lieu | Réglages (contact, tarifs, jauges, chaîne YouTube, Instagram), cartes de membre, location, histoire |
-
-Repris de Zinéma : films, séances, cases sans film, événements, commandes,
-abonnements, location, histoire, réglages ; les cases à cocher « Où en est ce
-film ? » ; les séances d'un film dans sa fiche ; et la projection datée : une
-avant-première, une première ou une projection extraordinaire se date dans la
-fiche du film, et sa séance se crée (ou se déplace) toute seule à la
-publication (`actions/projection.ts`, vérifié par `node outils/verifier-projection.mjs`). Les noms des champs des films et
-des séances sont les mêmes (`title`, `poster`, `director`, `time`…), pour
-pouvoir copier le catalogue une fois.
-
-Les noms attendus par la caisse (`api/_evenement.php`, `BILLETTERIE.md`) sont
-respectés : `screening`, `soiree` (`title`, `date`, `ouverture`, `status`,
-`tarifs`, `capacite`), `reglagesMinimum` (`tarifsCinema`, `placesCinema`,
-`placesClub`), `commande`.
-
-## Le post Instagram en un clic
-
-Sur une soirée, un artiste, un live, un film ou un événement :
-
-- le bouton **« Post Insta en 1 clic »** (menu des actions, en bas de la
-  fiche) enregistre l'image du post et copie sa légende ;
-- l'onglet **« Instagram »** montre le visuel avant, en trois formats (post
-  4:5, story 9:16, carré), avec la légende modifiable. Sur une soirée, il
-  propose un post pour la soirée entière et un par artiste du line-up. Sur
-  téléphone, « Envoyer vers Instagram » ouvre la feuille de partage.
-
-Les visuels reprennent la machine à flyers du site (`js/flyer.js`,
-`css/flyer.css`) : la photo en plein, l'étiquette rose, le nom en très grand
-sur une bande noire, la date et l'heure en rose ; portrait d'artiste en noir
-et blanc, affiche de soirée en couleur, flyer tout rose sans image. Les films
-et les événements sont sur fond blanc, avec l'étiquette rouge du cinéma.
-
-Le code : `insta/rendu.ts` (le dessin), `insta/propositions.ts` (ce qu'on
-poste et la légende), `insta/requetes.ts` (ce qu'on lit), `insta/vue-instagram.tsx`
-(l'onglet), `actions/post-insta.tsx` (le bouton).
-
-La publication se fait à la main dans Instagram : le Studio prépare l'image
-et la légende. Publier directement demanderait un compte Instagram
-professionnel relié à une page Facebook et une application Meta.
+`npm run deploy` demande un compte qui a les droits sur le projet
+(`npx sanity login`), ou un jeton « Deploy Studio » dans `SANITY_AUTH_TOKEN`.
 
 ## Ce qui a été essayé, et ce qui ne l'a pas été
 
-Essayé dans le vrai Studio, dans un navigateur, le 26.11.2026, avec des fiches
-d'essai (supprimées depuis) : le menu et chacune de ses listes ; l'ouverture de
-chaque type de fiche ; l'onglet Instagram d'un film, d'un artiste, d'une
-soirée, d'un live et d'un événement, dans les trois formats ; le bouton « 1
-clic » (image enregistrée, légende copiée) ; les séances dans la fiche d'un
-film et « Ajouter une séance » ; le planning, sa navigation et « + » ; l'alerte
-de chevauchement ; le bouton « + » du Studio ; les tarifs proposés d'office
-dans les réglages. Aucune erreur du Studio relevée.
+Essayé dans le Studio, dans un navigateur, le 26.11.2026, avec des fiches
+d'essai supprimées depuis :
 
-**Pas essayé** : tout ce qui écrit. Le compte utilisé pour ces essais ne
-pouvait que lire. Restent donc à essayer avec un vrai compte : saisir et
-publier une fiche, la création automatique de la séance d'une avant-première
-(sa règle est vérifiée à part, pas son branchement sur « Publier »), et les
-boutons « Billet contrôlé » et « Marquer comme remboursée » d'une commande.
+- le menu « Contenu » et chacune de ses listes ;
+- la Planification : la grille à une salle, le changement de semaine, et
+  l'ouverture de chaque assistant (Programmer un film, Remplir au hasard,
+  Dupliquer la semaine, Imprimer le programme, Vider la semaine) ;
+- l'onglet Posts : les aperçus, « Post » et « Story » (image enregistrée,
+  légende copiée).
 
-## Pas repris de Zinéma
+Vérifié par `npm test` : 6206 vérifications de la Planification à une salle
+(semaine remplie, aucun chevauchement, 21 h après la fin du film de 19 h,
+dimanche à 17 h, rien d'écrasé, rien au Club), et 17 sur la séance d'une
+avant-première.
 
-Le code du Studio de Zinéma n'a pas pu être lu : seul son modèle de contenu,
-avec ses textes d'aide, a servi de référence. Le planning est donc celui de
-Minimum, pas une copie de la « Planification » de Zinéma. Ne sont pas repris :
-la newsletter (rappel d'un événement), l'envoi du billet par e-mail, le prix
-particulier d'un film ou d'une séance et les liens de paiement SumUp par film
-(la caisse de Minimum encaisse les tarifs des réglages et des soirées).
+**Pas essayé.** Le compte disponible pour ces essais ne pouvait que lire, et
+cette version du Studio n'ouvre pas une fiche sans connexion en direct :
+
+- ouvrir, remplir et publier une fiche, et l'onglet « Instagram » d'une fiche
+  (son code est celui de l'onglet Posts, essayé) ;
+- tout ce qui écrit depuis la Planification : glisser une séance, programmer
+  un film, remplir au hasard, dupliquer, vider, annuler ;
+- les deux boutons d'une commande.
+
+À essayer avec un vrai compte avant de s'y fier.
+
+## À savoir
+
+- Les 27 films recopiés de Zinéma sont marqués « Terminé » : cocher « À
+  l'affiche » pour en programmer un. Plusieurs affiches ne font que 250 px de
+  large : leurs posts sortiront flous tant qu'elles ne sont pas remplacées.
+- Avant d'ouvrir la caisse : remplir et publier « Réglages du cinéma »
+  (tarifs, places, jauge).
+- Le site (`js/config.js`) lit ce projet, mais reste en démonstration : il ne
+  lit pas encore les séances, les soirées ni les lives saisis ici.

@@ -1,0 +1,507 @@
+import { defineField, defineType } from "sanity";
+
+import { ChampEtatsDuFilm } from "../plugins/planification/components/ChampEtatsDuFilm";
+import { ChampSeancesDuFilm } from "../plugins/planification/components/ChampSeancesDuFilm";
+import { heureDeFin, intervallesSeChevauchent } from "../plugins/planification/utils/conflits";
+import {
+  HEURE_VALIDE,
+  NOM_DE_LA_PROJECTION,
+  estUneProjection,
+} from "../plugins/planification/utils/projection-de-la-fiche";
+import {
+  ETATS_DU_FILM,
+  TERMINE,
+  statutsDe,
+  statutsDuJour,
+} from "../plugins/planification/utils/etats-du-film";
+import { listeDesSalles, SALLES } from "../salles";
+
+/* ============================================================
+   Un film à l'affiche, à venir, ou terminé.
+
+   Le formulaire n'a volontairement AUCUN onglet : tout se lit du
+   haut vers le bas, dans l'ordre où l'on remplit une fiche de
+   film. L'affiche est le deuxième champ, juste sous le titre —
+   impossible de la manquer en créant un nouveau film. Le seul
+   réglage rarement utile (l'adresse de la page) est dans un
+   encadré, en bas. À Minimum, pas de prix particulier par film :
+   la caisse encaisse les tarifs des réglages.
+
+   Aucun réglage de mise en page : le site place les affiches tout
+   seul, il n'y a rien à « régler » pour que ce soit joli.
+   ============================================================ */
+
+/** La date du jour, AAAA-MM-JJ, à l'heure de Neuchâtel comme le site. */
+function dateDuJour(): string {
+  const maintenant = new Date();
+  const mois = String(maintenant.getMonth() + 1).padStart(2, "0");
+  const jour = String(maintenant.getDate()).padStart(2, "0");
+  return `${maintenant.getFullYear()}-${mois}-${jour}`;
+}
+
+/** La case « Prochainement » est-elle cochée dans cette fiche ? */
+function estCoche(document: unknown, statut: string): boolean {
+  return statutsDe(document as { status?: unknown; statuts?: unknown } | undefined).includes(statut);
+}
+
+/** « 12/03/2026 », depuis « 2026-03-12 ». */
+function dateCourte(iso: string): string {
+  const [annee, mois, jour] = iso.split("-");
+  return annee && mois && jour ? `${jour}/${mois}/${annee}` : iso;
+}
+
+export const film = defineType({
+  name: "film",
+  title: "Film",
+  type: "document",
+  fieldsets: [
+    {
+      name: "adresse",
+      title: "Adresse de la page sur le site (facultatif)",
+      options: { collapsible: true, collapsed: true },
+    },
+    /* Le jour, l'heure et la salle d'une avant-première, d'une
+       première ou d'une projection extraordinaire, sur une seule rangée, juste sous « Où en est ce
+       film ? ». Ils n'apparaissent que pour ces deux statuts. */
+    {
+      name: "projection",
+      title: "Jour et heure de la projection",
+      description:
+        "Publiez la fiche : la séance est créée toute seule dans la Planification, sur l'agenda et en billetterie, et le site affiche le jour avec l'heure. Pour la déplacer, changez-la ici puis republiez.",
+      hidden: ({ document }) => !estUneProjection(document?.status),
+      options: { columns: 3 },
+    },
+  ],
+  fields: [
+    defineField({
+      name: "title",
+      title: "Titre du film",
+      type: "string",
+      validation: (Rule) => Rule.required().error("Le titre est obligatoire."),
+    }),
+
+    /* L'affiche, tout de suite : c'est elle qui représente le film
+       partout, et c'est la première chose qu'on a sous la main en
+       créant une fiche. */
+    defineField({
+      name: "poster",
+      title: "Affiche du film",
+      type: "imageMinimum",
+      description:
+        "Glissez l'affiche ici, ou cliquez pour choisir un fichier. Image verticale (format portrait), 800 px de large minimum. C'est LA seule affiche du film : elle s'affiche sur l'accueil, la page Films, la fiche du film et l'agenda. La remplacer ici la remplace partout, immédiatement.",
+      validation: (Rule) =>
+        Rule.required().error(
+          "Un film sans affiche ne peut pas être publié : c'est elle qui le représente sur tout le site."
+        ),
+    }),
+
+    defineField({
+      name: "director",
+      title: "Réalisation",
+      type: "string",
+      description: "Ex. Francesco Sossai. Plusieurs noms : séparez par « & ».",
+      validation: (Rule) => Rule.required().error("Indiquez qui a réalisé le film."),
+    }),
+    defineField({
+      name: "duration",
+      title: "Durée en minutes",
+      type: "number",
+      description:
+        "Uniquement le nombre, ex. 94. Important : c'est la durée qui permet au site de repérer tout seul deux films qui se chevaucheraient dans la même salle.",
+      validation: (Rule) =>
+        Rule.min(1)
+          .max(600)
+          .warning(
+            "Sans durée, le site ne peut pas repérer deux films qui se chevaucheraient dans la même salle. À compléter dès que possible."
+          ),
+    }),
+    defineField({
+      name: "year",
+      title: "Année de sortie",
+      type: "number",
+      validation: (Rule) =>
+        Rule.min(1895)
+          .max(new Date().getFullYear() + 3)
+          .warning("Cette année semble inhabituelle — vérifiez la saisie."),
+    }),
+    defineField({
+      name: "country",
+      title: "Pays",
+      type: "string",
+      description: "Ex. Suisse, France, Italie. Coproduction : « Suisse / France ».",
+    }),
+    defineField({
+      name: "originalTitle",
+      title: "Titre original",
+      type: "string",
+      description: "Seulement si le film sort sous un autre titre chez nous.",
+    }),
+    defineField({
+      name: "language",
+      title: "Version",
+      type: "string",
+      description: "Ex. VO italien, VF, VO anglais.",
+    }),
+    defineField({
+      name: "subtitles",
+      title: "Sous-titres",
+      type: "string",
+      description: "Ex. st fr, st fr/all. Laissez vide s'il n'y en a pas.",
+    }),
+    defineField({
+      name: "ageRating",
+      title: "Âge légal / âge conseillé",
+      type: "string",
+      description: "Ex. 12/14 ans, ou « Tous publics ».",
+    }),
+    /* Un simple texte, écrit comme il doit se lire. L'ancien champ
+       « Genres » fabriquait une étiquette à chaque Entrée : taper
+       « doc » puis cliquer ailleurs perdait le mot, ou laissait
+       « doc » au lieu de « Documentaire ». */
+    defineField({
+      name: "typeDeFilm",
+      title: "Type de film",
+      type: "string",
+      description:
+        "Écrit tel qu'il s'affichera sur le site. Ex. Documentaire, Fiction, Animation, Comédie · Jeune public.",
+    }),
+    /* L'ancien champ, gardé pour ne rien perdre : les films saisis
+       avant le 22 septembre 2026 ont leur genre ici. Il n'apparaît
+       que tant que « Type de film » est vide, en lecture seule, et
+       le site l'affiche en attendant. */
+    defineField({
+      name: "genres",
+      title: "Genre (ancienne saisie)",
+      type: "array",
+      of: [{ type: "string" }],
+      options: { layout: "tags" },
+      readOnly: true,
+      hidden: ({ document }) => {
+        const film = document as { genres?: unknown[]; typeDeFilm?: string } | undefined;
+        return !film?.genres?.length || Boolean(film.typeDeFilm?.trim());
+      },
+      description:
+        "Saisi avec l'ancien formulaire, et encore affiché sur le site. Pour le changer, écrivez le type du film dans « Type de film » juste au-dessus : c'est lui qui compte dès qu'il est rempli, et ce champ disparaît.",
+    }),
+    defineField({
+      name: "synopsis",
+      title: "Synopsis",
+      type: "text",
+      rows: 6,
+      description:
+        "Le résumé affiché sur la fiche du film et sur la page Films. Deux à six phrases suffisent.",
+      validation: (Rule) =>
+        Rule.max(1200).warning(
+          "Très long — au-delà de ~1200 signes le texte devient difficile à lire sur téléphone."
+        ),
+    }),
+
+    /* Des cases à cocher, plus un choix unique : un film peut être en
+       avant-première ET à l'affiche, sauf « Terminé » qui ne se
+       combine avec rien (demande du cinéma, 3 novembre 2026). Voir
+       plugins/planification/utils/etats-du-film.ts. Le champ garde
+       l'état principal ; les cases cochées vont dans « statuts ». */
+    defineField({
+      name: "status",
+      title: "Où en est ce film ?",
+      type: "string",
+      description:
+        "Cochez une ou plusieurs cases : le film apparaît dans chaque rubrique cochée de la page Films. Ex. « Avant-première » + « À l'affiche ». Une avant-première, une première ou une projection extraordinaire se date juste en dessous (jour, heure, salle) : sa séance se crée toute seule à la publication, et le lendemain le film quitte cette rubrique tout seul pour rester dans les autres cases cochées. « Prochainement » passe tout seul « À l'affiche » le jour de sa date de sortie. « Terminé » ne se combine avec rien : le film sort des pages publiques mais reste consultable ici.",
+      components: { input: ChampEtatsDuFilm },
+      options: {
+        list: ETATS_DU_FILM.map((etat) => ({ title: etat.titre, value: etat.valeur })),
+      },
+      initialValue: "a-laffiche",
+      /* Une case au moins. Les films recopiés de Zinéma le 26.11.2026 n'ont
+         que la liste « statuts » (« Terminé ») : elle compte, comme partout
+         ailleurs (statutsDe). Le champ principal se remplit dès qu'on touche
+         aux cases. */
+      validation: (Rule) =>
+        Rule.custom((etat, contexte) =>
+          etat || statutsDe(contexte.document as { statuts?: unknown } | undefined).length > 0
+            ? true
+            : "Cochez au moins une case."
+        ),
+    }),
+    defineField({
+      name: "statuts",
+      title: "Cases cochées",
+      type: "array",
+      of: [{ type: "string" }],
+      hidden: true,
+      initialValue: ["a-laffiche"],
+      validation: (Rule) =>
+        Rule.custom((cases) => {
+          const liste = Array.isArray(cases) ? cases : [];
+          return liste.includes(TERMINE) && liste.length > 1
+            ? "« Terminé » ne se combine avec aucune autre case."
+            : true;
+        }),
+    }),
+
+    /* -------- Avant-première, première, projection extraordinaire --------
+       Un rendez-vous unique : un jour, une heure, une salle, écrits
+       ici plutôt que programmés à la main dans la Planification. La
+       publication de la fiche crée la séance (voir
+       plugins/planification/actions/publierAvecProjection.tsx). */
+    defineField({
+      name: "projectionDate",
+      title: "Jour",
+      type: "date",
+      fieldset: "projection",
+      options: { dateFormat: "DD/MM/YYYY" },
+      validation: (Rule) =>
+        Rule.custom((jour, contexte) => {
+          const statut = (contexte.document as { status?: string } | undefined)?.status;
+          if (!estUneProjection(statut)) return true;
+          if (!jour) {
+            return "Sans jour, la séance ne peut pas être programmée : le site écrira « Date à venir ».";
+          }
+          /* Un film qui reste à l'affiche garde le jour de son
+             avant-première une fois passé : c'est normal, pas une erreur. */
+          if (statutsDe(contexte.document as { status?: unknown; statuts?: unknown }).length > 1) {
+            return true;
+          }
+          return jour < dateDuJour() ? "Ce jour est déjà passé : vérifiez la date." : true;
+        }).warning(),
+    }),
+    defineField({
+      name: "projectionHeure",
+      title: "Heure",
+      type: "string",
+      fieldset: "projection",
+      placeholder: "20:00",
+      validation: (Rule) => [
+        Rule.regex(HEURE_VALIDE, { name: "heure (HH:MM)" }).error(
+          "Écrivez l'heure sous la forme 20:30."
+        ),
+        /* La même vigilance que sur une séance : prévenir, sans bloquer,
+           si la salle est déjà prise à cette heure-là. */
+        Rule.custom(async (heure, contexte) => {
+          const film = contexte.document as
+            | {
+                _id?: string;
+                status?: string;
+                duration?: number;
+                projectionDate?: string;
+                projectionSalle?: string;
+              }
+            | undefined;
+          if (!estUneProjection(film?.status) || !film?.projectionDate) return true;
+          if (!heure) {
+            return "Sans heure, aucune séance n'est créée : le site n'affichera que le jour.";
+          }
+          if (!HEURE_VALIDE.test(heure) || !film.projectionSalle) return true;
+
+          const client = contexte.getClient({ apiVersion: "2024-06-01" });
+          /* Les séances de ce film-ci ne comptent pas : celle qu'on
+             programme ici les remplace ou les rejoint. */
+          const autres = await client.fetch<
+            { heure: string; duree: number | null; titre: string | null }[]
+          >(
+            `*[_type == "screening" && date == $date && room == $salle
+                && film._ref != $filmId && !(_id in path("drafts.**"))]{
+              "heure": time, "duree": film->duration, "titre": film->title
+            }`,
+            {
+              date: film.projectionDate,
+              salle: film.projectionSalle,
+              filmId: (film._id ?? "").replace(/^drafts\./, ""),
+            }
+          );
+          const duree = typeof film.duration === "number" ? film.duration : null;
+          const genante = autres.find((autre) =>
+            intervallesSeChevauchent(heure, duree, autre.heure, autre.duree)
+          );
+          if (!genante) return true;
+          const titreGenant = genante.titre ?? "un autre film";
+          const fin =
+            typeof genante.duree === "number" ? heureDeFin(genante.heure, genante.duree) : null;
+          return fin
+            ? `Attention : « ${titreGenant} » occupe déjà cette salle de ${genante.heure} à ${fin.heure}. Choisissez une autre heure ou une autre salle.`
+            : `Attention : « ${titreGenant} » occupe déjà cette salle à ${genante.heure}. Choisissez une autre heure ou une autre salle.`;
+        }).warning(),
+      ],
+    }),
+    defineField({
+      name: "projectionSalle",
+      title: "Salle",
+      type: "string",
+      fieldset: "projection",
+      options: { list: listeDesSalles },
+      initialValue: SALLES[0],
+      validation: (Rule) =>
+        Rule.custom((salle, contexte) => {
+          const film = contexte.document as
+            | { status?: string; projectionDate?: string; projectionHeure?: string }
+            | undefined;
+          if (!estUneProjection(film?.status) || !film?.projectionDate || !film.projectionHeure) {
+            return true;
+          }
+          return salle ? true : "Choisissez la salle : la séance ne peut pas être créée sans elle.";
+        }),
+    }),
+
+    /* La date de sortie n'a de sens que pour un film annoncé : le
+       champ n'apparaît donc que si « Prochainement » est coché, et
+       disparaît dès que la case est décochée. Sur le site, elle
+       remplace la case des séances par « Sortie — à partir du … ». */
+    defineField({
+      name: "releaseDate",
+      title: "Date de sortie",
+      type: "date",
+      options: { dateFormat: "DD/MM/YYYY" },
+      description:
+        "Le jour où le film arrive chez nous. Sur le site, la fiche du film annonce alors « À partir du mercredi 12 mars » à la place des séances. Laissez vide si la date n'est pas encore connue : le site écrira simplement « Date à venir ».",
+      hidden: ({ document }) => !estCoche(document, "prochainement"),
+      validation: (Rule) =>
+        Rule.custom((valeur, contexte) => {
+          if (!estCoche(contexte.document, "prochainement") || valeur) return true;
+          return "Sans date, le site affichera « Date à venir » : indiquez-la dès qu'elle est connue.";
+        }).warning(),
+    }),
+
+    /* Le bloc « Séances » n'enregistre rien dans le film : il affiche
+       ses séances à venir, permet de les marquer complètes ou annulées,
+       d'en supprimer, et d'en ajouter plusieurs d'un coup. */
+    defineField({
+      name: "seancesDuFilm",
+      title: "Séances de ce film",
+      description:
+        "Les horaires auxquels ce film passe. Tout se règle ici, sans quitter la fiche.",
+      type: "string",
+      components: { input: ChampSeancesDuFilm },
+    }),
+
+    /* ---------------- La séance en présence de quelqu'un ----------------
+       Rempli, ce champ suffit : le film s'annonce tout seul sur la
+       page Événements, sans qu'on ait à créer un événement à côté.
+       Vide, il ne se passe rien — c'est le champ lui-même qui dit
+       « oui » ou « non », il n'y a pas de case à cocher qui pourrait
+       le contredire. */
+    defineField({
+      name: "presence",
+      title: "Séance en présence de…",
+      type: "string",
+      description:
+        "Le nom de l'invité·e, écrit tel qu'il doit se lire après « En présence de ». Ex. « la réalisatrice Jeanne Dupont », « l'équipe du film », « Jean Dupont, monteur ». Le film apparaît alors tout seul sur la page Événements. Laissez vide s'il n'y a pas d'invité.",
+    }),
+    defineField({
+      name: "presenceDate",
+      title: "Jour de cette séance",
+      type: "date",
+      options: { dateFormat: "DD/MM/YYYY" },
+      /* Inutile de demander un jour tant qu'il n'y a pas d'invité :
+         le champ n'apparaît qu'une fois le nom écrit. */
+      hidden: ({ document }) => !document?.presence,
+      description:
+        "Le jour où l'invité·e sera là, s'il ne vient que pour une séance. Laissez vide s'il est présent à toutes les séances du film : la page Événements annoncera alors la prochaine.",
+    }),
+
+    defineField({
+      name: "stillImages",
+      title: "Photos du film",
+      type: "array",
+      of: [{ type: "imageMinimum" }],
+      description:
+        "Facultatif. Images horizontales tirées du film, affichées sous le synopsis sur la fiche. Glissez-les pour changer l'ordre.",
+    }),
+    defineField({
+      name: "trailerUrl",
+      title: "Bande-annonce",
+      type: "url",
+      description:
+        "Collez l'adresse complète de la vidéo YouTube ou Vimeo (ex. https://www.youtube.com/watch?v=…). Un bouton « Voir la bande-annonce » apparaît alors sur la fiche.",
+    }),
+    defineField({
+      name: "presseUrl",
+      title: "Article de presse",
+      type: "url",
+      description:
+        "Facultatif. Collez l'adresse de l'article : la fiche du film affiche alors une grande case « PRESSE », cliquable. Rien d'autre à remplir.",
+    }),
+
+    /* ---------------- Encadrés repliables ---------------- */
+    defineField({
+      name: "slug",
+      title: "Adresse de la page du film",
+      type: "slug",
+      fieldset: "adresse",
+      description:
+        "Vous pouvez ignorer ce champ : le site sait fabriquer l'adresse tout seul. Cliquer sur « Generate » donne simplement une adresse plus jolie, construite à partir du titre. À ne plus modifier une fois le film en ligne, sinon les liens déjà partagés cesseraient de fonctionner.",
+      options: { source: "title", maxLength: 96 },
+    }),
+  ],
+  orderings: [
+    { title: "Titre de A à Z", name: "titleAsc", by: [{ field: "title", direction: "asc" }] },
+    { title: "Année, du plus récent", name: "yearDesc", by: [{ field: "year", direction: "desc" }] },
+  ],
+  preview: {
+    select: {
+      title: "title",
+      director: "director",
+      year: "year",
+      status: "status",
+      statuts: "statuts",
+      releaseDate: "releaseDate",
+      projectionDate: "projectionDate",
+      projectionHeure: "projectionHeure",
+      presence: "presence",
+      media: "poster",
+    },
+    prepare({
+      title,
+      director,
+      year,
+      status,
+      statuts,
+      releaseDate,
+      projectionDate,
+      projectionHeure,
+      presence,
+      media,
+    }) {
+      const etats: Record<string, string> = {
+        "a-laffiche": "À l'affiche",
+        ...NOM_DE_LA_PROJECTION,
+        prochainement: "Prochainement",
+        cycle: "Cycle / ciné-club",
+        passe: "Terminé",
+      };
+      const sortie = typeof releaseDate === "string" && releaseDate ? releaseDate : null;
+      const projection = typeof projectionDate === "string" && projectionDate ? projectionDate : null;
+      /* Les rubriques du jour, comme le site les range : « Avant-première
+         — 04/11/2026 à 20:00 + À l'affiche ». Un film annoncé se lit avec
+         sa date, une projection avec son rendez-vous. */
+      const etat = statutsDuJour(
+        {
+          status: typeof status === "string" ? status : null,
+          statuts: Array.isArray(statuts) ? (statuts as string[]) : null,
+          releaseDate: sortie,
+          projectionDate: projection,
+        },
+        dateDuJour()
+      )
+        .map((statut) => {
+          const nom = etats[statut] || statut;
+          if (statut === "prochainement" && sortie) return `${nom} — dès le ${dateCourte(sortie)}`;
+          if (estUneProjection(statut) && projection) {
+            const heure = typeof projectionHeure === "string" && projectionHeure ? ` à ${projectionHeure}` : "";
+            return `${nom} — ${dateCourte(projection)}${heure}`;
+          }
+          return nom;
+        })
+        .join(" + ");
+      /* L'invité·e se lit dans la liste : c'est ce qui fait apparaître
+         le film dans la rubrique Événements. */
+      const invite = typeof presence === "string" && presence.trim()
+        ? `en présence de ${presence.trim()}`
+        : "";
+      return {
+        title: title || "Film sans titre",
+        subtitle: [etat, invite, director, year].filter(Boolean).join(" · "),
+        media,
+      };
+    },
+  },
+});
