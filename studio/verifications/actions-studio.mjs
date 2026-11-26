@@ -75,7 +75,13 @@ verifier(
 );
 verifier(
   "les commandes n'ont pas de bouton « + » (seul le serveur les crée)",
-  /typesNonCreables = \[\.\.\.typesUniques, "commande"\]/.test(lire("../sanity/schemaTypes/index.ts")),
+  /typesNonCreables = \[\.\.\.typesUniques, "commande"[,\]]/.test(lire("../sanity/schemaTypes/index.ts")),
+  true,
+);
+verifier(
+  "le carnet des films partagés non plus (le Studio le tient seul)",
+  /typesNonCreables = \[[^\]]*"journalBanque"\]/.test(lire("../sanity/schemaTypes/index.ts")) &&
+    /\["commande", "journalBanque"\]\.includes\(modele\.schemaType\)/.test(config),
   true,
 );
 verifier(

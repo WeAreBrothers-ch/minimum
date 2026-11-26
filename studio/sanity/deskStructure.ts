@@ -17,7 +17,7 @@ import {
   VideoIcon,
 } from "@sanity/icons";
 
-import { BanqueDeFilms } from "./minimum/banque/BanqueDeFilms";
+import { FilmsPartages } from "./minimum/banque/FilmsPartages";
 import { AUTRE } from "./minimum/banque/reglages";
 import { TYPES_INSTAGRAM } from "./minimum/insta/requetes";
 import { VueInstagram } from "./minimum/insta/vue-instagram";
@@ -75,15 +75,16 @@ export const deskStructure: StructureResolver = (S) =>
             .defaultOrdering([{ field: "title", direction: "asc" }])
         ),
 
-      /* ---------------- Banque de films ----------------
-         Juste sous « Films » : le catalogue de l'autre cinéma, où
-         l'on pioche un film déjà saisi là-bas au lieu de le retaper
-         (minimum/banque). */
+      /* ---------------- Films partagés ----------------
+         Juste sous « Films » : un film créé chez l'autre cinéma
+         arrive ici tout seul (minimum/banque). Cet écran montre où
+         en est cette arrivée ; on n'a pas à y passer pour que ça
+         marche. */
       S.listItem()
         .id("banque-de-films")
-        .title(`Banque de films (${AUTRE.nom})`)
+        .title(`Films partagés (${AUTRE.nom})`)
         .icon(InsertAboveIcon)
-        .child(S.component(BanqueDeFilms).id("banque-de-films").title(`Banque de films (${AUTRE.nom})`)),
+        .child(S.component(FilmsPartages).id("banque-de-films").title(`Films partagés (${AUTRE.nom})`)),
 
       /* ---------------- Agenda ----------------
          Séparé en deux parce qu'il y en a beaucoup, et qu'on ne

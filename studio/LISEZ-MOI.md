@@ -6,9 +6,10 @@ même personne gère les deux cinémas ; elle ne doit pas avoir à réapprendre.
 S'y ajoute ce qui n'existe qu'à Minimum : la Musique et les posts Instagram.
 
 - Studio en ligne : <https://cine-minimum.sanity.studio>
-- Projet Sanity : `hvxsup1j` (« minimum »), jeu `production`. Rien n'est
-  partagé avec le projet de Zinéma (`vle63mzm`), sur lequel ce Studio refuse
-  de démarrer (`sanity/projet.ts`).
+- Projet Sanity : `hvxsup1j` (« minimum »), jeu `production`. Le projet de
+  Zinéma (`vle63mzm`) reste à part : ce Studio refuse d'y démarrer
+  (`sanity/projet.ts`) et n'y écrit jamais ; il y LIT seulement les films,
+  pour les faire arriver ici (voir « Les films partagés »).
 - Mode d'emploi : celui de Zinéma (`SANITY.md` du dépôt Cin-Cin-), à ceci
   près — voir « Ce qui diffère de Zinéma ».
 
@@ -27,6 +28,7 @@ adaptée le moins possible. Ce qui est propre à Minimum est dans
 | `sanity/minimum/insta` | Les visuels et les légendes Instagram |
 | `sanity/minimum/posts` | L'onglet « Posts » |
 | `sanity/minimum/actions` | Post en un clic ; contrôle et remboursement d'un billet |
+| `sanity/minimum/banque` | Les films partagés avec Zinéma |
 
 ## Ce qui diffère de Zinéma
 
@@ -34,11 +36,11 @@ adaptée le moins possible. Ce qui est propre à Minimum est dans
 
 - **Musique**, dans le menu « Contenu », après l'Agenda : soirées à venir,
   soirées passées, lives de la radio, artistes et DJ.
-- **Banque de films (Zinéma)**, dans le menu « Contenu », juste sous
-  « Films » : le catalogue de Zinéma, où l'on pioche. « Piocher » copie la
-  fiche et l'affiche d'un film dans Minimum, où il arrive « À l'affiche »,
-  prêt pour la Planification ; un film déjà là le dit. Voir « La banque de
-  films » plus bas.
+- **Les films de Zinéma arrivent tout seuls.** Un film créé (et publié) à
+  Zinéma apparaît dans « Films » et dans la Planification de Minimum, fiche
+  et affiche copiées, sans rien cliquer. L'écran **Films partagés (Zinéma)**,
+  juste sous « Films », montre où en est cette arrivée. Voir « Les films
+  partagés » plus bas.
 - **Posts**, en haut, à côté de « Planification » : tout ce qui peut se poster
   dans les quatre semaines qui viennent (soirées, DJ, lives, films qui ont une
   séance, événements), avec le visuel déjà composé. « Post » ou « Story » :
@@ -83,30 +85,54 @@ adaptée le moins possible. Ce qui est propre à Minimum est dans
 - Le lien d'un événement, dans la newsletter, mène à l'agenda : le site de
   Minimum n'a pas de page par événement.
 
-## La banque de films
+## Les films partagés
 
 Les deux cinémas ont les mêmes exploitants et passent souvent les mêmes
-films. Chacun garde son projet Sanity et son catalogue, mais peut piocher
-dans celui de l'autre (demande d'Eliott, 26.11.2026) : la fiche du film et
-son affiche sont copiées, rien à retaper.
+films. Chacun garde son projet Sanity, mais la liste des films doit être la
+même des deux côtés : un film créé dans un cinéma est disponible dans l'autre
+sans rien retaper (demande d'Eliott, 26.11.2026).
+
+**Comment ça marche.** Dès que le Studio de Minimum est ouvert, puis toutes
+les cinq minutes, il lit les films publiés de Zinéma et crée ici ceux qui
+manquent (`sanity/minimum/banque`). Un mot l'annonce : « « Titre » est arrivé
+de Zinéma ».
 
 - **Ce qui est copié** : ce qui décrit le film (titre, réalisation, durée,
   année, pays, version, âge, type, synopsis, bande-annonce, presse, affiche,
   photos). **Ce qui ne l'est pas** : ce qui tient à un cinéma (où en est le
   film là-bas, ses séances, sa date de sortie, son invité).
-- Une fois pioché, le film est une fiche de Minimum comme les autres : une
-  correction faite ensuite chez l'un n'arrive pas chez l'autre.
-- Un film pioché porte une marque invisible (`origineBanque`,
-  « zinema:<identifiant> ») ; un film est aussi reconnu par son titre.
+- **Le film arrive PAS à l'affiche** : un film créé à Zinéma ne doit pas se
+  montrer au public de Minimum sans qu'on l'ait décidé. Il est dans « Films »
+  (« Pas à l'affiche (fiche de Zinéma) ») et la Planification le propose ; sa
+  fiche le dit en une phrase. Cocher « À l'affiche » ou « Prochainement » pour
+  le montrer.
+- **Le même film a le même identifiant des deux côtés** : il ne peut pas être
+  créé deux fois. Un film saisi à la main dans les deux cinémas est reconnu
+  par son titre.
+- **Rien n'est jamais modifié ni supprimé** par l'arrivée, ni ici ni à
+  Zinéma : elle ne fait que créer ce qui manque. Une correction faite ensuite
+  dans un cinéma n'arrive donc pas chez l'autre.
+- **Un film supprimé ici ne revient pas tout seul** : le Studio tient un
+  carnet des films déjà venus (fiche `banque.zinema`, dans aucun menu). Sur
+  l'écran « Films partagés », il est marqué « Retiré de Minimum », avec un
+  bouton « Remettre ».
+- **Seul un film publié arrive** : un brouillon de Zinéma reste à Zinéma.
 - **Zinéma est lu sans jeton ni identifiants**, par son API publique, comme
   le fait son site : rien ne peut y être écrit d'ici. Le seul réglage fait
   chez Zinéma : l'adresse `https://cine-minimum.sanity.studio` est autorisée
   à le LIRE (CORS, sans identifiants), avec l'accord d'Eliott.
-- **Dans l'autre sens** (piocher depuis Zinéma dans le catalogue de Minimum),
-  rien n'est fait : il faut ajouter cet écran au Studio de Zinéma, donc
-  modifier son code. Le dossier `sanity/minimum/banque` est écrit pour y
-  servir tel quel : seul `reglages.ts` change (qui est « ici », qui est
-  « l'autre », le type des images).
+- Pour couper l'arrivée automatique : `ARRIVEE_AUTOMATIQUE = false` dans
+  `sanity/minimum/banque/reglages.ts` (l'écran garde alors ses boutons).
+
+**Dans l'autre sens, rien n'est fait.** Un film créé à Minimum n'arrive PAS
+encore à Zinéma : il faut pour cela ajouter ce même dossier au Studio de
+Zinéma (donc modifier son code et le remettre en ligne) et autoriser
+`https://cincin-zinema.sanity.studio` à lire le projet de Minimum. Le dossier
+`sanity/minimum/banque` est écrit pour y servir tel quel : seul `reglages.ts`
+change (qui est « ici », qui est « l'autre », le type des images) ; s'y
+ajoutent le type `journalBanque`, le champ `origineBanque` du film et la ligne
+`studio.components.layout` de `sanity.config.ts`. À ne faire qu'avec l'accord
+d'Eliott : la consigne est de ne rien toucher à Zinéma.
 
 ## Les exemples (26.11.2026)
 
@@ -158,17 +184,19 @@ Essayé dans le Studio, dans un navigateur, le 26.11.2026, sur les exemples :
   relues (aucune mention de Zinéma, liens vers cineminimum.ch, tarifs des
   réglages) et affichées ;
 - la feuille à imprimer : le logo de Minimum, pas de « Salle » répété ;
-- la banque de films : les 27 films de Zinéma listés avec leurs affiches,
-  tous reconnus comme déjà dans Minimum, la recherche ; et, hors du Studio,
-  une vraie pioche d'un film de Zinéma dans Minimum (fiche et affiche
-  copiées, puis fiche d'essai retirée), Zinéma inchangé après coup ;
+- les films partagés : les 27 films de Zinéma listés avec leurs affiches,
+  tous reconnus comme déjà dans Minimum (« À jour ») ; avec un film de plus
+  dans la réponse de Zinéma et des écritures simulées, le film arrive tout
+  seul (fiche complète, pas à l'affiche, affiche copiée, carnet tenu) et le
+  mot s'affiche ; avec des écritures refusées, rien ne casse et l'écran
+  propose « Faire venir ». Zinéma n'est lu que sans identifiants ;
 - l'onglet Posts : 34 posts composés, « Post » et « Story » (image
   enregistrée, légende copiée).
 
 Vérifié par `npm test` : 6206 vérifications de la Planification à une salle
 (semaine remplie, aucun chevauchement, 21 h après la fin du film de 19 h,
 dimanche à 17 h, rien d'écrasé, rien au Club), 17 sur la séance d'une
-avant-première, 22 sur la banque de films, et celles de Zinéma sur l'historique, la feuille à imprimer
+avant-première, 42 sur les films partagés, et celles de Zinéma sur l'historique, la feuille à imprimer
 et les actions du Studio.
 
 **Pas essayé.** Le compte disponible pour ces essais ne pouvait que lire, et
@@ -178,7 +206,10 @@ cette version du Studio n'ouvre pas une fiche sans connexion en direct :
   (son code est celui de l'onglet Posts, essayé) ;
 - tout ce qui écrit depuis la Planification : glisser une séance, programmer
   un film, remplir au hasard, dupliquer, vider, annuler ;
-- les deux boutons d'une commande.
+- les deux boutons d'une commande ;
+- une vraie arrivée de film écrite dans le projet (les écritures ont été
+  simulées dans le navigateur) et la phrase affichée dans la fiche d'un film
+  arrivé.
 
 À essayer avec un vrai compte avant de s'y fier.
 

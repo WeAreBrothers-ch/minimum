@@ -19,7 +19,9 @@ const MENTION_DE_STATUT: Record<string, string> = {
   'projection-extraordinaire': 'projection extraordinaire',
   prochainement: 'prochainement',
   cycle: 'cycle / ciné-club',
-  passe: 'retiré de l’affiche',
+  /* À Zinéma : « retiré de l’affiche ». Ici, un film arrivé de l'autre
+     cinéma n'y a jamais été : « pas à l’affiche » est vrai dans les deux cas. */
+  passe: 'pas à l’affiche',
 }
 
 interface Props {

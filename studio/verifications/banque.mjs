@@ -1,14 +1,19 @@
 /* ============================================================
-   La banque de films, vérifiée.
+   Les films partagés, vérifiés.
 
-   « Piocher » copie un film de l'autre cinéma ici. Trois promesses :
+   Un film créé chez l'autre cinéma arrive ici tout seul. Cinq
+   promesses :
 
      1. un film déjà ici est reconnu — par sa marque, par son
-        identifiant, ou par son titre — et ne se pioche pas deux fois ;
+        identifiant, ou par son titre — et n'arrive pas deux fois ;
      2. seule la fiche du FILM est copiée : pas l'état du film chez
-        l'autre, ni sa date de sortie, ni son invité ;
+        l'autre, ni sa date de sortie, ni son invité ; et il arrive
+        PAS à l'affiche ;
      3. une image qui ne se laisse pas copier n'empêche pas la fiche
-        d'être créée, et c'est dit.
+        d'être créée, et c'est dit ;
+     4. un film supprimé ici ne revient pas tout seul ;
+     5. rien n'est jamais modifié ni supprimé : on ne fait que créer
+        ce qui manque.
 
    Rien n'est lu ni écrit dans Sanity ici : un faux client note ce
    qu'on lui demande.
@@ -29,7 +34,7 @@ async function chargerModule(chemin) {
   return import(`data:text/javascript;base64,${Buffer.from(compile.outputFiles[0].text).toString('base64')}`)
 }
 
-const {dejaIci, ficheAPartirDe, origineDe, piocher} = await chargerModule('../sanity/minimum/banque/piocher.ts')
+const {arriveeDesFilms, dejaIci, faireVenir, ficheAPartirDe, origineDe, trier} = await chargerModule('../sanity/minimum/banque/partage.ts')
 
 let echecs = 0
 let reussites = 0
@@ -71,7 +76,7 @@ const FILM = {
 console.log('Reconnaître un film déjà ici')
 verifier('la marque « zinema:… »', origineDe(FILM), 'zinema:abc')
 verifier('par sa marque', dejaIci(FILM, [{_id: 'x', title: 'Autre titre', origineBanque: 'zinema:abc'}])?._id, 'x')
-verifier('par son identifiant (films recopiés le 26.11.2026)', dejaIci(FILM, [{_id: 'abc', title: 'Autre'}])?._id, 'abc')
+verifier('par son identifiant (un film arrive avec celui qu’il a chez l’autre)', dejaIci(FILM, [{_id: 'abc', title: 'Autre'}])?._id, 'abc')
 verifier('par son titre, malgré la casse, les accents et la ponctuation', dejaIci({...FILM, title: 'Mr. Nobody Against Pûtin'}, [{_id: 'y', title: 'MR NOBODY AGAINST PUTIN'}])?._id, 'y')
 verifier('un autre film n’est pas pris pour lui', dejaIci(FILM, [{_id: 'z', title: 'Le Petit Bleu'}]), null)
 verifier('un film sans titre ne correspond à aucun film sans titre', dejaIci({...FILM, title: null}, [{_id: 'z', title: null}]), null)
@@ -84,49 +89,138 @@ verifier('l’affiche est celle d’ici, avec sa description et son point d’in
 verifier('les photos suivent', fiche.stillImages, [{_type: 'imageMinimum', _key: 'photo0', asset: {_type: 'reference', _ref: 'image-photo'}}])
 verifier('l’adresse de la page suit', fiche.slug, {_type: 'slug', current: 'le-grand-bleu'})
 verifier('un champ vide n’est pas écrit', ['subtitles' in fiche, 'originalTitle' in fiche, 'presseUrl' in fiche], [false, false, false])
-verifier('le film arrive « À l’affiche », quel que soit son état chez l’autre', [fiche.status, fiche.statuts], ['a-laffiche', ['a-laffiche']])
+verifier('le film arrive PAS à l’affiche, quel que soit son état chez l’autre', [fiche.status, fiche.statuts], ['passe', ['passe']])
+verifier('la fiche garde l’identifiant du film chez l’autre', fiche._id, 'abc')
 verifier('ni date de sortie, ni invité, ni projection de l’autre cinéma', ['releaseDate' in fiche, 'presence' in fiche, 'projectionDate' in fiche], [false, false, false])
 verifier('la marque est posée', fiche.origineBanque, 'zinema:abc')
 verifier('sans affiche copiée, pas de champ affiche', 'poster' in ficheAPartirDe(FILM, null, []), false)
 
-console.log('Piocher')
-function fauxClient({refuserImage = false} = {}) {
-  const journal = []
+console.log('Faire venir un film')
+/* Un faux projet Sanity : il garde ses fiches, et note tout ce qu'on lui demande d'écrire. */
+function fauxClient({films = [], carnet = null, refuserImage = false, refuserFiche = () => false, refuserCarnet = false} = {}) {
+  const fiches = new Map(films.map((film) => [film._id, film]))
+  if (carnet) fiches.set('banque.zinema', {_id: 'banque.zinema', _type: 'journalBanque', films: [...carnet]})
+  const gestes = []
   return {
-    journal,
+    gestes,
+    fiches,
+    carnet: () => fiches.get('banque.zinema')?.films ?? null,
+    fetch: async (requete, parametres) => {
+      if (parametres?.id) return fiches.get(parametres.id)?.films ?? null
+      return [...fiches.values()].filter((fiche) => fiche._type === 'film').map(({_id, title, origineBanque}) => ({_id, title, origineBanque}))
+    },
     assets: {
       upload: async (type, corps, options) => {
         if (refuserImage) throw new Error('refus')
-        journal.push(['upload', type, options.filename])
+        gestes.push(['upload', type, options.filename])
         return {_id: `image-${options.filename}`}
       },
     },
-    create: async (doc) => {
-      journal.push(['create', doc])
-      return {_id: 'nouveau'}
+    createIfNotExists: async (doc) => {
+      if (doc._type === 'film' && refuserFiche(doc)) throw new Error('refus')
+      if (doc._type !== 'film' && refuserCarnet) throw new Error('refus')
+      gestes.push(['createIfNotExists', doc])
+      if (!fiches.has(doc._id)) fiches.set(doc._id, doc)
+      return {_id: doc._id}
+    },
+    patch: (id) => {
+      const retouche = {
+        setIfMissing: () => retouche,
+        insert: (ou, chemin, elements) => {
+          retouche.elements = [ou, chemin, elements]
+          return retouche
+        },
+        commit: async () => {
+          if (refuserCarnet) throw new Error('refus')
+          gestes.push(['patch', id, retouche.elements])
+          fiches.get(id).films.push(...retouche.elements[2])
+        },
+      }
+      return retouche
     },
   }
 }
 const telecharger = async (url) => new Blob([url])
+const sansBruit = async (action) => {
+  /* Un refus est noté dans la console du Studio : ici, on le fait taire. */
+  const noter = console.error
+  console.error = () => undefined
+  try {
+    return await action()
+  } finally {
+    console.error = noter
+  }
+}
 
 let client = fauxClient()
-let resultat = await piocher(client, FILM, telecharger)
-verifier('rend la nouvelle fiche, sans image manquante', resultat, {id: 'nouveau', imagesManquantes: 0})
-verifier('copie l’affiche, puis la photo, puis crée la fiche', client.journal.map((ligne) => ligne[0]), ['upload', 'upload', 'create'])
-verifier('la fiche créée porte l’affiche copiée', client.journal[2][1].poster.asset._ref, 'image-affiche.jpg')
+let resultat = await faireVenir(client, FILM, telecharger)
+verifier('rend la fiche, sous l’identifiant du film, sans image manquante', resultat, {id: 'abc', imagesManquantes: 0})
+verifier('copie l’affiche, puis la photo, puis crée la fiche', client.gestes.map((ligne) => ligne[0]), ['upload', 'upload', 'createIfNotExists'])
+verifier('la fiche créée porte l’affiche copiée', client.gestes[2][1].poster.asset._ref, 'image-affiche.jpg')
 
 client = fauxClient({refuserImage: true})
-/* Le refus est noté dans la console du Studio : ici, on le fait taire. */
-const noter = console.error
-console.error = () => undefined
-resultat = await piocher(client, FILM, telecharger)
-console.error = noter
-verifier('une image refusée n’empêche pas la fiche', [resultat.id, resultat.imagesManquantes], ['nouveau', 2])
-verifier('la fiche est alors créée sans affiche', 'poster' in client.journal[0][1], false)
+resultat = await sansBruit(() => faireVenir(client, FILM, telecharger))
+verifier('une image refusée n’empêche pas la fiche', [resultat.id, resultat.imagesManquantes], ['abc', 2])
+verifier('la fiche est alors créée sans affiche', 'poster' in client.gestes[0][1], false)
 
 client = fauxClient()
-resultat = await piocher(client, {...FILM, affiche: null, photos: null}, telecharger)
-verifier('un film sans affiche se pioche quand même', [resultat.id, client.journal.map((l) => l[0])], ['nouveau', ['create']])
+resultat = await faireVenir(client, {...FILM, affiche: null, photos: null}, telecharger)
+verifier('un film sans affiche vient quand même', [resultat.id, client.gestes.map((l) => l[0])], ['abc', ['createIfNotExists']])
+
+client = fauxClient({films: [{_id: 'abc', _type: 'film', title: 'Corrigé ici', status: 'a-laffiche'}]})
+await faireVenir(client, FILM, telecharger)
+verifier('une fiche qui existe déjà sous cet identifiant n’est pas écrasée', [client.fiches.get('abc').title, client.fiches.get('abc').status], ['Corrigé ici', 'a-laffiche'])
+
+console.log('Trier les films de l’autre cinéma')
+const A = {...FILM, _id: 'a', title: 'Film A'}
+const B = {...FILM, _id: 'b', title: 'Film B'}
+const C = {...FILM, _id: 'c', title: 'Film C'}
+const D = {...FILM, _id: 'd', title: 'Film D'}
+let tri = trier([A, B, C, D], [{_id: 'a', title: 'Film A'}, {_id: 'x', title: 'film b'}], ['a', 'c'])
+verifier('à faire venir : ni ici, ni au carnet', tri.aFaireVenir.map((f) => f._id), ['d'])
+verifier('à noter : ici, pas encore au carnet (même reconnu par son titre)', tri.aNoter, ['b'])
+verifier('retiré exprès : au carnet, plus ici', tri.retires.map((f) => f._id), ['c'])
+verifier('sans carnet, tout ce qui manque vient', trier([A, B], [], null).aFaireVenir.map((f) => f._id), ['a', 'b'])
+
+console.log('L’arrivée des films')
+const autre = (films) => ({fetch: async () => films})
+
+client = fauxClient({films: [{_id: 'a', _type: 'film', title: 'Film A'}]})
+let bilan = await arriveeDesFilms(client, autre([A, B, C]), telecharger)
+verifier('les films qui manquent arrivent, pas les autres', [bilan.arrives, bilan.rates, bilan.imagesManquantes], [[{id: 'b', titre: 'Film B'}, {id: 'c', titre: 'Film C'}], 0, 0])
+verifier('ils sont ici, pas à l’affiche, avec leur marque', ['b', 'c'].map((id) => [client.fiches.get(id).status, client.fiches.get(id).origineBanque]), [['passe', 'zinema:b'], ['passe', 'zinema:c']])
+verifier('le film déjà ici n’a pas été touché', client.fiches.get('a'), {_id: 'a', _type: 'film', title: 'Film A'})
+verifier('le carnet note les trois', [...client.carnet()].sort(), ['a', 'b', 'c'])
+verifier('seules des créations (et le carnet) ont été écrites', [...new Set(client.gestes.map((g) => g[0]))].sort(), ['createIfNotExists', 'patch', 'upload'])
+
+const avant = client.gestes.length
+bilan = await arriveeDesFilms(client, autre([A, B, C]), telecharger)
+verifier('une deuxième arrivée ne fait rien : rien de neuf', [bilan.arrives, client.gestes.length - avant], [[], 0])
+
+client.fiches.delete('b')
+bilan = await arriveeDesFilms(client, autre([A, B, C]), telecharger)
+verifier('un film supprimé ici ne revient pas tout seul', [bilan.arrives, client.fiches.has('b')], [[], false])
+await faireVenir(client, B, telecharger)
+verifier('mais il se remet à la demande', client.fiches.has('b'), true)
+
+bilan = await arriveeDesFilms(client, autre([A, B, C, D]), telecharger)
+verifier('un film créé ensuite chez l’autre arrive à son tour', bilan.arrives, [{id: 'd', titre: 'Film D'}])
+
+client = fauxClient({refuserFiche: (doc) => doc._id === 'b'})
+bilan = await sansBruit(() => arriveeDesFilms(client, autre([A, B]), telecharger))
+verifier('un film qui rate n’empêche pas les autres', [bilan.arrives.map((f) => f.id), bilan.rates], [['a'], 1])
+verifier('et n’est pas noté au carnet : il sera retenté', client.carnet(), ['a'])
+client = fauxClient({films: [...client.fiches.values()].filter((f) => f._type === 'film'), carnet: client.carnet()})
+bilan = await arriveeDesFilms(client, autre([A, B]), telecharger)
+verifier('la fois suivante, il arrive', bilan.arrives.map((f) => f.id), ['b'])
+
+client = fauxClient({refuserCarnet: true})
+bilan = await sansBruit(() => arriveeDesFilms(client, autre([A]), telecharger))
+verifier('un carnet qui ne s’écrit pas ne fait pas perdre l’arrivée', [bilan.arrives.map((f) => f.id), client.fiches.has('a')], [['a'], true])
+
+client = fauxClient({films: [{_id: 'a', _type: 'film', title: 'Film A'}], carnet: ['a']})
+bilan = await arriveeDesFilms(client, autre([]), telecharger)
+verifier('l’autre cinéma illisible ou vide : rien ne bouge ici', [bilan.arrives, client.gestes.length, client.fiches.has('a')], [[], 0, true])
 
 console.log(`${reussites} vérification(s) réussie(s), ${echecs} échec(s).`)
 process.exit(echecs > 0 ? 1 : 0)

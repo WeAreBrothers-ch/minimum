@@ -8,6 +8,7 @@ import { planification } from "./sanity/plugins/planification";
 import { BilletControle, MarquerRemboursee } from "./sanity/minimum/actions/commande";
 import { PostInsta } from "./sanity/minimum/actions/post-insta";
 import { TYPES_INSTAGRAM } from "./sanity/minimum/insta/requetes";
+import { StudioAvecArrivee } from "./sanity/minimum/banque/ArriveeDesFilms";
 import { posts } from "./sanity/minimum/posts";
 import { JEU, PROJET } from "./sanity/projet";
 
@@ -29,11 +30,15 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
     // Retire des modèles de création les commandes de billetterie, créées
-    // par le serveur. Les fiches uniques gardent leur modèle (il porte leurs
+    // par le serveur, et le carnet des films partagés, tenu par le Studio. Les fiches uniques gardent leur modèle (il porte leurs
     // valeurs proposées d'office) : c'est le bouton « + » qui ne les
     // propose pas.
-    templates: (modeles) => modeles.filter((modele) => modele.schemaType !== "commande"),
+    templates: (modeles) =>
+      modeles.filter((modele) => !["commande", "journalBanque"].includes(modele.schemaType)),
   },
+  /* Les films de l'autre cinéma (Zinéma) arrivent tout seuls dès que le
+     Studio est ouvert : voir sanity/minimum/banque. */
+  studio: { components: { layout: StudioAvecArrivee } },
   document: {
     // Le bouton « + » ne propose que ce qui se crée vraiment à la main.
     newDocumentOptions: (options) =>

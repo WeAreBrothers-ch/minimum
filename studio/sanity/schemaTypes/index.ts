@@ -16,6 +16,7 @@ import { artiste } from "../minimum/schema/artiste";
 import { emission } from "../minimum/schema/emission";
 import { tarif } from "../minimum/schema/tarif";
 import { passage } from "../minimum/schema/passage";
+import { journalBanque } from "../minimum/schema/journal-banque";
 
 export const schemaTypes = [
   // Brique réutilisée par toutes les images du site
@@ -43,10 +44,13 @@ export const schemaTypes = [
 
   // Billetterie : créé automatiquement par le serveur, jamais à la main
   commande,
+
+  // Films partagés avec l'autre cinéma : le carnet que le Studio tient seul
+  journalBanque,
 ];
 
 /** Types dont il n'existe qu'une seule fiche : pas de bouton « créer ». */
 export const typesUniques = ["siteSettings", "abonnements", "location", "histoire"];
 
 /** Types que personne ne crée à la main depuis le Studio. */
-export const typesNonCreables = [...typesUniques, "commande"];
+export const typesNonCreables = [...typesUniques, "commande", "journalBanque"];

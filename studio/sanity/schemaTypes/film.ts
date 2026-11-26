@@ -15,6 +15,8 @@ import {
   statutsDuJour,
 } from "../plugins/planification/utils/etats-du-film";
 import { listeDesSalles, SALLES } from "../salles";
+import { NoteFilmPartage } from "../minimum/banque/NoteFilmPartage";
+import { AUTRE } from "../minimum/banque/reglages";
 
 /* ============================================================
    Un film à l'affiche, à venir, ou terminé.
@@ -421,15 +423,17 @@ export const film = defineType({
         "Facultatif. Collez l'adresse de l'article : la fiche du film affiche alors une grande case « PRESSE », cliquable. Rien d'autre à remplir.",
     }),
 
-    /* La marque d'un film pioché dans la banque de films (minimum/banque) :
+    /* La marque d'un film arrivé de l'autre cinéma (minimum/banque) :
        « zinema:<identifiant> ». Elle sert à reconnaître qu'il est déjà ici ;
-       personne n'a à la lire ni à la modifier. */
+       personne n'a à la modifier. Quand elle est là, la fiche le dit en
+       une phrase (NoteFilmPartage). */
     defineField({
       name: "origineBanque",
-      title: "Pioché dans la banque de films",
+      title: "Fiche partagée",
       type: "string",
       readOnly: true,
-      hidden: true,
+      hidden: ({ value }) => !value,
+      components: { input: NoteFilmPartage },
     }),
 
     /* ---------------- Encadrés repliables ---------------- */
@@ -458,6 +462,7 @@ export const film = defineType({
       projectionDate: "projectionDate",
       projectionHeure: "projectionHeure",
       presence: "presence",
+      origineBanque: "origineBanque",
       media: "poster",
     },
     prepare({
@@ -470,6 +475,7 @@ export const film = defineType({
       projectionDate,
       projectionHeure,
       presence,
+      origineBanque,
       media,
     }) {
       const etats: Record<string, string> = {
@@ -477,7 +483,9 @@ export const film = defineType({
         ...NOM_DE_LA_PROJECTION,
         prochainement: "Prochainement",
         cycle: "Cycle / ciné-club",
-        passe: "Terminé",
+        /* Un film arrivé de l'autre cinéma n'a peut-être jamais été montré
+           ici : « Terminé » le ferait croire. */
+        passe: origineBanque ? `Pas à l'affiche (fiche de ${AUTRE.nom})` : "Terminé",
       };
       const sortie = typeof releaseDate === "string" && releaseDate ? releaseDate : null;
       const projection = typeof projectionDate === "string" && projectionDate ? projectionDate : null;
