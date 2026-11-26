@@ -47,73 +47,78 @@
       <p class="page__chapeau">La salle, les tarifs, le contact</p>
     </header>
 
-    <div class="briques">
-      <section class="brique brique--m6 brique--o7" aria-labelledby="b-adresse">
-        <h2 class="brique__terme" id="b-adresse">Adresse</h2>
-        <p class="brique__valeur brique__valeur--grand">Quai Philippe&#8209;Godet&nbsp;20<br />2000 Neuchâtel</p>
-        <p class="brique__detail">Cinéma Minimum, salle Anaïs Emery, à La Case à Chocs, ancienne Brasserie Müller.</p>
+    <div class="infos">
+      <div class="infos__venir">
+        <section class="brique infos__adresse" aria-labelledby="b-adresse">
+          <h2 class="brique__terme" id="b-adresse">Adresse</h2>
+          <p class="infos__grand">Quai Philippe&#8209;Godet&nbsp;20<br />2000 Neuchâtel</p>
+          <p class="brique__detail">Cinéma Minimum, salle Anaïs Emery, à La Case à Chocs, ancienne Brasserie Müller.</p>
+        </section>
+        <div class="infos__contacts">
+          <a class="brique brique--lien" href="https://www.openstreetmap.org/search?query=Quai%20Philippe-Godet%2020%2C%202000%20Neuch%C3%A2tel" rel="noopener">
+            <span class="brique__terme">Plan</span>
+            <span class="brique__valeur">Ouvrir <span class="fleche fleche--sortie" aria-hidden="true"></span></span>
+          </a>
+          <a class="brique brique--lien" href="tel:+41765671291">
+            <span class="brique__terme">Bureau</span>
+            <span class="brique__valeur brique__chiffres">076&nbsp;567&nbsp;12&nbsp;91</span>
+          </a>
+          <a class="brique brique--lien" href="tel:+41325453737">
+            <span class="brique__terme">Cinéma</span>
+            <span class="brique__valeur brique__chiffres">032&nbsp;545&nbsp;37&nbsp;37</span>
+          </a>
+          <a class="brique brique--lien infos__mail" href="mailto:cineminimum@gmail.com">
+            <span class="brique__terme">E-mail</span>
+            <span class="brique__valeur brique__valeur--minuscules">cineminimum@<wbr />gmail.com</span>
+          </a>
+        </div>
+      </div>
+      <figure class="infos__photo"><img src="../assets/img/salle.jpg" width="603" height="401" alt="La salle Anaïs Emery : des rangées de fauteuils rouges face à l’écran" decoding="async" /></figure>
+
+      <h2 class="infos__rubrique" id="tarifs">Tarifs</h2>
+      <div class="tarif">
+        <h3 class="tarif__terme">Ordinaire</h3>
+        <p class="tarif__prix">CHF&nbsp;16.–</p>
+      </div>
+      <div class="tarif">
+        <h3 class="tarif__terme">AVS, AI</h3>
+        <p class="tarif__prix">CHF&nbsp;14.–</p>
+        <p class="tarif__detail">AVS, AI, chômeur.euse.s</p>
+      </div>
+      <div class="tarif">
+        <h3 class="tarif__terme">Réduit</h3>
+        <p class="tarif__prix">CHF&nbsp;10.–</p>
+        <p class="tarif__detail">Membres de soutien, abonné.e.s au journal Le Courrier, étudiant.e.s, carte Culture Caritas</p>
+      </div>
+      <div class="tarif">
+        <h3 class="tarif__terme">AG culturel</h3>
+        <p class="tarif__prix">CHF&nbsp;0.–</p>
+      </div>
+      <section class="brique infos__moitie" aria-labelledby="b-en-ligne">
+        <h3 class="brique__terme" id="b-en-ligne">Billets en ligne</h3>
+        <p class="infos__phrase">Par carte, sur la fiche de chaque film.</p>
       </section>
-      <figure class="brique brique--photo brique--m4 brique--o5"><img src="../assets/img/salle.jpg" width="603" height="401" alt="La salle Anaïs Emery : des rangées de fauteuils rouges face à l’écran" decoding="async" /></figure>
-      <a class="brique brique--lien brique--m2 brique--o2" href="https://www.openstreetmap.org/search?query=Quai%20Philippe-Godet%2020%2C%202000%20Neuch%C3%A2tel" rel="noopener">
-        <span class="brique__terme">Plan</span>
-        <span class="brique__valeur">Ouvrir <span class="fleche fleche--sortie" aria-hidden="true"></span></span>
-      </a>
-
-      <a class="brique brique--lien brique--m3 brique--o3" href="tel:+41765671291">
-        <span class="brique__terme">Bureau</span>
-        <span class="brique__valeur brique__chiffres">076&nbsp;567&nbsp;12&nbsp;91</span>
-      </a>
-      <a class="brique brique--lien brique--m3 brique--o3" href="tel:+41325453737">
-        <span class="brique__terme">Cinéma</span>
-        <span class="brique__valeur brique__chiffres">032&nbsp;545&nbsp;37&nbsp;37</span>
-      </a>
-      <a class="brique brique--lien brique--m6 brique--o4" href="mailto:cineminimum@gmail.com">
-        <span class="brique__terme">E-mail</span>
-        <span class="brique__valeur brique__valeur--minuscules">cineminimum@<wbr />gmail.com</span>
-      </a>
-
-      <div class="brique brique--m3 brique--o3">
-        <p class="brique__terme">Tarif ordinaire</p>
-        <p class="brique__valeur"><span class="brique__prix">CHF&nbsp;16.–</span></p>
-      </div>
-      <div class="brique brique--m3 brique--o3">
-        <p class="brique__terme">Tarif AVS, AI</p>
-        <p class="brique__valeur"><span class="brique__prix">CHF&nbsp;14.–</span></p>
-        <p class="brique__detail">AVS, AI, chômeur.euse.s</p>
-      </div>
-      <div class="brique brique--m4 brique--o6">
-        <p class="brique__terme">Tarif réduit</p>
-        <p class="brique__valeur"><span class="brique__prix">CHF&nbsp;10.–</span></p>
-        <p class="brique__detail">Membres de soutien, abonné.e.s au journal Le Courrier, étudiant.e.s, carte Culture Caritas</p>
-      </div>
-      <div class="brique brique--m2 brique--o2">
-        <p class="brique__terme">AG culturel</p>
-        <p class="brique__valeur"><span class="brique__prix">CHF&nbsp;0.–</span></p>
-      </div>
-
-      <section class="brique brique--m6 brique--o6" aria-labelledby="b-billets">
-        <h2 class="brique__terme" id="b-billets">Billets</h2>
-        <p class="brique__texte">En ligne, par carte, sur la fiche de chaque film. À la buvette, 15 minutes avant chaque séance, en espèces ou par TWINT.</p>
+      <section class="brique infos__moitie" aria-labelledby="b-buvette">
+        <h3 class="brique__terme" id="b-buvette">Billets à la buvette</h3>
+        <p class="infos__phrase">15 minutes avant chaque séance, en espèces ou par TWINT.</p>
       </section>
-      <section class="brique brique--m3 brique--o4" aria-labelledby="b-membre">
-        <h2 class="brique__terme" id="b-membre">Carte de membre de soutien</h2>
-        <p class="brique__valeur"><span class="brique__prix">CHF&nbsp;60.–</span> par an</p>
+
+      <h2 class="infos__rubrique" id="salle">Carte de membre, projection privée, location</h2>
+      <section class="brique infos__tiers" aria-labelledby="b-membre">
+        <h3 class="brique__terme" id="b-membre">Carte de membre de soutien</h3>
+        <p class="infos__valeur"><span class="brique__prix">CHF&nbsp;60.–</span> par an</p>
         <p class="brique__detail">Avec une boisson sans alcool offerte à chaque projection.</p>
+        <p class="infos__iban"><span class="infos__iban-terme">IBAN</span> <span class="brique__chiffres">CH47&nbsp;0900&nbsp;0000 1439&nbsp;0316&nbsp;5</span></p>
       </section>
-
-      <section class="brique brique--m3 brique--o3" aria-labelledby="b-privee">
-        <h2 class="brique__terme" id="b-privee">Projection privée</h2>
-        <p class="brique__valeur">Dès <span class="brique__prix">CHF&nbsp;25.–</span></p>
+      <section class="brique infos__tiers" aria-labelledby="b-privee">
+        <h3 class="brique__terme" id="b-privee">Projection privée</h3>
+        <p class="infos__valeur">Dès <span class="brique__prix">CHF&nbsp;25.–</span></p>
         <p class="brique__detail">Par personne, à la demande, de 6 à 40 personnes.</p>
       </section>
-      <div class="brique brique--m6 brique--o4">
-        <p class="brique__terme">IBAN, carte de membre</p>
-        <p class="brique__valeur brique__chiffres">CH47&nbsp;0900&nbsp;0000 1439&nbsp;0316&nbsp;5</p>
-      </div>
-      <section class="brique brique--m6 brique--o5" aria-labelledby="b-location">
-        <h2 class="brique__terme" id="b-location">Location de la salle</h2>
-        <p class="brique__texte">Soirées privées, événements, anniversaires, workshops ou projections.</p>
-        <p class="brique__detail">Laurent Toplitsch, <a href="tel:+41765671291">076&nbsp;567&nbsp;12&nbsp;91</a></p>
+      <section class="brique infos__tiers" aria-labelledby="b-location">
+        <h3 class="brique__terme" id="b-location">Location de la salle</h3>
+        <p class="infos__valeur"><a class="infos__appel" href="tel:+41765671291">076&nbsp;567&nbsp;12&nbsp;91</a></p>
+        <p class="brique__detail">Laurent Toplitsch. Soirées privées, événements, anniversaires, workshops ou projections.</p>
       </section>
 
       <section class="merci" aria-labelledby="b-merci">
@@ -125,19 +130,19 @@
         </div>
       </section>
 
-      <section class="brique brique--m6 brique--o5" aria-labelledby="b-architecture">
+      <section class="brique infos__quart" aria-labelledby="b-architecture">
         <h2 class="brique__terme" id="b-architecture">Architecture</h2>
         <p class="brique__detail">Laurent Toplitsch, maître d’ouvrage, Lausanne ; Patrick Aiassa, maître d’ouvrage, Neuchâtel ; Sibylle Koessler, architecte, Lausanne</p>
       </section>
-      <section class="brique brique--m3 brique--o3" aria-labelledby="b-design">
+      <section class="brique infos__quart" aria-labelledby="b-design">
         <h2 class="brique__terme" id="b-design">Design</h2>
         <p class="brique__detail">Etienne Gillabert, architecte, Paris&#8209;Lausanne</p>
       </section>
-      <section class="brique brique--m3 brique--o2" aria-labelledby="b-graphisme">
+      <section class="brique infos__quart" aria-labelledby="b-graphisme">
         <h2 class="brique__terme" id="b-graphisme">Graphisme</h2>
         <p class="brique__detail">Karen Ichters, Lausanne</p>
       </section>
-      <section class="brique brique--m6 brique--o2" aria-labelledby="b-site">
+      <section class="brique infos__quart" aria-labelledby="b-site">
         <h2 class="brique__terme" id="b-site">Site web</h2>
         <p class="brique__detail">WeAreBrothers</p>
       </section>

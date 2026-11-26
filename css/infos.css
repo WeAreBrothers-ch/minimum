@@ -1,25 +1,35 @@
-/* Minimum : la page Infos, un mur de briques. Chaque information est une
-   brique (une case) : son intitulé en petites capitales, sa valeur en
-   grand, et au besoin une ligne de détail. Les briques sont serrées, jointes
-   d'un trait, de largeurs différentes : d'une rangée à l'autre, les joints
-   verticaux ne tombent pas au même endroit, comme dans un mur. Chaque
-   rangée est pleine : jamais de trou.
+/* Minimum : la page Infos (revue le 27.11.2026 : « pas très jolie »).
 
-   Une grille de six colonnes sur téléphone, de douze sur ordinateur ; la
-   largeur de chaque brique est fixée dans la page (brique--m3 : trois
-   sixièmes sur téléphone ; brique--o5 : cinq douzièmes sur ordinateur).
-   Les remerciements défilent dans un bandeau, à la main, sans fin
-   (js/pages/infos.js). */
+   Avant, un mur de briques de largeurs toutes différentes : tout avait le
+   même poids, et l'adresse laissait un grand blanc. Maintenant la page se
+   lit en quatre temps, chacun avec sa grille régulière :
 
-.briques {
+     1. Venir : l'adresse en très grand, le plan, les téléphones et l'e-mail
+        à gauche, la photo de la salle à droite, à la même hauteur ;
+     2. Tarifs : quatre cases pleines du vert de l'argent, le prix en très
+        grand ; puis où prendre ses billets ;
+     3. Carte de membre, projection privée, location : trois cases égales ;
+     4. Merci (le bandeau qu'on fait défiler, js/pages/infos.js) et les
+        crédits, quatre cases égales.
+
+   Toujours des cases jointes d'un trait ; une case a toujours la même
+   forme : l'intitulé en capitales grasses, la valeur en grand, au besoin
+   une ligne de détail. Deux colonnes sur téléphone, douze sur ordinateur. */
+
+.infos {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--joint);
   background: var(--encre);
   border-bottom: var(--trait) solid var(--encre);
 }
 
-/* ---------- Une brique ---------- */
+.infos > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+/* ---------- Une case ---------- */
 .brique {
   display: flex;
   flex-direction: column;
@@ -30,38 +40,29 @@
   padding: var(--espace-3) var(--marge);
   color: var(--encre);
   background: var(--fond);
-  /* L'intitulé et la valeur se règlent aussi sur la largeur de la brique :
-     dans une brique étroite (AG culturel, sur un petit téléphone), aucun
-     mot ne déborde. */
+  /* L'intitulé et la valeur se règlent aussi sur la largeur de la case :
+     dans une case étroite, aucun mot ne déborde. */
   container-type: inline-size;
 }
 
-.brique--m2 { grid-column: span 2; }
-.brique--m3 { grid-column: span 3; }
-.brique--m4 { grid-column: span 4; }
-.brique--m6 { grid-column: span 6; }
-
-/* L'intitulé : le titre de la brique, en capitales grasses, bien lisible. */
-.brique__terme {
+/* L'intitulé : en capitales grasses, bien lisible. */
+.brique__terme,
+.tarif__terme {
   margin-bottom: var(--espace-1);
-  font-size: min(clamp(1rem, 0.85rem + 0.5vw, 1.25rem), 12cqi);
+  font-size: min(clamp(0.9375rem, 0.85rem + 0.35vw, 1.125rem), 12cqi);
   font-weight: var(--graisse-nom);
   line-height: 1.15;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
 }
 
-.brique__valeur {
-  font-size: min(clamp(1.0625rem, 0.85rem + 0.9vw, 1.5rem), 14cqi);
+.brique__valeur,
+.infos__valeur {
+  font-size: min(clamp(1.125rem, 0.9rem + 1vw, 1.75rem), 13cqi);
   font-weight: var(--graisse-nom);
   line-height: 1.1;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
-}
-
-.brique__valeur--grand {
-  font-size: clamp(1.375rem, 1rem + 1.8vw, 2.5rem);
-  line-height: 1.02;
 }
 
 /* L'adresse e-mail garde ses minuscules ; elle peut passer à la ligne
@@ -75,7 +76,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Un prix : surligné du vert de l'argent, comme partout sur le site. */
+/* Un prix dans une phrase : surligné du vert de l'argent. */
 .brique__prix {
   padding-inline: 0.15em;
   margin-inline: -0.15em;
@@ -84,42 +85,18 @@
   box-decoration-break: clone;
 }
 
-.brique__texte {
-  max-width: var(--mesure);
-  font-weight: var(--graisse-moyenne);
-  line-height: 1.4;
-}
-
-.brique__detail {
-  max-width: var(--mesure);
+.brique__detail,
+.tarif__detail {
+  max-width: 46ch;
   font-size: var(--taille-petite);
+  font-weight: var(--graisse-moyenne);
   line-height: 1.4;
 }
 
-.brique__detail a {
-  font-weight: var(--graisse-moyenne);
-}
-
-/* La photo de la salle : elle remplit sa brique, au format 3:2. */
-.brique--photo {
-  position: relative;
-  aspect-ratio: 3 / 2;
-  min-height: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-.brique--photo img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Une brique qu'on presse (plan, téléphones, e-mail) : toute la brique
-   est le lien ; elle se remplit de noir au survol. */
+/* Une case qu'on presse (plan, téléphones, e-mail) : toute la case est le
+   lien ; elle se remplit de noir au survol. */
 .brique--lien {
+  justify-content: space-between;
   text-decoration: none;
   transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out);
 }
@@ -136,6 +113,150 @@
 
 .brique--lien .fleche {
   margin-inline-start: 0.25em;
+}
+
+/* ---------- 1. Venir ---------- */
+.infos__venir {
+  display: flex;
+  flex-direction: column;
+  gap: var(--joint);
+  background: var(--encre);
+}
+
+.infos__adresse {
+  flex: 1;
+  justify-content: space-between;
+  gap: var(--espace-3);
+  padding-block: var(--espace-4);
+}
+
+/* L'adresse : le plus grand texte de la page, à la mesure de sa case. */
+.infos__grand {
+  font-size: clamp(1.5rem, 7cqi, 4rem);
+  font-weight: var(--graisse-nom);
+  line-height: 0.98;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+/* Le plan sur toute la largeur, les deux téléphones côte à côte, l'e-mail. */
+.infos__contacts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--joint);
+}
+
+.infos__contacts > :first-child,
+.infos__mail {
+  grid-column: 1 / -1;
+}
+
+.infos__contacts > :first-child {
+  flex-direction: row;
+  align-items: baseline;
+  min-height: var(--cible);
+}
+
+.infos__contacts > :first-child .brique__terme {
+  margin: 0;
+}
+
+/* La photo de la salle : elle remplit sa case, au format 3:2. */
+.infos__photo {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  margin: 0;
+  overflow: hidden;
+  background: var(--fond);
+}
+
+.infos__photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- Le nom d'une partie : une barre, comme « Au programme » ---------- */
+.infos__rubrique {
+  padding: var(--espace-3) var(--marge);
+  font-size: var(--taille-texte);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  color: var(--fond);
+  background: var(--encre);
+}
+
+/* ---------- 2. Les tarifs : le vert de l'argent, en grand ---------- */
+.infos > .tarif {
+  grid-column: auto;
+}
+
+.tarif {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espace-1);
+  min-height: 9rem;
+  padding: var(--espace-3) var(--marge);
+  color: var(--pastille-texte);
+  background: var(--pastille-argent);
+  container-type: inline-size;
+}
+
+.tarif__prix {
+  font-size: clamp(1.75rem, 19cqi, 4.5rem);
+  font-weight: var(--graisse-nom);
+  line-height: 0.95;
+  letter-spacing: var(--interlettre-capitales);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tarif__detail {
+  margin-top: auto;
+  padding-top: var(--espace-2);
+}
+
+/* Où prendre ses billets : une phrase, en grand. */
+.infos__phrase {
+  max-width: 28ch;
+  font-size: clamp(1.125rem, 0.95rem + 0.8vw, 1.625rem);
+  font-weight: var(--graisse-nom);
+  line-height: 1.12;
+}
+
+/* ---------- 3. Carte de membre, projection privée, location ---------- */
+.infos__valeur {
+  margin-bottom: var(--espace-1);
+}
+
+.infos__appel {
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.page .infos__appel:hover,
+.infos__appel:focus-visible {
+  text-decoration: underline;
+  text-decoration-thickness: var(--trait);
+  text-underline-offset: 0.15em;
+}
+
+/* L'IBAN, en bas de la case de la carte de membre. */
+.infos__iban {
+  margin-top: auto;
+  padding-top: var(--espace-3);
+  font-weight: var(--graisse-nom);
+  line-height: 1.2;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.infos__iban-terme {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
 }
 
 /* ---------- Les remerciements : un bandeau qu'on fait défiler ---------- */
@@ -226,9 +347,21 @@
   }
 }
 
+/* Les crédits : des cases à la hauteur de leur texte. */
+.infos__quart {
+  min-height: 0;
+}
+
+/* ---------- Tablette : les tarifs et les crédits deux par deux ---------- */
+@media (min-width: 40rem) {
+  .infos > .infos__quart {
+    grid-column: auto;
+  }
+}
+
 /* ---------- Ordinateur : douze colonnes ---------- */
 @media (min-width: 56rem) {
-  .briques {
+  .infos {
     grid-template-columns: repeat(12, minmax(0, 1fr));
   }
 
@@ -237,17 +370,67 @@
     padding-block: var(--espace-4);
   }
 
-  .brique--photo {
-    min-height: 0;
-    padding: 0;
+  /* Venir : sept douzièmes pour l'adresse et le contact, cinq pour la
+     photo, qui prend leur hauteur. */
+  .infos > .infos__venir {
+    grid-column: span 7;
   }
 
-  .brique--o2 { grid-column: span 2; }
-  .brique--o3 { grid-column: span 3; }
-  .brique--o4 { grid-column: span 4; }
-  .brique--o5 { grid-column: span 5; }
-  .brique--o6 { grid-column: span 6; }
-  .brique--o7 { grid-column: span 7; }
+  .infos > .infos__photo {
+    grid-column: span 5;
+    aspect-ratio: auto;
+    min-height: 22rem;
+  }
+
+  /* Le plan et les deux téléphones sur une ligne, l'e-mail dessous. */
+  .infos__contacts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .infos__contacts > :first-child {
+    grid-column: auto;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .infos__contacts > :first-child .brique__terme {
+    margin-bottom: var(--espace-1);
+  }
+
+  .infos__contacts .brique {
+    min-height: 7rem;
+    padding-block: var(--espace-3);
+  }
+
+  .infos__contacts .infos__mail {
+    flex-direction: row;
+    align-items: center;
+    min-height: 4.5rem;
+    padding-block: var(--espace-2);
+  }
+
+  .infos__mail .brique__terme {
+    margin: 0;
+  }
+
+  .infos > .tarif,
+  .infos > .infos__quart {
+    grid-column: span 3;
+  }
+
+  .tarif {
+    min-height: 13rem;
+    padding-block: var(--espace-4);
+  }
+
+  .infos > .infos__moitie {
+    grid-column: span 6;
+  }
+
+  .infos > .infos__tiers {
+    grid-column: span 4;
+    min-height: 13rem;
+  }
 
   /* Ordinateur : MERCI sur la même ligne, dans une case d'un quart. */
   .merci {

@@ -46,14 +46,14 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 2cqi;
-  padding: 5cqi;
+  padding: var(--flyer-marge, 5cqi);
 }
 
 .flyer__live {
   display: inline-flex;
   align-items: center;
   padding: 0.3em 0.55em;
-  font-size: clamp(0.625rem, 4.5cqi, 1.125rem);
+  font-size: clamp(0.625rem, var(--flyer-etiquette, 4.5cqi), 1.125rem);
   white-space: nowrap;
   font-weight: var(--graisse-nom);
   line-height: 1.1;
@@ -80,13 +80,15 @@
   /* Toujours en bas, même sans étiquette en haut (les soirées). */
   margin-top: auto;
   display: grid;
-  gap: 2cqi;
-  padding: 5cqi;
+  gap: var(--flyer-joint, 2cqi);
+  padding: var(--flyer-marge, 5cqi);
   background: var(--noir);
 }
 
+/* Les tailles suivent la largeur du flyer ; un flyer deux fois plus large
+   (page Musique, les prochaines dates) les règle à sa mesure. */
 .flyer__nom {
-  font-size: 12cqi;
+  font-size: var(--flyer-nom, 12cqi);
   font-weight: var(--graisse-nom);
   line-height: 0.92;
   text-transform: uppercase;
@@ -98,7 +100,7 @@
   display: flex;
   justify-content: space-between;
   gap: 4cqi;
-  font-size: 9cqi;
+  font-size: var(--flyer-quand, 9cqi);
   font-weight: var(--graisse-nom);
   line-height: 1;
   font-variant-numeric: tabular-nums;
