@@ -138,9 +138,10 @@ de Zinéma ».
 - Pour couper l'arrivée automatique : `ARRIVEE_AUTOMATIQUE = false` dans
   `sanity/minimum/banque/reglages.ts` (l'écran garde alors ses boutons).
 
-**Dans l'autre sens, c'est prêt mais pas en place.** Un film créé à Minimum
-n'arrive PAS encore à Zinéma : il faut pour cela modifier le Studio de Zinéma,
-et la consigne est de ne rien y toucher sans l'accord d'Eliott.
+**Dans l'autre sens, c'est prêt mais pas en place, et c'est voulu.** Un film
+créé à Minimum n'arrive PAS à Zinéma. Décision d'Eliott (27.11.2026) : ne pas
+l'installer pour l'instant, pour pouvoir continuer à tout essayer sur Minimum
+sans que Zinéma en soit touché. À ne mettre en place que quand il le demande.
 
 Le changement est préparé et vérifié dans `studio/pour-zinema/films-partages.patch`
 (27.11.2026), à appliquer sur le dépôt `Mouknardine/Cin-Cin-` (commit
