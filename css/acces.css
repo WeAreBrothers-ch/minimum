@@ -1,97 +1,13 @@
 /* Minimum : aller d'une rubrique à l'autre, sans barre de menu (demande du
    client, 26.11.2026). Trois choses seulement :
-   - sur l'accueil, des rectangles de la couleur de chaque rubrique, posés
-     sur les murs d'affiches (mur.css les place) ;
+   - sur l'accueil, une case de la couleur de chaque rubrique, dans le
+     défilement des murs (carte.css) ;
    - en haut de chaque page, le nom MINIMUM, qui ramène à l'accueil, dans la
      case du titre, elle-même de la couleur de la rubrique ;
    - en bas, dans le pied de page, une rangée de cases vers les rubriques,
      la page où l'on est pleine de sa couleur.
    Couleurs : jetons.css (rouge le cinéma, rose la musique et la radio, jaune
    l'agenda, grenat les infos). */
-
-/* ---------- Les rectangles de l'accueil ---------- */
-.acces {
-  --acces-fond: var(--blanc);
-  --acces-texte: var(--noir);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: 0.125rem var(--espace-2);
-  padding: var(--espace-1) var(--espace-2) var(--espace-2);
-  text-decoration: none;
-  color: var(--acces-texte);
-  background: var(--acces-fond);
-  border: var(--trait) solid var(--noir);
-}
-
-.acces--cinema { --acces-fond: var(--pastille-cinema); --acces-texte: var(--texte-cinema); }
-.acces--musique { --acces-fond: var(--pastille-musique); --acces-texte: var(--texte-musique); }
-.acces--radio { --acces-fond: var(--pastille-radio); --acces-texte: var(--texte-radio); }
-.acces--agenda { --acces-fond: var(--pastille-agenda); --acces-texte: var(--texte-agenda); }
-.acces--infos { --acces-fond: var(--pastille-infos); --acces-texte: var(--texte-infos); }
-
-.acces__nom {
-  grid-column: 1;
-  font-size: clamp(1rem, 0.7rem + 1.2vw, 1.5rem);
-  font-weight: var(--graisse-nom);
-  line-height: var(--interligne-titre);
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
-}
-
-/* Le grand rectangle d'un monde (Musique, Cinéma) : son nom en très grand,
-   à la mesure de sa colonne (mur.css en fait un conteneur). */
-.acces--grand .acces__nom {
-  font-size: clamp(1.125rem, 14cqi, 3.25rem);
-}
-
-/* Ce que contient la rubrique (« 8 films ») : sous le nom, en petit. */
-.acces__detail {
-  grid-column: 1;
-  grid-row: 2;
-  font-size: 0.75rem;
-  font-weight: var(--graisse-nom);
-  line-height: 1.3;
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
-}
-
-.acces .fleche {
-  /* Téléphone : le nom prend toute la largeur du rectangle (voir plus bas). */
-  display: none;
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  align-self: center;
-  margin: 0;
-}
-
-.acces:focus-visible {
-  outline: var(--trait) solid var(--acces-texte);
-  outline-offset: calc(var(--trait) * -4);
-}
-
-.acces:active {
-  scale: 0.98;
-  transition: scale var(--duree-pression) var(--ease-out);
-}
-
-/* Plus large qu'un téléphone : la flèche, et plus d'air. */
-@media (min-width: 40rem) {
-  .acces {
-    padding: var(--espace-2) var(--espace-3);
-  }
-
-  .acces .fleche {
-    display: inline-block;
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .acces:hover {
-    color: var(--blanc);
-    background: var(--noir);
-  }
-}
 
 /* ---------- La case du titre, sur chaque page ---------- */
 /* Le nom MINIMUM en haut de la case : le chemin du retour à l'accueil. */

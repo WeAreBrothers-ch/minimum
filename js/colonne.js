@@ -5,8 +5,8 @@
    tient vers la copie du milieu ; quand le défilement s’arrête trop loin,
    on revient d’un nombre entier de cycles. Le contenu étant identique
    d’une copie à l’autre, le saut ne se voit pas. Les cases ont une hauteur
-   entière en pixels : le cycle tombe juste et le saut n’accumule aucun
-   décalage.
+   entière en pixels (une affiche, ou une rubrique, deux fois moins haute) :
+   le cycle tombe juste et le saut n’accumule aucun décalage.
 
    Vingt et une copies : dix cycles de chaque côté du milieu, des dizaines
    de milliers de pixels. Même lancée très fort, plusieurs fois de suite,
@@ -21,6 +21,8 @@ import { carteHTML } from "./carte.js";
 const COPIES = 21;
 const CENTRE = 10;
 const PROPORTION = 1.5;
+/** Une rubrique dans le mur : la moitié de la hauteur d’une affiche. */
+const PROPORTION_RUBRIQUE = 0.75;
 const ATTENTE_ARRET = 120;
 
 /**
@@ -35,7 +37,7 @@ const ATTENTE_ARRET = 120;
 /**
  * @typedef {Object} Geometrie
  * @property {number} cycle     Hauteur d’un cycle, en pixels (0 : colonne sans largeur).
- * @property {number} pas       Une case et son joint, en pixels.
+ * @property {number} pas       Une affiche et son joint, en pixels.
  * @property {number} largeur   Largeur de la colonne au moment du calcul.
  */
 
@@ -104,16 +106,22 @@ function construire(colonne, options) {
   }
   const joint = parseFloat(getComputedStyle(colonne).rowGap) || 0;
   const hauteurCase = Math.round(largeur * PROPORTION);
+  const hauteurRubrique = Math.round(largeur * PROPORTION_RUBRIQUE);
   const pas = hauteurCase + joint;
+  const hauteur = (/** @type {number} */ place) =>
+    (options.cartes[options.ordre[place % options.ordre.length] ?? 0]?.genre === "rubrique" ? hauteurRubrique : hauteurCase) + joint;
+  let serie = 0;
+  for (let place = 0; place < options.cartes.length; place++) serie += hauteur(place);
 
   /* Assez de cases par cycle pour qu’un cycle dépasse l’écran. */
   const ecran = colonne.clientHeight || window.innerHeight;
-  const repetitions = Math.max(1, Math.ceil((ecran * 1.5) / (options.cartes.length * pas)));
+  const repetitions = Math.max(1, Math.ceil((ecran * 1.5) / serie));
   const casesParCycle = options.cartes.length * repetitions;
 
   colonne.style.setProperty("--hauteur-case", `${hauteurCase}px`);
+  colonne.style.setProperty("--hauteur-rubrique", `${hauteurRubrique}px`);
   colonne.innerHTML = casesHTML(options, casesParCycle, pas, ecran);
-  return { cycle: casesParCycle * pas, pas, largeur };
+  return { cycle: serie * repetitions, pas, largeur };
 }
 
 /**

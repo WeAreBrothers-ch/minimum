@@ -5,7 +5,7 @@
    - changer de page : la nouvelle page glisse sur l'ancienne (View Transitions) ;
    - le titre de la page sort de sous sa ligne ;
    - les lignes de tirets se tapent, comme sur le programme de 2009 ;
-   - sur l'accueil, les murs s'ouvrent, puis les rectangles des rubriques se posent ;
+   - sur l'accueil, les deux murs s'ouvrent l'un après l'autre ;
    - un point clignote à côté de « En direct » pendant un live.
 
    Seulement l'opacité et le déplacement : fluide sur un téléphone.
@@ -55,7 +55,7 @@
   .filtre,
   .jour,
   .tuile,
-  .acces,
+  .carte--rubrique,
   .pied__rubrique {
     transition:
       background-color 200ms var(--ease-out),
@@ -79,16 +79,6 @@
   .moitie + .moitie {
     animation-delay: 140ms;
   }
-
-  /* Puis les rectangles des rubriques se posent sur les murs. */
-  .acces,
-  .mur__nom {
-    animation: 620ms var(--ease-entree) 380ms both apparaitre;
-  }
-
-  .moitie__acces .acces + .acces { animation-delay: 440ms; }
-  .mur__pied > :nth-child(2) { animation-delay: 500ms; }
-  .mur__pied > :nth-child(3) { animation-delay: 540ms; }
 
   /* ---------- La radio : le point du direct ---------- */
   .en-direct::before {

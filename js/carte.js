@@ -113,12 +113,59 @@ export function cartesMusique(programme) {
  */
 export function carteHTML(carte, racine, accessible, prioritaire) {
   const cache = accessible ? "" : ' aria-hidden="true" tabindex="-1"';
+  if (carte.genre === "rubrique") return rubriqueHTML(carte, racine, cache);
   const typo = carte.image === null;
   const classes = `carte${typo ? " carte--typo" : ""}${carte.genre === "film" ? "" : ` carte--${carte.genre}`}`;
   const contenu = typo ? contenuTypographique(carte) : imageHTML(carte, racine, prioritaire);
 
   /* Un live mène à la page Radio, sur sa ligne. */
   return `<a class="${classes}" href="${echapper(racine + carte.lien)}"${cache}>${contenu}</a>`;
+}
+
+/**
+ * Une rubrique dans le mur : une case de sa couleur, moins haute qu’une
+ * affiche, son nom en grand. Le nom MINIMUM n’est pas un lien.
+ * @param {Carte} carte
+ * @param {string} racine
+ * @param {string} cache
+ * @returns {string}
+ */
+function rubriqueHTML(carte, racine, cache) {
+  const classes = `carte carte--rubrique carte--${carte.teinte ?? "marque"}`;
+  const nom = `<span class="carte__rubrique">${echapper(carte.titre)}</span>`;
+  const ligne = carte.ligne ? `<span class="carte__ligne">${echapper(carte.ligne)}</span>` : "";
+  if (!carte.lien) return `<p class="${classes}" aria-hidden="true">${nom}${ligne}</p>`;
+  return (
+    `<a class="${classes}" href="${echapper(racine + carte.lien)}"${cache}>${nom}` +
+    `<span class="carte__suite">${ligne}<span class="fleche" aria-hidden="true"></span></span></a>`
+  );
+}
+
+/**
+ * Les rubriques glissées entre les affiches, à intervalles réguliers : la
+ * première tout en haut, les autres réparties dans le cycle.
+ * @param {Carte[]} affiches
+ * @param {Carte[]} rubriques
+ * @returns {Carte[]}
+ */
+export function intercaler(affiches, rubriques) {
+  const total = affiches.length + rubriques.length;
+  /** @type {Map<number, Carte>} */
+  const places = new Map();
+  rubriques.forEach((r, i) => places.set(Math.floor((i * total) / rubriques.length), r));
+  /** @type {Carte[]} */
+  const liste = [];
+  let a = 0;
+  for (let i = 0; i < total; i++) {
+    const rubrique = places.get(i);
+    const affiche = affiches[a];
+    if (rubrique) liste.push(rubrique);
+    else if (affiche) {
+      liste.push(affiche);
+      a++;
+    }
+  }
+  return liste;
 }
 
 /**

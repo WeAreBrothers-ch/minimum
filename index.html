@@ -27,7 +27,6 @@
   <link rel="stylesheet" href="css/reset.css" />
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/pastilles.css" />
-  <link rel="stylesheet" href="css/acces.css" />
   <link rel="stylesheet" href="css/mur.css" />
   <link rel="stylesheet" href="css/carte.css" />
   <link rel="stylesheet" href="css/pages.css" />
@@ -39,8 +38,8 @@
   <link rel="modulepreload" href="js/navigation.js" />
   <link rel="modulepreload" href="js/carte.js" />
   <link rel="modulepreload" href="js/donnees.js" />
-  <link rel="modulepreload" href="js/format.js" />
   <link rel="modulepreload" href="js/mur.js" />
+  <link rel="modulepreload" href="js/format.js" />
   <link rel="modulepreload" href="js/images.js" />
   <link rel="modulepreload" href="js/config.js" />
   <link rel="modulepreload" href="js/catalogue.js" />
@@ -55,41 +54,11 @@
   <main id="contenu" class="mur" tabindex="-1">
     <h1 class="visuellement-cache">Minimum : cinéma, club et radio à La Case à Chocs, Neuchâtel</h1>
     <section class="moitie surface-nuit" data-monde="musique" aria-label="Musique">
-      <nav class="moitie__acces" aria-label="Musique">
-        <a class="acces acces--grand acces--musique" href="musique/">
-          <span class="acces__nom">Musique</span>
-          <span class="acces__detail" data-compte>Soirées et radio</span>
-          <span class="fleche" aria-hidden="true"></span>
-        </a>
-        <a class="acces acces--radio" href="radio/">
-          <span class="acces__nom">Radio</span>
-          <span class="acces__detail">Lives sur YouTube</span>
-          <span class="fleche" aria-hidden="true"></span>
-        </a>
-      </nav>
       <div class="moitie__colonnes" role="group" aria-label="Affiches des soirées et des lives de la radio"></div>
     </section>
     <section class="moitie surface-ecran" data-monde="cinema" aria-label="Cinéma">
-      <nav class="moitie__acces" aria-label="Cinéma">
-        <a class="acces acces--grand acces--cinema" href="cinema/">
-          <span class="acces__nom">Cinéma</span>
-          <span class="acces__detail" data-compte>À l’affiche et prochainement</span>
-          <span class="fleche" aria-hidden="true"></span>
-        </a>
-      </nav>
       <div class="moitie__colonnes" role="group" aria-label="Affiches des films"></div>
     </section>
-    <nav class="mur__pied" aria-label="Minimum">
-      <p class="mur__nom" aria-hidden="true">Minimum</p>
-      <a class="acces acces--agenda" href="agenda/">
-        <span class="acces__nom">Agenda</span>
-        <span class="fleche" aria-hidden="true"></span>
-      </a>
-      <a class="acces acces--infos" href="infos/">
-        <span class="acces__nom">Infos</span>
-        <span class="fleche" aria-hidden="true"></span>
-      </a>
-    </nav>
   </main>
   <script type="module" src="js/main.js"></script>
 </body>

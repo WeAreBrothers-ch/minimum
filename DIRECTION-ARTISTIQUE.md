@@ -103,13 +103,17 @@ désormais **Musique** (adresse `musique/`).
 **Pas de barre de menu.** La barre du haut (nom, rubriques, lecteur radio) est
 supprimée sur tout le site. On circule par :
 - **l'accueil** : les deux murs prennent tout l'écran (Musique à gauche, Cinéma à
-  droite ; quatre colonnes sur ordinateur, deux sur téléphone). Des rectangles
-  de couleur sont posés dessus, d'un trait noir : en haut du mur gauche
-  MUSIQUE (avec le compte « 7 soirées · 3 lives ») et RADIO, en haut du mur
-  droit CINÉMA (« 8 films ») ; en bas, à cheval sur les deux murs, le nom
-  MINIMUM, puis AGENDA et INFOS côte à côte. Entre les rectangles, les
-  affiches défilent comme avant ; seuls les rectangles prennent le clic.
-  Sur téléphone, les rectangles perdent leur flèche pour laisser la place au nom ;
+  droite ; quatre colonnes sur ordinateur, deux sur téléphone). Les rubriques
+  sont des **cases du mur, dans le défilement** (revu le 26.11.2026 : pas de
+  boutons posés par-dessus) : deux fois moins hautes qu'une affiche, pleines
+  de leur couleur, le nom en très grand, ce qu'elles contiennent en petit
+  (« 7 soirées · 3 lives », « 8 films ») et la flèche. Mur gauche : MUSIQUE
+  (tout en haut), RADIO, AGENDA, MINIMUM, INFOS ; mur droit : CINÉMA (tout en
+  haut), INFOS, MINIMUM, AGENDA. Elles reviennent à chaque tour de la boucle,
+  comme les affiches. MINIMUM est une case blanche, le nom d'un bord à
+  l'autre, qui n'est pas un lien. Au survol, une case de rubrique passe au
+  blanc. Un live sans visuel est une affiche typographique blanche (plus
+  rose, pour ne pas se confondre avec les cases Musique et Radio) ;
 - **la case du titre** de chaque rubrique : pleine de sa couleur, avec en haut
   « ← MINIMUM » qui ramène à l'accueil ;
 - **le pied de page** : une rangée de cases, une par rubrique, un carré de sa

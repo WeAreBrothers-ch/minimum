@@ -2,11 +2,10 @@
    Musique à gauche sur fond noir, Cinéma à droite sur fond blanc (D1).
 
    Pas de barre de menu (demande du client, 26.11.2026) : les murs prennent
-   tout l'écran, et les rubriques sont des rectangles posés dessus
-   (acces.css). En haut de chaque mur, son monde : Musique et Radio à
-   gauche, Cinéma à droite. En bas, à cheval sur le partage des deux murs,
-   le nom MINIMUM, l'Agenda et les Infos. Entre les rectangles, les
-   affiches défilent comme avant. */
+   tout l'écran, et les rubriques sont des cases du mur, qui défilent avec
+   les affiches, deux fois moins hautes qu'elles (carte.css, accueil.js) :
+   Musique et Radio à gauche, Cinéma à droite, l'Agenda, les Infos et le
+   nom MINIMUM des deux côtés. Rien n'est posé par-dessus. */
 
 .mur {
   position: relative;
@@ -30,25 +29,6 @@
    Cinéma, pas par le mur entier : toutes les colonnes ont la même largeur. */
 .moitie + .moitie .moitie__colonne:first-child {
   border-left: var(--trait) solid var(--noir);
-}
-
-/* Les rectangles d'un monde, en haut de son mur, par-dessus les affiches.
-   Seuls les rectangles prennent le clic : à côté, le doigt et la molette
-   font défiler les colonnes. */
-.moitie__acces {
-  position: absolute;
-  z-index: 2;
-  top: var(--espace-2);
-  left: var(--espace-2);
-  right: var(--espace-2);
-  display: grid;
-  gap: var(--espace-1);
-  pointer-events: none;
-  container-type: inline-size;
-}
-
-.moitie__acces .acces {
-  pointer-events: auto;
 }
 
 /* Les colonnes d'une moitié, côte à côte : une sur téléphone, deux sur
@@ -84,52 +64,4 @@
 
 .moitie__colonne::-webkit-scrollbar {
   display: none;
-}
-
-/* Mur vide ou injoignable : une phrase, sous les rectangles. */
-.moitie__message {
-  align-self: center;
-  padding: var(--espace-3);
-  max-width: var(--mesure);
-}
-
-/* En bas, au milieu, à cheval sur les deux murs : le nom du lieu, puis
-   l'Agenda et les Infos côte à côte. */
-.mur__pied {
-  position: absolute;
-  z-index: 2;
-  left: 50%;
-  bottom: calc(var(--espace-2) + env(safe-area-inset-bottom));
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--espace-1);
-  width: min(26rem, calc(100% - 2 * var(--espace-2)));
-  translate: -50% 0;
-}
-
-.mur__nom {
-  grid-column: 1 / -1;
-  padding: var(--espace-1) var(--espace-2) 0.125rem;
-  font-size: clamp(2rem, 1.2rem + 3.6vw, 3.75rem);
-  font-weight: var(--graisse-nom);
-  line-height: 0.95;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-  color: var(--noir);
-  background: var(--blanc);
-  border: var(--trait) solid var(--noir);
-}
-
-@media (min-width: 40rem) {
-  .moitie__acces {
-    top: var(--espace-3);
-    left: var(--espace-3);
-    right: auto;
-    width: min(24rem, calc(100% - 2 * var(--espace-3)));
-  }
-
-  .mur__pied {
-    bottom: calc(var(--espace-3) + env(safe-area-inset-bottom));
-  }
 }

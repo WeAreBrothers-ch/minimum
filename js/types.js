@@ -116,15 +116,17 @@
  */
 
 /**
- * Une case du mur d’accueil.
+ * Une case du mur d’accueil : une affiche, ou une rubrique du site.
  * @typedef {Object} Carte
- * @property {"film" | "soiree" | "emission"} genre
+ * @property {"film" | "soiree" | "emission" | "rubrique"} genre
  * @property {string} id
  * @property {string} titre
  * @property {string} lien        Adresse relative à la racine du site.
  * @property {Image | null} image
  * @property {string} ligne       Une ligne d’information (date, réalisation…).
  * @property {string} etat        « À l’affiche », « En direct », « Soirée »…
+ * @property {"cinema" | "musique" | "radio" | "agenda" | "infos" | "marque"} [teinte]
+ *           Une rubrique : sa couleur (« marque » : le nom MINIMUM, en blanc).
  */
 
 export {};

@@ -88,8 +88,9 @@
   }
 }
 
-/* Une émission sans visuel : une affiche typographique bleue, la couleur de
-   la radio, plutôt qu'une case vide. Le titre grandit pour tenir l'affiche. */
+/* Un live sans visuel : une affiche typographique blanche, plutôt qu'une
+   case vide. Pas rose : elle se confondrait avec les cases Musique et Radio
+   du mur. Le titre grandit pour tenir l'affiche. */
 /* Sa taille suit la largeur de la colonne (9,5 % de celle-ci) : un mot de
    neuf lettres, « RÉÉCOUTER », tient sur une ligne, sans coupure, du plus
    petit téléphone au grand écran. */
@@ -98,8 +99,8 @@
 }
 
 .carte--typo.carte--emission {
-  color: var(--texte-radio);
-  background: var(--pastille-radio);
+  color: var(--noir);
+  background: var(--blanc);
 }
 
 /* Une soirée sans affiche : rose, la couleur de la musique. Noire, elle se
@@ -111,3 +112,96 @@
 
 /* L'état (« En direct », « À l'affiche ») : la pastille noire du site
    (pastilles.css). */
+
+/* ---------- Une rubrique dans le mur (demande du client, 26.11.2026) ----------
+   Pas de menu : les rubriques défilent avec les affiches, dans des cases
+   deux fois moins hautes qu'elles, pleines de leur couleur (jetons.css).
+   Le nom en très grand (sa taille suit la largeur de la colonne), ce que
+   contient la rubrique en petit, et la flèche. Le nom MINIMUM, en blanc,
+   n'est pas un lien. */
+.carte--rubrique {
+  --rubrique-fond: var(--blanc);
+  --rubrique-texte: var(--noir);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--espace-2);
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  padding: var(--espace-3);
+  color: var(--rubrique-texte);
+  background: var(--rubrique-fond);
+}
+
+.moitie__colonne .carte--rubrique {
+  height: var(--hauteur-rubrique, auto);
+}
+
+.carte--cinema { --rubrique-fond: var(--pastille-cinema); --rubrique-texte: var(--texte-cinema); }
+.carte--musique { --rubrique-fond: var(--pastille-musique); --rubrique-texte: var(--texte-musique); }
+.carte--radio { --rubrique-fond: var(--pastille-radio); --rubrique-texte: var(--texte-radio); }
+.carte--agenda { --rubrique-fond: var(--pastille-agenda); --rubrique-texte: var(--texte-agenda); }
+.carte--infos { --rubrique-fond: var(--pastille-infos); --rubrique-texte: var(--texte-infos); }
+
+.carte__rubrique {
+  font-size: clamp(1.25rem, 15cqi, 4rem);
+  font-weight: var(--graisse-nom);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  overflow-wrap: break-word;
+}
+
+/* Le nom du lieu : d'un bord à l'autre de sa case, comme dans le pied de page. */
+.carte--marque {
+  justify-content: center;
+}
+
+.carte--marque .carte__rubrique {
+  font-size: calc((100cqi - var(--espace-3) * 2) / 5.4);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.carte__suite {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--espace-2);
+}
+
+.carte--rubrique .carte__ligne {
+  font-size: clamp(0.6875rem, 4.2cqi, 0.875rem);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.carte--rubrique .fleche {
+  margin: 0;
+  font-size: clamp(1rem, 8cqi, 2rem);
+}
+
+.carte--rubrique:focus-visible {
+  outline-color: var(--rubrique-texte);
+}
+
+.carte--rubrique:active {
+  scale: 0.98;
+  transition: scale var(--duree-pression) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* Au survol, la case passe au blanc (jamais au noir : elle se souderait
+     aux joints noirs du mur). */
+  a.carte--rubrique:hover {
+    color: var(--noir);
+    background: var(--blanc);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carte--rubrique:active {
+    scale: none;
+  }
+}
