@@ -128,6 +128,7 @@
  * @property {string} etat        « À l’affiche », « En direct », « Soirée »…
  * @property {"cinema" | "musique" | "radio" | "agenda" | "infos"} [teinte]  Une rubrique : sa couleur.
  * @property {Emission} [live]    Un live : de quoi composer son flyer.
+ * @property {number} [hauteur]   Une rubrique du mur : sa hauteur, en largeurs de colonne.
  */
 
 export {};

@@ -110,10 +110,19 @@ function construire(colonne, options) {
   const hauteurCase = Math.round(largeur * PROPORTION);
   const hauteurRubrique = Math.round(largeur * (options.rubrique || PROPORTION_RUBRIQUE));
   const pas = hauteurCase + joint;
-  const hauteur = (/** @type {number} */ place) =>
-    (options.cartes[options.ordre[place % options.ordre.length] ?? 0]?.genre === "rubrique" ? hauteurRubrique : hauteurCase) + joint;
+  /* Chaque rubrique peut avoir sa propre hauteur (carte.hauteur) : en
+     pixels entiers elle aussi, pour que le cycle tombe juste. */
+  /** @type {Map<string, number>} */
+  const rubriques = new Map();
+  for (const carte of options.cartes) {
+    if (carte.genre === "rubrique" && carte.hauteur) rubriques.set(carte.id, Math.round(largeur * carte.hauteur));
+  }
+  /** @param {Carte | undefined} carte */
+  const hauteurDe = (carte) => (carte?.genre === "rubrique" ? (rubriques.get(carte.id) ?? hauteurRubrique) : hauteurCase);
   let serie = 0;
-  for (let place = 0; place < options.cartes.length; place++) serie += hauteur(place);
+  for (let place = 0; place < options.cartes.length; place++) {
+    serie += hauteurDe(options.cartes[options.ordre[place % options.ordre.length] ?? 0]) + joint;
+  }
 
   /* Assez de cases par cycle pour qu’un cycle dépasse l’écran. */
   const ecran = colonne.clientHeight || window.innerHeight;
@@ -122,7 +131,7 @@ function construire(colonne, options) {
 
   colonne.style.setProperty("--hauteur-case", `${hauteurCase}px`);
   colonne.style.setProperty("--hauteur-rubrique", `${hauteurRubrique}px`);
-  colonne.innerHTML = casesHTML(options, casesParCycle, pas, ecran);
+  colonne.innerHTML = casesHTML(options, casesParCycle, pas, ecran, rubriques);
   return { cycle: serie * repetitions, pas, largeur };
 }
 
@@ -132,9 +141,10 @@ function construire(colonne, options) {
  * @param {number} casesParCycle
  * @param {number} pas
  * @param {number} ecran
+ * @param {Map<string, number>} rubriques  Hauteur en pixels des rubriques qui ont la leur.
  * @returns {string}
  */
-function casesHTML({ cartes, ordre, racine, accessible, depart }, casesParCycle, pas, ecran) {
+function casesHTML({ cartes, ordre, racine, accessible, depart }, casesParCycle, pas, ecran, rubriques) {
   let html = "";
   for (let rang = 0; rang < COPIES * casesParCycle; rang++) {
     const copie = Math.floor(rang / casesParCycle);
@@ -146,7 +156,7 @@ function casesHTML({ cartes, ordre, racine, accessible, depart }, casesParCycle,
        La case d’une rubrique, elle, est lue dans chaque colonne. */
     const lisible = copie === CENTRE && place < cartes.length && (accessible || carte.genre === "rubrique");
     const prioritaire = copie === CENTRE && (place - depart) * pas < ecran;
-    html += carteHTML(carte, racine, lisible, prioritaire);
+    html += carteHTML(carte, racine, lisible, prioritaire, rubriques.get(carte.id));
   }
   return html;
 }

@@ -115,7 +115,7 @@
 .carte--infos { --rubrique-fond: var(--pastille-infos); --rubrique-texte: var(--texte-infos); }
 
 .carte__rubrique {
-  font-size: clamp(1.25rem, 15cqi, 4rem);
+  font-size: clamp(1rem, 13cqi, 4rem);
   font-weight: var(--graisse-nom);
   line-height: 0.95;
   text-transform: uppercase;

@@ -109,12 +109,18 @@ supprimée sur tout le site. On circule par :
   (rouge), INFOS (grenat). Sur ordinateur, un par colonne (Agenda et Musique
   sur les deux colonnes du mur noir, Cinéma et Infos sur celles du mur blanc) ;
   sur téléphone, Agenda puis Musique dans le mur gauche, Cinéma puis Infos
-  dans le droit, **une affiche entre les deux** (jamais un bloc). **Ni
-  alignés ni symétriques** (revu le 26.11.2026) : chaque colonne part d'une
-  hauteur différente et chaque onglet a sa propre hauteur (`ORDINATEUR` et
-  `TELEPHONE` dans `js/accueil.js`) ; ni rangée, ni zigzag. Tous dans l'écran
-  à l'arrivée sur ordinateur. Ils reviennent à la même place à chaque tour de
-  la colonne, jamais ailleurs. Une case d'onglet est moins haute qu'une
+  dans le droit, **une affiche entre les deux** (jamais un bloc). **Tirés
+  au sort à chaque arrivée** (revu le 26.11.2026 : « pas symétrique », puis
+  « tout le temps aléatoire ») : la hauteur de chaque onglet, la hauteur où il
+  arrive et l'ordre des affiches changent à chaque visite
+  (`tirerOrdinateur`, `tirerTelephone` dans `js/accueil.js`). Le hasard a
+  ses règles : chaque onglet entre en entier dans l'écran à l'arrivée, sans
+  coller au bord du haut ; deux onglets voisins ne commencent ni ne finissent
+  à la même hauteur et n'ont pas la même taille (jamais de rangée ni de
+  symétrie) ; un onglet va d'un peu plus d'une demi-largeur de colonne à une
+  largeur. Si l'écran est trop bas pour tout respecter, les écarts se
+  relâchent, jamais la règle « tout dans l'écran ». Une fois tirés, ils
+  reviennent à la même place à chaque tour de la colonne. Une case d'onglet est moins haute qu'une
   affiche : le nom en très grand, une ligne en petit
   (« 7 soirées · 3 lives », « 8 films ») et la flèche ; au survol, elle garde
   sa couleur, son nom se souligne et la flèche avance. Pas de case MINIMUM, pas de case Radio : la radio se trouve par

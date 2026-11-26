@@ -107,11 +107,12 @@ export function cartesMusique(programme) {
  * @param {string} racine      Chemin relatif vers la racine du site.
  * @param {boolean} accessible Faux pour les copies du mur, cachées aux lecteurs d’écran.
  * @param {boolean} prioritaire Vrai pour les cases visibles à l’arrivée.
+ * @param {number} [hauteur]   Une rubrique du mur : sa hauteur, en pixels.
  * @returns {string}
  */
-export function carteHTML(carte, racine, accessible, prioritaire) {
+export function carteHTML(carte, racine, accessible, prioritaire, hauteur) {
   const cache = accessible ? "" : ' aria-hidden="true" tabindex="-1"';
-  if (carte.genre === "rubrique") return rubriqueHTML(carte, racine, cache);
+  if (carte.genre === "rubrique") return rubriqueHTML(carte, racine, hauteur ? `${cache} style="--hauteur-rubrique: ${hauteur}px"` : cache);
   if (carte.live) return flyerHTML(carte.live, racine, { lien: racine + carte.lien, attributs: cache, prioritaire });
   const typo = carte.image === null;
   const classes = `carte${typo ? " carte--typo" : ""}${carte.genre === "film" ? "" : ` carte--${carte.genre}`}`;
@@ -126,7 +127,7 @@ export function carteHTML(carte, racine, accessible, prioritaire) {
  * affiche, son nom en grand.
  * @param {Carte} carte
  * @param {string} racine
- * @param {string} cache
+ * @param {string} cache     Attributs en plus (copie cachée, hauteur dans le mur).
  * @returns {string}
  */
 function rubriqueHTML(carte, racine, cache) {
