@@ -109,14 +109,28 @@ de Zinéma ».
 - **Le même film a le même identifiant des deux côtés** : il ne peut pas être
   créé deux fois. Un film saisi à la main dans les deux cinémas est reconnu
   par son titre.
-- **Rien n'est jamais modifié ni supprimé** par l'arrivée, ni ici ni à
-  Zinéma : elle ne fait que créer ce qui manque. Une correction faite ensuite
-  dans un cinéma n'arrive donc pas chez l'autre.
+- **Les corrections suivent** (demande d'Eliott, 27.11.2026). Une fiche
+  corrigée à Zinéma (titre, synopsis, affiche…) est corrigée ici toute seule,
+  et un mot l'annonce. Seule la DESCRIPTION du film est reprise ; ce qui tient
+  à Minimum (à l'affiche ou non, séances, date de sortie, invité, adresse de
+  la page) ne bouge pas. Un brouillon ouvert reçoit la même correction.
+- **Une fiche modifiée ici n'est jamais écrasée toute seule.** Chaque fiche
+  liée garde un repère (`banqueEmpreinte`) : où en étaient la fiche de Zinéma
+  et celle d'ici la dernière fois. On sait ainsi laquelle a changé. Si c'est
+  celle de Zinéma, on reprend ; si c'est celle d'ici, on n'y touche pas ; si
+  ce sont les deux, l'écran « Films partagés » écrit « Fiche différente » et
+  propose « Reprendre la fiche de Zinéma » (avec une question avant).
+- **Rien n'est jamais supprimé** par le partage, et rien n'est écrit à Zinéma.
 - **Un film supprimé ici ne revient pas tout seul** : le Studio tient un
   carnet des films déjà venus (fiche `banque.zinema`, dans aucun menu). Sur
   l'écran « Films partagés », il est marqué « Retiré de Minimum », avec un
   bouton « Remettre ».
 - **Seul un film publié arrive** : un brouillon de Zinéma reste à Zinéma.
+- **Les films recopiés le 26.11.2026**, avant le partage : 21 disent la même
+  chose des deux côtés et ont reçu leur repère ; 6 avaient été réécrits ici
+  d'après le programme du site (Dentro, Enjoy Your Stay, Ingeborg Bachmann,
+  Mr. Nobody Against Putin, Mit einem Tiger schlafen, Ni vue, ni connue) :
+  ils sont marqués « Fiche différente » et laissés tels quels.
 - **Zinéma est lu sans jeton ni identifiants**, par son API publique, comme
   le fait son site : rien ne peut y être écrit d'ici. Le seul réglage fait
   chez Zinéma : l'adresse `https://cine-minimum.sanity.studio` est autorisée
@@ -189,14 +203,18 @@ Essayé dans le Studio, dans un navigateur, le 26.11.2026, sur les exemples :
   dans la réponse de Zinéma et des écritures simulées, le film arrive tout
   seul (fiche complète, pas à l'affiche, affiche copiée, carnet tenu) et le
   mot s'affiche ; avec des écritures refusées, rien ne casse et l'écran
-  propose « Faire venir ». Zinéma n'est lu que sans identifiants ;
+  propose « Faire venir ». Zinéma n'est lu que sans identifiants. Les
+  corrections (écritures simulées) : une fiche corrigée à Zinéma est reprise
+  toute seule et annoncée ; « Reprendre la fiche de Zinéma » n'écrit que la
+  description du film. Le carnet, lui, a été écrit pour de vrai par le
+  Studio en ligne le 26.11.2026 (27 films notés) ;
 - l'onglet Posts : 34 posts composés, « Post » et « Story » (image
   enregistrée, légende copiée).
 
 Vérifié par `npm test` : 6206 vérifications de la Planification à une salle
 (semaine remplie, aucun chevauchement, 21 h après la fin du film de 19 h,
 dimanche à 17 h, rien d'écrasé, rien au Club), 17 sur la séance d'une
-avant-première, 42 sur les films partagés, et celles de Zinéma sur l'historique, la feuille à imprimer
+avant-première, 67 sur les films partagés, et celles de Zinéma sur l'historique, la feuille à imprimer
 et les actions du Studio.
 
 **Pas essayé.** Le compte disponible pour ces essais ne pouvait que lire, et

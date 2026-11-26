@@ -435,6 +435,16 @@ export const film = defineType({
       hidden: ({ value }) => !value,
       components: { input: NoteFilmPartage },
     }),
+    /* Le repère du partage : où en étaient la fiche de l'autre cinéma et
+       celle-ci la dernière fois qu'elles ont été accordées. Il sert à
+       savoir laquelle a changé depuis ; personne n'a à le lire. */
+    defineField({
+      name: "banqueEmpreinte",
+      title: "Repère du partage",
+      type: "string",
+      readOnly: true,
+      hidden: true,
+    }),
 
     /* ---------------- Encadrés repliables ---------------- */
     defineField({

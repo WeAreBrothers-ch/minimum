@@ -3,8 +3,10 @@
  *
  * Posée autour de tout le Studio (sanity.config.ts) : dès qu'on l'ouvre,
  * puis toutes les cinq minutes, les films publiés chez l'autre et absents
- * d'ici sont créés ici, fiche et affiche copiées. Personne n'a rien à faire.
- * Un mot s'affiche quand un film vient d'arriver.
+ * d'ici sont créés ici, fiche et affiche copiées, et les corrections faites
+ * là-bas sont reprises ici (si la fiche d'ici n'a pas été modifiée entre
+ * temps). Personne n'a rien à faire. Un mot s'affiche quand un film vient
+ * d'arriver ou d'être mis à jour.
  *
  * Rien n'est montré quand il n'y a rien de neuf, ni quand ça rate : l'écran
  * « Films partagés » dit où on en est, et permet de relancer.
@@ -14,8 +16,8 @@ import {useEffect} from 'react'
 import {type LayoutProps, useClient} from 'sanity'
 
 import {VERSION_API} from '../../projet'
-import {annonce, lancerArrivee} from './arrivee'
-import {ARRIVEE_AUTOMATIQUE, INTERVALLE_ARRIVEE} from './reglages'
+import {annonce, annonceMiseAJour, lancerArrivee} from './arrivee'
+import {ARRIVEE_AUTOMATIQUE, AUTRE, INTERVALLE_ARRIVEE} from './reglages'
 
 function ArriveeDesFilms(): null {
   const client = useClient({apiVersion: VERSION_API})
@@ -41,9 +43,17 @@ function ArriveeDesFilms(): null {
             duration: 9000,
           })
         }
-        /* Rien n'a pu être créé (compte qui ne peut que lire, par exemple) :
+        if (bilan.misesAJour.length > 0) {
+          toast.push({
+            status: 'info',
+            title: annonceMiseAJour(bilan),
+            description: `La fiche a été corrigée à ${AUTRE.nom} : la correction est reprise ici. Ce qui est propre à ce cinéma (à l’affiche ou non, séances) n’a pas bougé.`,
+            duration: 9000,
+          })
+        }
+        /* Rien n'a pu être écrit (compte qui ne peut que lire, par exemple) :
            inutile d'insister toutes les cinq minutes. */
-        if (bilan.rates > 0 && bilan.arrives.length === 0) reessayer = false
+        if (bilan.rates > 0 && bilan.arrives.length === 0 && bilan.misesAJour.length === 0) reessayer = false
       } catch (cause) {
         console.error('Films partagés : l’arrivée automatique a échoué.', cause)
       }

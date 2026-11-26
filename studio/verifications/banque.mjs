@@ -1,8 +1,8 @@
 /* ============================================================
    Les films partagés, vérifiés.
 
-   Un film créé chez l'autre cinéma arrive ici tout seul. Cinq
-   promesses :
+   Un film créé chez l'autre cinéma arrive ici tout seul, et ses
+   corrections aussi. Sept promesses :
 
      1. un film déjà ici est reconnu — par sa marque, par son
         identifiant, ou par son titre — et n'arrive pas deux fois ;
@@ -12,8 +12,11 @@
      3. une image qui ne se laisse pas copier n'empêche pas la fiche
         d'être créée, et c'est dit ;
      4. un film supprimé ici ne revient pas tout seul ;
-     5. rien n'est jamais modifié ni supprimé : on ne fait que créer
-        ce qui manque.
+     5. rien n'est jamais supprimé, et rien n'est écrit chez l'autre ;
+     6. une fiche corrigée chez l'autre est corrigée ici, si celle
+        d'ici n'a pas bougé : seule la description du film change,
+        pas ce qui tient à ce cinéma ;
+     7. une fiche modifiée ICI n'est jamais écrasée toute seule.
 
    Rien n'est lu ni écrit dans Sanity ici : un faux client note ce
    qu'on lui demande.
@@ -34,7 +37,7 @@ async function chargerModule(chemin) {
   return import(`data:text/javascript;base64,${Buffer.from(compile.outputFiles[0].text).toString('base64')}`)
 }
 
-const {arriveeDesFilms, dejaIci, faireVenir, ficheAPartirDe, origineDe, trier} = await chargerModule('../sanity/minimum/banque/partage.ts')
+const {arriveeDesFilms, comparer, dejaIci, empreinte, faireVenir, ficheAPartirDe, ficheLiee, memeFiche, origineDe, reprendre, trier} = await chargerModule('../sanity/minimum/banque/partage.ts')
 
 let echecs = 0
 let reussites = 0
@@ -63,8 +66,8 @@ const FILM = {
   trailerUrl: 'https://exemple.ch/ba',
   presseUrl: null,
   slug: 'le-grand-bleu',
-  affiche: {url: 'https://cdn.exemple/affiche.jpg', nom: 'affiche.jpg', alt: 'Affiche', hotspot: {x: 0.5, y: 0.3}, crop: null},
-  photos: [{url: 'https://cdn.exemple/photo.jpg', nom: 'photo.jpg', alt: null, hotspot: null, crop: null}],
+  affiche: {id: 'image-aaa-400x570-jpg', url: 'https://cdn.exemple/affiche.jpg', nom: 'affiche.jpg', alt: 'Affiche', hotspot: {x: 0.5, y: 0.3}, crop: null},
+  photos: [{id: 'image-bbb-800x450-jpg', url: 'https://cdn.exemple/photo.jpg', nom: 'photo.jpg', alt: null, hotspot: null, crop: null}],
   /* Ce qui tient au cinéma d'en face : ne doit PAS traverser. */
   status: 'passe',
   statuts: ['passe'],
@@ -95,10 +98,27 @@ verifier('ni date de sortie, ni invité, ni projection de l’autre cinéma', ['
 verifier('la marque est posée', fiche.origineBanque, 'zinema:abc')
 verifier('sans affiche copiée, pas de champ affiche', 'poster' in ficheAPartirDe(FILM, null, []), false)
 
+verifier('la fiche porte son repère : celle de l’autre, et celle d’ici', /^[a-z0-9]+:[a-z0-9]+$/.test(fiche.banqueEmpreinte), true)
+
 console.log('Faire venir un film')
-/* Un faux projet Sanity : il garde ses fiches, et note tout ce qu'on lui demande d'écrire. */
-function fauxClient({films = [], carnet = null, refuserImage = false, refuserFiche = () => false, refuserCarnet = false} = {}) {
-  const fiches = new Map(films.map((film) => [film._id, film]))
+/* Un faux projet Sanity : il garde ses fiches comme Sanity les garde, les rend comme le
+   partage les lit, et note tout ce qu'on lui demande d'écrire. Une image déposée garde
+   l'identifiant qu'elle a chez l'autre (le même fichier : la même empreinte). */
+const ID_IMAGE = {'https://cdn.exemple/affiche.jpg': 'image-aaa-400x570-jpg', 'https://cdn.exemple/photo.jpg': 'image-bbb-800x450-jpg', 'https://cdn.exemple/nouvelle.jpg': 'image-ccc-1000x1400-jpg'}
+function lu(doc) {
+  const image = (i) => (i?.asset ? {id: i.asset._ref, url: `https://ici/${i.asset._ref}`, nom: null, alt: i.alt ?? null, hotspot: i.hotspot ?? null, crop: i.crop ?? null} : null)
+  const {poster, stillImages, slug, _type, status, statuts, releaseDate, presence, ...reste} = doc
+  return {
+    title: null, director: null, duration: null, year: null, country: null, originalTitle: null, language: null, subtitles: null,
+    ageRating: null, typeDeFilm: null, synopsis: null, trailerUrl: null, presseUrl: null,
+    ...reste,
+    slug: slug?.current ?? null,
+    affiche: image(poster),
+    photos: stillImages ? stillImages.map(image) : null,
+  }
+}
+function fauxClient({films = [], carnet = null, refuserImage = false, refuserFiche = () => false, refuserCarnet = false, refuserRetouche = false} = {}) {
+  const fiches = new Map(films.map((film) => [film._id, {_type: 'film', ...film}]))
   if (carnet) fiches.set('banque.zinema', {_id: 'banque.zinema', _type: 'journalBanque', films: [...carnet]})
   const gestes = []
   return {
@@ -106,14 +126,15 @@ function fauxClient({films = [], carnet = null, refuserImage = false, refuserFic
     fiches,
     carnet: () => fiches.get('banque.zinema')?.films ?? null,
     fetch: async (requete, parametres) => {
-      if (parametres?.id) return fiches.get(parametres.id)?.films ?? null
-      return [...fiches.values()].filter((fiche) => fiche._type === 'film').map(({_id, title, origineBanque}) => ({_id, title, origineBanque}))
+      if (parametres?.id && requete.includes('.films')) return fiches.get(parametres.id)?.films ?? null
+      if (parametres?.id) return fiches.has(parametres.id) ? parametres.id : null
+      return [...fiches.values()].filter((f) => f._type === 'film' && !f._id.startsWith('drafts.')).map(lu)
     },
     assets: {
       upload: async (type, corps, options) => {
         if (refuserImage) throw new Error('refus')
         gestes.push(['upload', type, options.filename])
-        return {_id: `image-${options.filename}`}
+        return {_id: ID_IMAGE[await corps.text()] ?? `image-${options.filename}`}
       },
     },
     createIfNotExists: async (doc) => {
@@ -125,15 +146,18 @@ function fauxClient({films = [], carnet = null, refuserImage = false, refuserFic
     },
     patch: (id) => {
       const retouche = {
+        aEcrire: {}, aVider: [], aAjouter: null,
+        set: (valeurs) => (Object.assign(retouche.aEcrire, valeurs), retouche),
+        unset: (champs) => (retouche.aVider.push(...champs), retouche),
         setIfMissing: () => retouche,
-        insert: (ou, chemin, elements) => {
-          retouche.elements = [ou, chemin, elements]
-          return retouche
-        },
+        insert: (ou, chemin, elements) => ((retouche.aAjouter = elements), retouche),
         commit: async () => {
-          if (refuserCarnet) throw new Error('refus')
-          gestes.push(['patch', id, retouche.elements])
-          fiches.get(id).films.push(...retouche.elements[2])
+          if (id === 'banque.zinema' ? refuserCarnet : refuserRetouche) throw new Error('refus')
+          gestes.push(['patch', id, {set: Object.keys(retouche.aEcrire).sort(), unset: [...retouche.aVider].sort()}])
+          const fiche = fiches.get(id)
+          if (retouche.aAjouter) fiche.films.push(...retouche.aAjouter)
+          Object.assign(fiche, retouche.aEcrire)
+          for (const champ of retouche.aVider) delete fiche[champ]
         },
       }
       return retouche
@@ -151,12 +175,13 @@ const sansBruit = async (action) => {
     console.error = noter
   }
 }
+const ecritures = (client) => client.gestes.filter((g) => g[0] !== 'upload').length
 
 let client = fauxClient()
 let resultat = await faireVenir(client, FILM, telecharger)
 verifier('rend la fiche, sous l’identifiant du film, sans image manquante', resultat, {id: 'abc', imagesManquantes: 0})
 verifier('copie l’affiche, puis la photo, puis crée la fiche', client.gestes.map((ligne) => ligne[0]), ['upload', 'upload', 'createIfNotExists'])
-verifier('la fiche créée porte l’affiche copiée', client.gestes[2][1].poster.asset._ref, 'image-affiche.jpg')
+verifier('la fiche créée porte l’affiche copiée', client.gestes[2][1].poster.asset._ref, 'image-aaa-400x570-jpg')
 
 client = fauxClient({refuserImage: true})
 resultat = await sansBruit(() => faireVenir(client, FILM, telecharger))
@@ -167,7 +192,7 @@ client = fauxClient()
 resultat = await faireVenir(client, {...FILM, affiche: null, photos: null}, telecharger)
 verifier('un film sans affiche vient quand même', [resultat.id, client.gestes.map((l) => l[0])], ['abc', ['createIfNotExists']])
 
-client = fauxClient({films: [{_id: 'abc', _type: 'film', title: 'Corrigé ici', status: 'a-laffiche'}]})
+client = fauxClient({films: [{_id: 'abc', title: 'Corrigé ici', status: 'a-laffiche'}]})
 await faireVenir(client, FILM, telecharger)
 verifier('une fiche qui existe déjà sous cet identifiant n’est pas écrasée', [client.fiches.get('abc').title, client.fiches.get('abc').status], ['Corrigé ici', 'a-laffiche'])
 
@@ -181,21 +206,21 @@ verifier('à faire venir : ni ici, ni au carnet', tri.aFaireVenir.map((f) => f._
 verifier('à noter : ici, pas encore au carnet (même reconnu par son titre)', tri.aNoter, ['b'])
 verifier('retiré exprès : au carnet, plus ici', tri.retires.map((f) => f._id), ['c'])
 verifier('sans carnet, tout ce qui manque vient', trier([A, B], [], null).aFaireVenir.map((f) => f._id), ['a', 'b'])
+verifier('une fiche du même titre n’est pas une fiche liée', [dejaIci(B, [{_id: 'x', title: 'film b'}])?._id, ficheLiee(B, [{_id: 'x', title: 'film b'}])], ['x', null])
 
 console.log('L’arrivée des films')
 const autre = (films) => ({fetch: async () => films})
 
-client = fauxClient({films: [{_id: 'a', _type: 'film', title: 'Film A'}]})
+client = fauxClient({films: [{_id: 'x', title: 'film a'}]})
 let bilan = await arriveeDesFilms(client, autre([A, B, C]), telecharger)
-verifier('les films qui manquent arrivent, pas les autres', [bilan.arrives, bilan.rates, bilan.imagesManquantes], [[{id: 'b', titre: 'Film B'}, {id: 'c', titre: 'Film C'}], 0, 0])
+verifier('les films qui manquent arrivent, pas les autres', [bilan.arrives, bilan.misesAJour, bilan.rates, bilan.imagesManquantes], [[{id: 'b', titre: 'Film B'}, {id: 'c', titre: 'Film C'}], [], 0, 0])
 verifier('ils sont ici, pas à l’affiche, avec leur marque', ['b', 'c'].map((id) => [client.fiches.get(id).status, client.fiches.get(id).origineBanque]), [['passe', 'zinema:b'], ['passe', 'zinema:c']])
-verifier('le film déjà ici n’a pas été touché', client.fiches.get('a'), {_id: 'a', _type: 'film', title: 'Film A'})
+verifier('la fiche du même titre, saisie ici à part, n’a pas été touchée', client.fiches.get('x'), {_type: 'film', _id: 'x', title: 'film a'})
 verifier('le carnet note les trois', [...client.carnet()].sort(), ['a', 'b', 'c'])
-verifier('seules des créations (et le carnet) ont été écrites', [...new Set(client.gestes.map((g) => g[0]))].sort(), ['createIfNotExists', 'patch', 'upload'])
 
-const avant = client.gestes.length
+let avant = ecritures(client)
 bilan = await arriveeDesFilms(client, autre([A, B, C]), telecharger)
-verifier('une deuxième arrivée ne fait rien : rien de neuf', [bilan.arrives, client.gestes.length - avant], [[], 0])
+verifier('une deuxième arrivée ne fait rien : rien de neuf', [bilan.arrives, bilan.misesAJour, ecritures(client) - avant], [[], [], 0])
 
 client.fiches.delete('b')
 bilan = await arriveeDesFilms(client, autre([A, B, C]), telecharger)
@@ -218,9 +243,84 @@ client = fauxClient({refuserCarnet: true})
 bilan = await sansBruit(() => arriveeDesFilms(client, autre([A]), telecharger))
 verifier('un carnet qui ne s’écrit pas ne fait pas perdre l’arrivée', [bilan.arrives.map((f) => f.id), client.fiches.has('a')], [['a'], true])
 
-client = fauxClient({films: [{_id: 'a', _type: 'film', title: 'Film A'}], carnet: ['a']})
+client = fauxClient({films: [{_id: 'a', title: 'Film A'}], carnet: ['a']})
 bilan = await arriveeDesFilms(client, autre([]), telecharger)
 verifier('l’autre cinéma illisible ou vide : rien ne bouge ici', [bilan.arrives, client.gestes.length, client.fiches.has('a')], [[], 0, true])
+
+client = fauxClient({refuserFiche: () => true})
+bilan = await sansBruit(() => arriveeDesFilms(client, autre([A, B, C, D, {...A, _id: 'e'}, {...A, _id: 'f'}]), telecharger))
+verifier('un compte qui ne peut que lire : on s’arrête au troisième refus', bilan.rates, 3)
+
+console.log('Une correction faite chez l’autre cinéma')
+/* Le film est arrivé ; ici, on l'a mis à l'affiche, daté, et on lui a donné un invité. */
+client = fauxClient()
+await arriveeDesFilms(client, autre([A]), telecharger)
+Object.assign(client.fiches.get('a'), {status: 'a-laffiche', statuts: ['a-laffiche'], releaseDate: '2026-12-02', presence: 'la réalisatrice'})
+let ici = (await client.fetch(''))[0]
+verifier('rien n’a changé depuis l’arrivée : à jour', comparer(A, ici), 'a-jour')
+verifier('mettre le film à l’affiche ici n’est pas une modification de sa fiche', empreinte(ici) === empreinte(lu({...client.fiches.get('a'), status: 'passe'})), true)
+
+const A2 = {...A, synopsis: 'Deux plongeurs, et la mer.', duration: 170, country: null, affiche: {...A.affiche, id: 'image-ccc-1000x1400-jpg', url: 'https://cdn.exemple/nouvelle.jpg'}}
+verifier('l’autre cinéma corrige sa fiche : à reprendre', comparer(A2, ici), 'a-reprendre')
+avant = ecritures(client)
+bilan = await arriveeDesFilms(client, autre([A2]), telecharger)
+let apres = client.fiches.get('a')
+verifier('la correction est reprise, et annoncée', [bilan.misesAJour, bilan.arrives, bilan.rates], [[{id: 'a', titre: 'Film A'}], [], 0])
+verifier('le synopsis, la durée et l’affiche sont ceux de l’autre cinéma', [apres.synopsis, apres.duration, apres.poster.asset._ref], ['Deux plongeurs, et la mer.', 170, 'image-ccc-1000x1400-jpg'])
+verifier('un champ vidé là-bas est vidé ici', 'country' in apres, false)
+verifier('ce qui tient à ce cinéma n’a pas bougé', [apres.status, apres.statuts, apres.releaseDate, apres.presence, apres.slug, apres.origineBanque], ['a-laffiche', ['a-laffiche'], '2026-12-02', 'la réalisatrice', {_type: 'slug', current: 'le-grand-bleu'}, 'zinema:a'])
+verifier('une seule écriture, sur la fiche (pas de brouillon ici)', client.gestes.slice(-1)[0].slice(0, 2), ['patch', 'a'])
+verifier('la photo, déjà ici, n’a pas été renvoyée ; la nouvelle affiche, oui', client.gestes.filter((g) => g[0] === 'upload').length, 3)
+avant = ecritures(client)
+bilan = await arriveeDesFilms(client, autre([A2]), telecharger)
+verifier('ensuite, plus rien à faire', [bilan.misesAJour, ecritures(client) - avant, comparer(A2, (await client.fetch(''))[0])], [[], 0, 'a-jour'])
+
+client.fiches.set('drafts.a', {...client.fiches.get('a'), _id: 'drafts.a', synopsis: 'Brouillon en cours'})
+const A3 = {...A2, director: 'L. Besson'}
+await arriveeDesFilms(client, autre([A3]), telecharger)
+verifier('un brouillon ouvert reçoit la même correction', [client.fiches.get('a').director, client.fiches.get('drafts.a').director, client.fiches.get('drafts.a').synopsis], ['L. Besson', 'L. Besson', 'Deux plongeurs, et la mer.'])
+client.fiches.delete('drafts.a')
+
+console.log('Une fiche modifiée ici n’est jamais écrasée toute seule')
+client.fiches.get('a').synopsis = 'Notre texte, écrit ici.'
+ici = (await client.fetch(''))[0]
+verifier('modifiée ici, pas chez l’autre : on n’y touche pas', comparer(A3, ici), 'modifiee-ici')
+const A4 = {...A3, year: 1989}
+verifier('modifiée des deux côtés : une personne décide', comparer(A4, ici), 'differente')
+avant = ecritures(client)
+bilan = await arriveeDesFilms(client, autre([A4]), telecharger)
+verifier('l’arrivée n’écrit rien dessus', [bilan.misesAJour, ecritures(client) - avant, client.fiches.get('a').synopsis, client.fiches.get('a').year], [[], 0, 'Notre texte, écrit ici.', 1988])
+await reprendre(client, A4, ici, telecharger)
+verifier('à la demande, la fiche de l’autre cinéma est reprise', [client.fiches.get('a').synopsis, client.fiches.get('a').year, comparer(A4, (await client.fetch(''))[0])], ['Deux plongeurs, et la mer.', 1989, 'a-jour'])
+
+/* Dans l'autre sens, plus tard : l'autre cinéma reprend NOTRE correction. Les deux fiches ont changé, pour dire la même chose. */
+client.fiches.get('a').synopsis = 'Corrigé ici.'
+const A5 = {...A4, synopsis: 'Corrigé ici.'}
+ici = (await client.fetch(''))[0]
+verifier('l’autre cinéma a repris notre correction : c’est accordé, sans rien réécrire', comparer(A5, ici), 'a-noter')
+await arriveeDesFilms(client, autre([A5]), telecharger)
+verifier('et c’est noté', [comparer(A5, (await client.fetch(''))[0]), client.fiches.get('a').synopsis], ['a-jour', 'Corrigé ici.'])
+
+console.log('Les films recopiés avant le partage (sans repère)')
+const copie = {_id: 'a', title: 'Film A', director: 'Luc Besson', duration: 168, year: 1988, country: 'France', language: 'VF', ageRating: '12/12 ans', typeDeFilm: 'Fiction', synopsis: 'Deux plongeurs.', trailerUrl: 'https://exemple.ch/ba', slug: {_type: 'slug', current: 'le-grand-bleu'},
+  poster: {_type: 'imageMinimum', asset: {_ref: 'image-zzz-400x570-jpg'}, alt: 'Affiche'}, stillImages: [{_type: 'imageMinimum', asset: {_ref: 'image-yyy-800x450-jpg'}}], status: 'passe'}
+verifier('mêmes textes, images de mêmes dimensions réenregistrées : la même fiche', [memeFiche(A, lu(copie), true), memeFiche(A, lu(copie), false), comparer(A, lu(copie))], [true, false, 'a-noter'])
+client = fauxClient({films: [copie], carnet: ['a']})
+bilan = await arriveeDesFilms(client, autre([A]), telecharger)
+verifier('elle reçoit son repère, sans rien changer d’autre', [bilan.misesAJour, client.gestes.map((g) => [g[0], g[1], g[2]?.set]), client.fiches.get('a').poster.asset._ref], [[], [['patch', 'a', ['banqueEmpreinte']]], 'image-zzz-400x570-jpg'])
+bilan = await arriveeDesFilms(client, autre([{...A, synopsis: 'Corrigé là-bas.'}]), telecharger)
+verifier('et reçoit ensuite les corrections de l’autre cinéma', [bilan.misesAJour.map((f) => f.id), client.fiches.get('a').synopsis], [['a'], 'Corrigé là-bas.'])
+verifier('une fiche réécrite ici avant le partage : différente, laissée telle quelle', comparer(A, lu({...copie, synopsis: 'Le texte du site.', poster: {asset: {_ref: 'image-site-607x865-jpg'}}})), 'differente')
+
+console.log('Quand ça rate')
+client = fauxClient({refuserImage: true})
+client.fiches.set('a', {...ficheAPartirDe(A, 'image-aaa-400x570-jpg', ['image-bbb-800x450-jpg'])})
+bilan = await sansBruit(() => arriveeDesFilms(client, autre([A2]), telecharger))
+verifier('une affiche qui ne se laisse pas copier : le texte est repris, l’ancienne affiche reste', [bilan.misesAJour.length, bilan.imagesManquantes, client.fiches.get('a').synopsis, client.fiches.get('a').poster.asset._ref], [1, 1, 'Deux plongeurs, et la mer.', 'image-aaa-400x570-jpg'])
+client = fauxClient({refuserRetouche: true})
+client.fiches.set('a', {...ficheAPartirDe(A, 'image-aaa-400x570-jpg', ['image-bbb-800x450-jpg'])})
+bilan = await sansBruit(() => arriveeDesFilms(client, autre([A2]), telecharger))
+verifier('une écriture refusée : rien n’est annoncé, la fiche est intacte', [bilan.misesAJour, bilan.rates, client.fiches.get('a').synopsis], [[], 1, 'Deux plongeurs.'])
 
 console.log(`${reussites} vérification(s) réussie(s), ${echecs} échec(s).`)
 process.exit(echecs > 0 ? 1 : 0)

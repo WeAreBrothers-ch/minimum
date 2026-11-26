@@ -16,7 +16,8 @@ export function NoteFilmPartage() {
         <Text size={1}>
           Elle a été copiée ici toute seule, avec son affiche. Le film n’est montré à {ICI} que si vous le décidez :
           cochez « À l’affiche » ou « Prochainement » plus haut dans cette fiche. Il se programme déjà dans la
-          Planification. Une correction faite ici ne change pas la fiche de {AUTRE.nom}, et inversement.
+          Planification. Une correction faite à {AUTRE.nom} arrive ici toute seule, tant que vous n’avez pas modifié
+          cette fiche entre-temps.
         </Text>
       </Stack>
     </Card>

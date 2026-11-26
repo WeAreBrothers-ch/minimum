@@ -29,10 +29,21 @@ export function lancerArrivee(client: unknown): Promise<Bilan> {
   return enCours;
 }
 
+function enumerer(films: Bilan["arrives"]): string {
+  const titres = films.map((film) => `« ${film.titre} »`);
+  if (titres.length === 1) return titres[0] as string;
+  if (titres.length <= 3) return `${titres.slice(0, -1).join(", ")} et ${titres[titres.length - 1]}`;
+  return `${titres.length} films`;
+}
+
 /** La phrase qui annonce une arrivée : « « Titre » est arrivé de Zinéma ». */
 export function annonce(bilan: Bilan): string {
-  const titres = bilan.arrives.map((film) => `« ${film.titre} »`);
-  if (titres.length === 1) return `${titres[0]} est arrivé de ${AUTRE.nom}`;
-  if (titres.length <= 3) return `${titres.slice(0, -1).join(", ")} et ${titres[titres.length - 1]} sont arrivés de ${AUTRE.nom}`;
-  return `${titres.length} films sont arrivés de ${AUTRE.nom}`;
+  const plusieurs = bilan.arrives.length > 1;
+  return `${enumerer(bilan.arrives)} ${plusieurs ? "sont arrivés" : "est arrivé"} de ${AUTRE.nom}`;
+}
+
+/** La phrase qui annonce une correction reprise : « « Titre » : fiche mise à jour d'après Zinéma ». */
+export function annonceMiseAJour(bilan: Bilan): string {
+  const plusieurs = bilan.misesAJour.length > 1;
+  return `${enumerer(bilan.misesAJour)} : ${plusieurs ? "fiches mises" : "fiche mise"} à jour d’après ${AUTRE.nom}`;
 }

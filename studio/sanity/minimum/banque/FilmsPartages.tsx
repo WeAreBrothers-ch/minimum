@@ -1,10 +1,12 @@
 /**
  * Les films partagés : où en est l'arrivée des films de l'autre cinéma.
  *
- * Les films arrivent tout seuls (ArriveeDesFilms) ; cet écran le montre.
- * Une ligne par film de l'autre cinéma : il est ici (et mène à sa fiche),
- * ou il a été retiré d'ici exprès (et peut être remis), ou il n'est pas
- * encore arrivé (et peut être demandé tout de suite).
+ * Les films arrivent tout seuls, et les corrections aussi (ArriveeDesFilms) ;
+ * cet écran le montre. Une ligne par film de l'autre cinéma : il est ici (et
+ * mène à sa fiche), ou il a été retiré d'ici exprès (et peut être remis), ou
+ * il n'est pas encore arrivé (et peut être demandé tout de suite). Une fiche
+ * modifiée ici n'est jamais écrasée toute seule : la ligne le dit, et un
+ * bouton permet de reprendre celle de l'autre cinéma.
  */
 import {AddIcon, CheckmarkIcon, EditIcon, SearchIcon, SyncIcon} from '@sanity/icons'
 import {Box, Button, Card, Flex, Spinner, Stack, Text, TextInput, useToast} from '@sanity/ui'
@@ -13,17 +15,21 @@ import {useClient} from 'sanity'
 import {IntentLink} from 'sanity/router'
 
 import {VERSION_API} from '../../projet'
-import {annonce, autreCinema, lancerArrivee} from './arrivee'
+import {annonce, annonceMiseAJour, autreCinema, lancerArrivee} from './arrivee'
 import {
   type Ecrivain,
+  type Etat,
   type FilmDeLaBanque,
   type FilmDIci,
   REQUETE_BANQUE,
   REQUETE_ICI,
   REQUETE_JOURNAL,
+  comparer,
   dejaIci,
   faireVenir,
+  ficheLiee,
   noterAuJournal,
+  reprendre,
 } from './partage'
 import {AUTRE, ICI, ID_JOURNAL} from './reglages'
 
@@ -73,8 +79,9 @@ export function FilmsPartages() {
             title: 'Tous les films n’ont pas pu arriver',
             description: 'Vérifiez la connexion et réessayez. Rien n’est créé à moitié.',
           })
-        } else if (bilan.arrives.length > 0) {
-          toast.push({status: 'success', title: annonce(bilan)})
+        } else if (bilan.arrives.length > 0 || bilan.misesAJour.length > 0) {
+          if (bilan.arrives.length > 0) toast.push({status: 'success', title: annonce(bilan)})
+          if (bilan.misesAJour.length > 0) toast.push({status: 'success', title: annonceMiseAJour(bilan)})
         } else {
           toast.push({status: 'success', title: `Tout est à jour : rien de neuf à ${AUTRE.nom}`})
         }
@@ -112,6 +119,7 @@ export function FilmsPartages() {
           setJournal((avant) => [...avant, film._id])
         }
         setIci((avant) => [...avant, {_id: id, title: film.title, origineBanque: `${AUTRE.cle}:${film._id}`}])
+        await lire().catch(() => undefined)
         toast.push({
           status: imagesManquantes ? 'warning' : 'success',
           title: `« ${film.title ?? 'Film'} » est dans ${ICI}`,
@@ -130,7 +138,52 @@ export function FilmsPartages() {
         setEnCours(null)
       }
     },
-    [client, journal, toast],
+    [client, journal, lire, toast],
+  )
+
+  /** Remplace la description de la fiche d'ici par celle de l'autre cinéma. */
+  const reprendreFiche = useCallback(
+    async (film: FilmDeLaBanque, fiche: FilmDIci, confirmer: boolean) => {
+      if (
+        confirmer &&
+        !window.confirm(
+          `Remplacer la fiche de ${ICI} par celle de ${AUTRE.nom} ?\n\nLe titre, le synopsis, l’affiche et les autres informations du film seront ceux de ${AUTRE.nom}. Ce qui est propre à ${ICI} (à l’affiche ou non, séances) ne change pas.`,
+        )
+      ) {
+        return
+      }
+      setEnCours(film._id)
+      try {
+        const {imagesManquantes} = await reprendre(client as unknown as Ecrivain, film, fiche)
+        await lire().catch(() => undefined)
+        toast.push({
+          status: imagesManquantes ? 'warning' : 'success',
+          title: `« ${film.title ?? 'Film'} » : fiche mise à jour d’après ${AUTRE.nom}`,
+          description: imagesManquantes ? 'Une image n’a pas suivi : l’ancienne est restée.' : undefined,
+        })
+      } catch (cause) {
+        console.error('Films partagés : la fiche n’a pas pu être reprise.', cause)
+        toast.push({status: 'error', title: 'La fiche n’a pas pu être mise à jour', description: 'Vérifiez la connexion et réessayez.'})
+      } finally {
+        setEnCours(null)
+      }
+    },
+    [client, lire, toast],
+  )
+
+  /** Où en est chaque fiche liée, pour la ligne d'état et pour les lignes. */
+  const etats = useMemo(() => {
+    const parFilm = new Map<string, {fiche: FilmDIci; etat: Etat}>()
+    for (const film of films ?? []) {
+      const fiche = ficheLiee(film, ici)
+      if (fiche) parFilm.set(film._id, {fiche, etat: comparer(film, fiche)})
+    }
+    return parFilm
+  }, [films, ici])
+
+  const aChoisir = useMemo(
+    () => [...etats.values()].filter(({etat}) => etat === 'differente' || etat === 'modifiee-ici').length,
+    [etats],
   )
 
   const manquants = useMemo(
@@ -148,7 +201,8 @@ export function FilmsPartages() {
           <Text size={1} muted>
             Un film créé à {AUTRE.nom} arrive ici tout seul, fiche et affiche comprises : rien à retaper, rien à
             cliquer. Il est alors dans « Films » et dans la Planification, mais pas encore à l’affiche : c’est ici
-            qu’on décide de le montrer. Une correction faite ensuite dans un cinéma ne change pas la fiche de l’autre.
+            qu’on décide de le montrer. Une fiche corrigée à {AUTRE.nom} est corrigée ici aussi, toute seule, tant
+            qu’elle n’a pas été modifiée à {ICI} entre-temps.
           </Text>
           {films !== null && !erreur && (
             <Text size={1} weight="medium" data-etat-du-partage>
@@ -157,6 +211,9 @@ export function FilmsPartages() {
                 : manquants === 0
                   ? `À jour : les ${films.length} films de ${AUTRE.nom} sont connus de ${ICI}.`
                   : `${manquants} film${manquants > 1 ? 's' : ''} de ${AUTRE.nom} ${manquants > 1 ? 'ne sont' : 'n’est'} pas encore arrivé${manquants > 1 ? 's' : ''}.`}
+              {!arrivee && aChoisir > 0
+                ? ` ${aChoisir} fiche${aChoisir > 1 ? 's ne sont pas les mêmes' : ' n’est pas la même'} dans les deux cinémas : elle${aChoisir > 1 ? 's sont' : ' est'} laissée${aChoisir > 1 ? 's' : ''} telle${aChoisir > 1 ? 's' : ''} quelle${aChoisir > 1 ? 's' : ''}.`
+                : ''}
             </Text>
           )}
         </Stack>
@@ -204,6 +261,10 @@ export function FilmsPartages() {
           {visibles.map((film) => {
             const present = dejaIci(film, ici)
             const retire = !present && journal.includes(film._id)
+            const lien = etats.get(film._id)
+            const etat = lien?.etat ?? null
+            const aReprendre = etat === 'a-reprendre'
+            const autreVersion = etat === 'differente' || etat === 'modifiee-ici'
             return (
               <Card key={film._id} border radius={2} padding={2} data-film-de-la-banque={film._id}>
                 <Flex align="center" gap={3}>
@@ -237,9 +298,28 @@ export function FilmsPartages() {
                           <CheckmarkIcon />
                         </Text>
                         <Text size={1} muted>
-                          Dans {ICI}
+                          {aReprendre
+                            ? `Corrigée à ${AUTRE.nom}`
+                            : etat === 'modifiee-ici'
+                              ? `Modifiée à ${ICI}`
+                              : etat === 'differente'
+                                ? 'Fiche différente'
+                                : `Dans ${ICI}`}
                         </Text>
                       </Flex>
+                      {lien && (aReprendre || autreVersion) && (
+                        <Button
+                          icon={SyncIcon}
+                          mode={aReprendre ? 'default' : 'ghost'}
+                          tone={aReprendre ? 'primary' : 'default'}
+                          fontSize={1}
+                          padding={2}
+                          text={aReprendre ? 'Mettre à jour' : `Reprendre la fiche de ${AUTRE.nom}`}
+                          loading={enCours === film._id}
+                          disabled={enCours !== null || arrivee}
+                          onClick={() => void reprendreFiche(film, lien.fiche, autreVersion)}
+                        />
+                      )}
                       <Button
                         as={IntentLink}
                         {...{intent: 'edit', params: {id: present._id, type: 'film'}}}
