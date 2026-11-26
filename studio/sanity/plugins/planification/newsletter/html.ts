@@ -7,28 +7,40 @@
  * ne font qu'assembler ces briques.
  */
 
-/* ---- Les couleurs du site, recopiées depuis assets/css/style.css ----
+/* ---- Les couleurs du site de MINIMUM, recopiées depuis css/jetons.css ----
    Un e-mail ne sait pas lire une variable CSS : elles sont écrites en
-   clair, une seule fois, ici. */
-export const ENCRE = '#100f0c'
-export const PAPIER = '#ededed'
+   clair, une seule fois, ici.
+
+   La newsletter vient du Studio de Zinéma, composée avec les trois couleurs
+   de son site (bleu, rouge, jaune). Les noms des constantes sont gardés pour
+   que le code reste le même des deux côtés ; leurs valeurs sont celles du
+   code couleur de Minimum, choisies pour que le texte posé dessus garde sa
+   couleur et son contraste :
+
+     BLEU  (texte blanc) → le rouge du cinéma de Minimum (#a72920, 7:1) ;
+     ROUGE (texte blanc) → le grenat des infos (#6b1222, 12:1) ;
+     JAUNE (texte noir)  → le jaune de l'agenda (#f6d82b, 14,8:1) ;
+     VERT  → le vert de l'argent (#3cab64). À Minimum il porte un texte
+             NOIR (7,2:1), pas blanc : voir SUR_VERT. */
+export const ENCRE = '#000000'
+export const PAPIER = '#ffffff'
 export const BLANC = '#ffffff'
-export const ROUGE = '#c22a1d'
-export const BLEU = '#2f49c2'
-export const JAUNE = '#f7c600'
-/** L'encre éclaircie : les mentions secondaires, sur papier (6,6:1). */
+export const ROUGE = '#6b1222'
+export const BLEU = '#a72920'
+export const JAUNE = '#f6d82b'
+/** L'encre éclaircie : les mentions secondaires, sur papier (5:1 sur blanc). */
 export const GRIS = '#57534a'
-/** Le grisé du lundi et du mardi de l'envoi, rappelés au-dessus du programme :
-    assez pâle pour s'effacer devant la semaine annoncée, assez sombre pour se
-    lire — en texte sur papier (3,5:1) comme en fond sous du blanc (4,1:1). */
+/** Le grisé du lundi et du mardi de l'envoi, rappelés au-dessus du programme
+    (le même qu'à Zinéma : la feuille à imprimer s'en sert aussi). */
 export const GRIS_CLAIR = '#807d76'
-/* Le vert du billet. C'est la seule couleur du site qui ait un sens fixe :
-   elle ne sert qu'à acheter une place, nulle part ailleurs (voir --vert dans
-   assets/css/style.css). La newsletter respecte la même règle. */
-export const VERT = '#275a1b'
+/* Le vert du billet. C'est la seule couleur qui ait un sens fixe : elle ne
+   sert qu'à acheter une place (--vert dans css/jetons.css). */
+export const VERT = '#3cab64'
+/** Le texte posé sur le vert : noir, comme sur le site de Minimum. */
+export const SUR_VERT = ENCRE
 
 /** Le trait du site. Un seul, partout — cases, pastilles d'horaire comprises. */
-export const TRAIT = `border:3px solid ${ENCRE};`
+export const TRAIT = `border:2px solid ${ENCRE};`
 /** La largeur d'un e-mail : au-delà, les messageries recadrent. */
 export const LARGEUR = 600
 
@@ -95,7 +107,8 @@ export function sansLienAutomatique(texteEchappe: string): string {
 export function lienDuFilm(slug: string | null | undefined): string | null {
   const propre = String(slug ?? '').trim()
   if (!propre) return null
-  return echapper(`${SITE}/film/?s=${encodeURIComponent(propre)}`)
+  /* La fiche d'un film sur le site de Minimum : cineminimum.ch/film/?id=… */
+  return echapper(`${SITE}/film/?id=${encodeURIComponent(propre)}`)
 }
 
 /** Les sauts de ligne d'un champ « texte » deviennent des paragraphes. */

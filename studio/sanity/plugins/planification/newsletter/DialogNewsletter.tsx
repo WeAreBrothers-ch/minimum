@@ -61,7 +61,7 @@ export function DialogNewsletter({debutSemaine, onFermer}: Props): React.JSX.Ele
   }, [dataset, donnees, projectId])
 
   const objet = donnees ? objetDeLaNewsletter(donnees) : ''
-  const sortie = useSortie(html, objet, `zinema-${debutSemaine}.html`)
+  const sortie = useSortie(html, objet, `minimum-${debutSemaine}.html`)
 
   return (
     <Dialog

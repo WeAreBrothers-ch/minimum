@@ -25,6 +25,7 @@ import type {SeanceProgramme} from '../newsletter/types'
 import {formatJourLong, formatJourLongAvecAnnee, numeroDeSemaine} from '../utils/dates'
 import {mesuresDeLaFeuille} from './mesures'
 import {stylesDeLaFeuille} from './styles'
+import {salleDuProgramme} from '../../../salles'
 
 /** Les séances regroupées par jour, dans l'ordre du programme. */
 function parJour(programme: readonly SeanceProgramme[]): Map<string, SeanceProgramme[]> {
@@ -100,7 +101,7 @@ function ligneDeSeance(seance: SeanceProgramme, taille: number): string {
     `<tr class="${classe}">` +
     `<td class="heure">${echapper(seance.heure)}</td>` +
     `<td class="titre">${texteDuTitre(seance)}</td>` +
-    `<td class="salle">${echapper(seance.salle)}</td>` +
+    `<td class="salle">${echapper(salleDuProgramme(seance.salle))}</td>` +
     `</tr>`
   )
 }

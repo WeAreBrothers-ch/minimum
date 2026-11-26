@@ -9,4 +9,4 @@
    leurs deux boutons ne s'affichent pas dans la Planification.
 
    Le jour où c'est fait : passer à true, et relancer les vérifications. */
-export const NEWSLETTER_ACTIVE = false;
+export const NEWSLETTER_ACTIVE = true;

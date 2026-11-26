@@ -38,7 +38,7 @@ export interface SeanceProgramme extends SeanceNewsletter {
 export interface FilmNewsletter {
   _id: string
   titre: string
-  /** L'adresse de sa page sur le site : zinema.ch/film/?s=… */
+  /** L'adresse de sa page sur le site : cineminimum.ch/film/?id=… */
   slug: string | null
   realisation: string | null
   pays: string | null
@@ -72,10 +72,10 @@ export interface ReglagesNewsletter {
   telephone: string | null
   telephoneBis: string | null
   email: string | null
-  tarifPlein: number | null
-  tarifReduit: number | null
-  conditionsReduit: string[] | null
-  salles: {nom: string; places: number}[] | null
+  /** Les tarifs du cinéma, tels que la caisse les encaisse (Réglages → Tarifs & salles). */
+  tarifs: {libelle: string | null; prix: number | null; detail: string | null}[] | null
+  /** Le nombre de places de la salle de cinéma. */
+  places: number | null
   iban: string | null
 }
 

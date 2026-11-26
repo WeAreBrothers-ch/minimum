@@ -31,7 +31,7 @@ import type {FilmNewsletter} from './types'
  * Au-delà de ce nombre de semaines, un film qui repasse n'est plus « en
  * continuation » : c'est une reprise.
  *
- * Deux mois : au Zinéma, un film tient l'affiche quelques semaines. Annoncer
+ * Deux mois : au cinéma, un film tient l'affiche quelques semaines. Annoncer
  * une « 34ème semaine » serait exact et absurde — personne n'a suivi le film
  * sans interruption depuis huit mois. Passé ce seuil, l'information juste
  * n'est plus le décompte, c'est qu'il revient.

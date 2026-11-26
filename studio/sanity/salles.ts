@@ -25,6 +25,16 @@ export const PARRAIN_DE_SALLE: Record<NomDeSalle, string> = {
   Club: "",
 };
 
+/**
+ * Le nom de l'espace tel qu'on l'écrit sur le programme (newsletter, feuille
+ * à imprimer). Minimum n'a qu'une salle de cinéma : écrire « SALLE » au bout
+ * de chaque ligne ne dirait rien. Seul un autre lieu se nomme : le Club.
+ */
+export function salleDuProgramme(nom: string | undefined | null): string {
+  const salle = String(nom ?? "");
+  return salle === SALLES[0] ? "" : salle;
+}
+
 /** Liste prête à l'emploi pour un champ `options.list` du Studio. */
 export const listeDesSalles = SALLES.map((nom) => ({ title: nom, value: nom }));
 

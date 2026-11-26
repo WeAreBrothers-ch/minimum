@@ -2,10 +2,10 @@
  * Le cadre commun aux deux envois — la newsletter du lundi et la piqûre de
  * rappel du milieu de semaine : le logo en tête, la case bleue qui annonce,
  * l'appel au site, le pied, et la largeur du message. Une seule écriture :
- * l'abonné reconnaît le Zinéma au premier coup d'œil, quel que soit l'envoi.
+ * l'abonné reconnaît Minimum au premier coup d'œil, quel que soit l'envoi.
  */
 import {
-  BLANC, BLEU, ENCRE, LARGEUR, PAPIER, POLICE, SITE, TAILLE, VERT,
+  BLANC, BLEU, ENCRE, LARGEUR, PAPIER, POLICE, SITE, SUR_VERT, TAILLE, VERT,
   capitales, cellule, echapper,
 } from './html'
 import type {ReglagesNewsletter} from './types'
@@ -18,10 +18,14 @@ import type {ReglagesNewsletter} from './types'
  * (22 septembre 2026) : l'ancienne version blanche sur l'encre ne passait
  * ni à l'écran ni à l'impression, où le fond noir sortait en gris.
  */
-const LOGO = `${SITE}/assets/img/zinema-logo.png`
+/* Le logo de Minimum (le grand M au-dessus de INIMUM), déposé une fois dans
+   le projet Sanity de Minimum : une adresse fixe, que toute messagerie peut
+   aller chercher, et qui ne dépend pas de la mise en ligne du site. */
+const LOGO = 'https://cdn.sanity.io/images/hvxsup1j/production/f29a69ac0bb5d4f9787ecdab2154b2e386f70eb0-604x745.png?w=360'
 const MARGE_LOGO = 16
-/* Toute la largeur du message, moins la marge de chaque côté. */
-const LARGEUR_LOGO = LARGEUR - 2 * MARGE_LOGO
+/* Le logo de Minimum est en hauteur : sur toute la largeur du message, il
+   prendrait l'écran entier. Il garde une largeur de logo, au centre. */
+const LARGEUR_LOGO = 150
 
 /**
  * L'en-tête : le logo seul, sur toute la largeur du message, en noir sur
@@ -31,7 +35,7 @@ const LARGEUR_LOGO = LARGEUR - 2 * MARGE_LOGO
 export function entete(): string {
   return `<tr>${cellule(
     `<a href="${SITE}" style="display:block;color:${ENCRE};text-decoration:none;">` +
-      `<img src="${LOGO}" width="${LARGEUR_LOGO}" alt="ZINÉMA" style="display:block;width:100%;` +
+      `<img src="${LOGO}" width="${LARGEUR_LOGO}" alt="MINIMUM" style="display:block;width:100%;` +
       `max-width:${LARGEUR_LOGO}px;height:auto;border:0;margin:0 auto;color:${ENCRE};font-family:${POLICE};` +
       `font-size:${TAILLE.titre};font-weight:bold;text-align:center;"></a>`,
     `background-color:${BLANC};padding:${MARGE_LOGO + 8}px ${MARGE_LOGO}px;text-align:center;`,
@@ -63,16 +67,16 @@ export const AGENDA = `${SITE}/agenda/`
  */
 export function appelAuSite(destination: string = AGENDA): string {
   return `<tr>${cellule(
-    /* « ZINEMA.CH &rarr; » ne se coupe pas : l'adresse et la flèche restent
+    /* « CINEMINIMUM.CH &rarr; » ne se coupe pas : l'adresse et la flèche restent
        ensemble, sur la même ligne, quelle que soit la largeur. */
-    `<a href="${destination}" style="display:block;color:${BLANC};text-decoration:none;">` +
-      `ACHETER UN BILLET SUR <span style="white-space:nowrap;">ZINEMA.CH &rarr;</span></a>`,
-    `background-color:${VERT};color:${BLANC};padding:13px 14px;font-size:${TAILLE.titre};` +
+    `<a href="${destination}" style="display:block;color:${SUR_VERT};text-decoration:none;">` +
+      `ACHETER UN BILLET SUR <span style="white-space:nowrap;">CINEMINIMUM.CH &rarr;</span></a>`,
+    `background-color:${VERT};color:${SUR_VERT};padding:13px 14px;font-size:${TAILLE.titre};` +
       `line-height:1.25;font-weight:bold;text-transform:uppercase;`,
   )}</tr>`
 }
 
-/** Le pied : les contacts, l'IBAN, et la date de fondation. */
+/** Le pied : les contacts, l'IBAN, et l'adresse du lieu. */
 export function pied(reglages: ReglagesNewsletter): string {
   const contacts = [
     reglages.telephone ? `${echapper(reglages.telephone)} (cinéma)` : null,
@@ -86,7 +90,8 @@ export function pied(reglages: ReglagesNewsletter): string {
   return `<tr>${cellule(
     contacts +
       (reglages.iban ? `<br>IBAN ${echapper(reglages.iban)}` : '') +
-      `<br>Salle de cinéma fondée en juin 2001 par Laurent Serge Toplitsch.`,
+      `<br>Cinéma Minimum, salle Anaïs Emery, La Case à Chocs` +
+      (reglages.adresse ? `<br>${echapper(reglages.adresse.replace(/\s*\n\s*/g, ', '))}` : ''),
     `background-color:${ENCRE};color:${BLANC};padding:14px;font-size:${TAILLE.petit};line-height:1.7;`,
   )}</tr>`
 }

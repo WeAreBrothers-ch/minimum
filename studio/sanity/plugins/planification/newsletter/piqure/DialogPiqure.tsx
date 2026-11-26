@@ -63,7 +63,7 @@ export function DialogPiqure({debutSemaine, onFermer}: Props): React.JSX.Element
     [choix, dataset, donnees, mot, projectId, titre],
   )
   const objet = objetDeLaPiqure(titre, choix)
-  const sortie = useSortie(html, objet, `zinema-piqure-${envoi}.html`)
+  const sortie = useSortie(html, objet, `minimum-piqure-${envoi}.html`)
 
   return (
     <Dialog id="piqure-de-rappel" header="Piqûre de rappel" onClose={onFermer} width={3}>

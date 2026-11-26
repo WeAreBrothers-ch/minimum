@@ -22,7 +22,7 @@
  *
  * LA DIRECTION ARTISTIQUE VIENT DU SITE.
  *
- * Les couleurs, le trait et la façon de composer sont ceux de zinema.ch
+ * Les couleurs et le trait sont ceux de cineminimum.ch ; la façon de composer, celle de la newsletter de Zinéma
  * (assets/css/style.css) : des cases de papier posées sur l'encre, séparées
  * par un trait unique. Le site pose sa règle ainsi : « deux traits qui se
  * touchent n'en font qu'un » — c'est exactement ce que fait un tableau en

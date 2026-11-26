@@ -81,7 +81,8 @@ const LARGEUR_VISUEL = 180
 /** L'adresse de la page de l'événement sur le site, ou null. */
 export function adresseDeLEvenement(slug: string | null | undefined): string | null {
   const propre = String(slug ?? '').trim()
-  return propre ? `${SITE}/evenements/?e=${encodeURIComponent(propre)}` : null
+  /* Le site de Minimum n'a pas de page par événement : le lien mène à l'agenda. */
+  return propre ? `${SITE}/agenda/` : null
 }
 
 function lienDeLEvenement(slug: string | null): string | null {

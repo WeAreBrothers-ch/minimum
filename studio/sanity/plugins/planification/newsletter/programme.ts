@@ -11,6 +11,7 @@
 import {formatJourLong} from '../utils/dates'
 import type {SeanceProgramme} from './types'
 import {BLANC, BLEU, ENCRE, GRIS_CLAIR, JAUNE, ROUGE, TAILLE, capitales, cellule, echapper, lienDuFilm} from './html'
+import {salleDuProgramme} from '../../../salles'
 
 interface Couleur {
   fond: string
@@ -80,7 +81,7 @@ function ligneDeSeance(seance: SeanceProgramme, encre: string): string {
       'valign="middle"',
     ) +
     cellule(
-      echapper(capitales(seance.salle)),
+      echapper(capitales(salleDuProgramme(seance.salle))),
       `color:${encre};padding:10px 12px;width:${LARGEUR_SALLE}px;font-size:${TAILLE.texte};line-height:1.3;font-weight:bold;` +
         `text-transform:uppercase;white-space:nowrap;text-align:right;`,
       `width="${LARGEUR_SALLE}" valign="middle" align="right"`,

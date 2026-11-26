@@ -20,7 +20,7 @@
  * ---------------------------------------------------------------------------
  */
 import {ajouterJours, formatJourAbrege, formatJourLong, numeroDuJour} from '../utils/dates'
-import {BLANC, ENCRE, POLICE, TAILLE, TRAIT, VERT, capitales, echapper} from './html'
+import {BLANC, ENCRE, POLICE, SUR_VERT, TAILLE, TRAIT, VERT, capitales, echapper} from './html'
 import type {SeanceNewsletter} from './types'
 
 /** Du lundi de l'envoi au mercredi qui ouvre la semaine : deux jours. */
@@ -67,13 +67,14 @@ const PAR_RANGEE = 2
  * « LUN 5 19:00 » ne se coupe jamais en deux.
  */
 function puceHoraire(seance: SeanceNewsletter, lien: string | null): string {
-  /* Une pastille qui achète est verte, écrite en blanc : « qu'on comprenne
+  /* Une pastille qui achète est verte, écrite en noir à Minimum (en blanc à
+     Zinéma, dont le vert est plus sombre) : « qu'on comprenne
      que c'est pour acheter » (demande du cinéma, 18 novembre 2026). Les
      séances spéciales aussi — le bandeau d'encre au-dessus les distingue.
      Comme sur la fiche du film du site, une séance complète, ou un film
      sans page où acheter, garde sa pastille cadrée : elle ne vend rien. */
   const achete = Boolean(lien) && seance.statut !== 'complet'
-  const encre = achete ? BLANC : ENCRE
+  const encre = achete ? SUR_VERT : ENCRE
   const fond = achete ? `background-color:${VERT};` : ''
   const TEXTE_PASTILLE = textePastille(encre)
   const contenu =

@@ -45,8 +45,9 @@ export const REQUETE_REGLAGES = `{
     "adresse": address,
     "telephone": phone,
     "telephoneBis": phoneSecondary,
-    email, tarifPlein, tarifReduit, conditionsReduit,
-    "salles": salles[]{nom, places}
+    email,
+    "tarifs": tarifsCinema[]{libelle, prix, detail},
+    "places": placesCinema
   },
   "iban": *[_type == "abonnements"][0].iban
 }`
@@ -62,10 +63,8 @@ const SANS_REGLAGES: Omit<ReglagesNewsletter, 'iban'> = {
   telephone: null,
   telephoneBis: null,
   email: null,
-  tarifPlein: null,
-  tarifReduit: null,
-  conditionsReduit: null,
-  salles: null,
+  tarifs: null,
+  places: null,
 }
 
 /** Les réglages prêts à l'emploi, même si le document des réglages manque. */
