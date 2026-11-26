@@ -3,10 +3,11 @@
    côté, sans fin (demande d’Eliott, 17.11.2026) : sur ordinateur, quatre
    colonnes indépendantes, deux par mur ; sur téléphone, une par mur.
 
-   La seconde colonne d’un mur prend les affiches dans un autre ordre et
-   part d’une demi-case plus bas, pour que les affiches ne s’alignent pas
-   en rangées. Elle reprend les mêmes affiches que la première : seule la
-   première est lue par le clavier et les lecteurs d’écran. */
+   Chaque colonne reçoit sa propre liste (accueil.js) : en tête, la case de
+   sa rubrique, puis les affiches. La seconde colonne d’un mur prend les
+   affiches dans un autre ordre. Les affiches ne sont lues qu’une fois par
+   le clavier et les lecteurs d’écran (première colonne du mur) ; les cases
+   de rubrique, dans chaque colonne. */
 
 import { monterColonne } from "./colonne.js";
 
@@ -17,29 +18,30 @@ const ORDINATEUR = "(min-width: 56rem)";
 /**
  * Monte un mur dans son conteneur et renvoie de quoi le démonter.
  * @param {HTMLElement} conteneur   Le conteneur des colonnes (.moitie__colonnes).
- * @param {Carte[]} cartes
+ * @param {(ordinateur: boolean) => Carte[][]} colonnesDe  Les cases de chaque colonne.
  * @param {string} racine
  * @returns {() => void}
  */
-export function monterMur(conteneur, cartes, racine) {
-  if (cartes.length === 0) return () => {};
+export function monterMur(conteneur, colonnesDe, racine) {
   const ordinateur = window.matchMedia(ORDINATEUR);
   /** @type {Array<() => void>} */
   let demontages = [];
 
   const dessiner = () => {
     for (const demonter of demontages) demonter();
-    conteneur.innerHTML = colonnesHTML(ordinateur.matches ? 2 : 1);
+    const listes = colonnesDe(ordinateur.matches).filter((l) => l.length > 0);
+    conteneur.innerHTML = listes.map(() => `<div class="moitie__colonne"></div>`).join("");
     const colonnes = [...conteneur.children].filter((el) => el instanceof HTMLElement);
-    demontages = colonnes.map((colonne, rang) =>
-      monterColonne(colonne, {
+    demontages = colonnes.map((colonne, rang) => {
+      const cartes = listes[rang] ?? [];
+      return monterColonne(colonne, {
         cartes,
-        ordre: ordreDeColonne(cartes.length, rang),
+        ordre: cartes.map((_, i) => i),
         racine,
         accessible: rang === 0,
-        depart: rang === 0 ? 0 : 0.5,
-      })
-    );
+        depart: 0,
+      });
+    });
   };
 
   dessiner();
@@ -52,27 +54,13 @@ export function monterMur(conteneur, cartes, racine) {
 }
 
 /**
- * La première colonne suit l’ordre du programme ; la seconde commence à
- * la moitié de la liste.
- * @param {number} nombre
- * @param {number} rang
- * @returns {number[]}
+ * Les mêmes affiches, à partir de la moitié de la liste : la seconde
+ * colonne d’un mur ne montre pas les mêmes affiches en même temps.
+ * @template T
+ * @param {T[]} liste
+ * @returns {T[]}
  */
-function ordreDeColonne(nombre, rang) {
-  const rotation = rang === 0 ? 0 : Math.ceil(nombre / 2);
-  return Array.from({ length: nombre }, (_, i) => (i + rotation) % nombre);
-}
-
-/**
- * Les colonnes vides, que monterColonne remplit. La seconde est cachée aux
- * lecteurs d’écran et hors de la tabulation : elle répète la première.
- * @param {number} nombre
- * @returns {string}
- */
-function colonnesHTML(nombre) {
-  let html = `<div class="moitie__colonne"></div>`;
-  for (let rang = 1; rang < nombre; rang++) {
-    html += `<div class="moitie__colonne" aria-hidden="true" tabindex="-1"></div>`;
-  }
-  return html;
+export function decaler(liste) {
+  const rotation = Math.ceil(liste.length / 2);
+  return [...liste.slice(rotation), ...liste.slice(0, rotation)];
 }

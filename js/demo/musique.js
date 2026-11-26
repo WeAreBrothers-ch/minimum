@@ -50,12 +50,25 @@ export const SOIREES_DEMO = AFFICHES.map(([date, largeur, hauteur, description],
   },
 }));
 
-/** Des lives d’essai : un en cours, deux à venir, deux passés. Pas encore
-    de vidéo : la page Radio le dit. @type {Emission[]} */
+/** Un portrait d’exemple pour les flyers des lives (à remplacer, comme les
+    affiches de soirée).
+    @param {number} n  Le numéro de l’image d’exemple.
+    @param {number} largeur
+    @param {number} hauteur
+    @param {string} description
+    @returns {import("../types.js").Image} */
+function portrait(n, largeur, hauteur, description) {
+  return { url: `assets/img/exemples/soiree-exemple-${n}.webp`, alt: `Portrait : ${description}`, largeur, hauteur };
+}
+
+/** Des lives d’essai : un en cours, deux à venir, deux passés. Le titre
+    d’un live est le nom de l’artiste ; son visuel, le portrait dont le
+    site tire le flyer (« machine à flyers », croquis du client, 26.11.2026).
+    Pas encore de vidéo : la page Radio le dit. @type {Emission[]} */
 export const EMISSIONS_DEMO = [
-  { id: "live-2026-11-11", titre: "Live au studio", date: "2026-11-11", heure: "18:00", enDirect: true, video: null, visuel: null },
-  { id: "live-2026-11-13", titre: "Live au studio", date: "2026-11-13", heure: "20:00", enDirect: false, video: null, visuel: null },
-  { id: "live-2026-11-19", titre: "Live au studio", date: "2026-11-19", heure: "20:00", enDirect: false, video: null, visuel: null },
-  { id: "live-2026-11-07", titre: "Live au studio", date: "2026-11-07", heure: "20:00", enDirect: false, video: null, visuel: null },
-  { id: "live-2026-11-04", titre: "Live au studio", date: "2026-11-04", heure: "20:00", enDirect: false, video: null, visuel: null },
+  { id: "live-2026-11-11", titre: "DJ à annoncer", date: "2026-11-11", heure: "18:00", enDirect: true, video: null, visuel: portrait(6, 640, 360, "un DJ en sweat blanc aux platines") },
+  { id: "live-2026-11-19", titre: "DJ à annoncer", date: "2026-11-19", heure: "20:00", enDirect: false, video: null, visuel: portrait(3, 900, 1200, "un homme à lunettes éclairé en vert") },
+  { id: "live-2026-12-24", titre: "DJ à annoncer", date: "2026-12-24", heure: "19:00", enDirect: false, video: null, visuel: portrait(7, 640, 360, "deux personnes derrière des platines") },
+  { id: "live-2026-11-07", titre: "DJ à annoncer", date: "2026-11-07", heure: "20:00", enDirect: false, video: null, visuel: null },
+  { id: "live-2026-11-04", titre: "DJ à annoncer", date: "2026-11-04", heure: "20:00", enDirect: false, video: null, visuel: null },
 ];

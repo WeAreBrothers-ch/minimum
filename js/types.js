@@ -85,14 +85,15 @@
  */
 
 /**
+ * Un live de la radio, sur YouTube.
  * @typedef {Object} Emission
  * @property {string} id
- * @property {string} titre
+ * @property {string} titre  Le nom de l’artiste (« DJ … »).
  * @property {string} date   AAAA-MM-JJ
  * @property {string} heure  HH:MM
  * @property {boolean} enDirect
  * @property {string | null} video   Adresse YouTube du live (youtube.com/live/…, watch?v=…) ; null si pas encore en ligne.
- * @property {Image | null} visuel
+ * @property {Image | null} visuel  Le portrait de l’artiste : le site en fait le flyer du live.
  */
 
 /**
@@ -126,6 +127,7 @@
  * @property {string} ligne       Une ligne d’information (date, réalisation…).
  * @property {string} etat        « À l’affiche », « En direct », « Soirée »…
  * @property {"cinema" | "musique" | "radio" | "agenda" | "infos"} [teinte]  Une rubrique : sa couleur.
+ * @property {Emission} [live]    Un live : de quoi composer son flyer.
  */
 
 export {};

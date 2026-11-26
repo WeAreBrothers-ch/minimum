@@ -31,7 +31,7 @@ const ATTENTE_ARRET = 120;
  * @property {number[]} ordre       L’ordre des affiches dans le cycle (rangs dans `cartes`).
  * @property {string} racine
  * @property {boolean} accessible   Vrai pour la colonne que lisent le clavier et les lecteurs d’écran.
- * @property {number} depart        Où la colonne commence, en fraction de case (0 ou 0,5).
+ * @property {number} depart        Où la colonne commence, en fraction de case (0 : tout en haut).
  */
 
 /**
@@ -140,8 +140,9 @@ function casesHTML({ cartes, ordre, racine, accessible, depart }, casesParCycle,
     const carte = cartes[ordre[place % ordre.length] ?? 0];
     if (!carte) continue;
     /* Une seule fois chaque affiche pour les lecteurs d’écran et le clavier :
-       la première série de la copie du milieu, dans la colonne accessible. */
-    const lisible = accessible && copie === CENTRE && place < cartes.length;
+       la première série de la copie du milieu, dans la colonne accessible.
+       La case d’une rubrique, elle, est lue dans chaque colonne. */
+    const lisible = copie === CENTRE && place < cartes.length && (accessible || carte.genre === "rubrique");
     const prioritaire = copie === CENTRE && (place - depart) * pas < ecran;
     html += carteHTML(carte, racine, lisible, prioritaire);
   }

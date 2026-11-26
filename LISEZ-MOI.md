@@ -65,8 +65,10 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
   `api/` (PHP). Mode d'emploi et liste avant ouverture : `BILLETTERIE.md`.
 - Page Radio : les lives YouTube (`js/pages/radio.js`, `css/radio.css`) : le
   lecteur (live en cours de la chaîne, sinon le dernier live en ligne), les
-  prochains lives et ceux à revoir. Chaque live a son adresse YouTube dans le
-  programme (`video`).
+  prochains lives (leurs flyers) et ceux à revoir. Chaque live a son nom
+  d'artiste (`titre`), son portrait (`visuel`) et son adresse YouTube (`video`).
+- Machine à flyers : `js/flyer.js` compose le flyer d'un live (portrait, nom,
+  date, heure), pour le mur Musique de l'accueil et la page Radio.
 - Design : celui de Zinéma, déguisé (tableau de cases, `css/cases.css`,
   `css/acces.css`) ; voir `DIRECTION-ARTISTIQUE.md`.
 - Toutes les valeurs de style sont dans `css/jetons.css`.

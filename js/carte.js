@@ -3,6 +3,7 @@
 
 import { filmsALAffiche, filmsAnnonces } from "./donnees.js";
 import { echapper, heureCourte, jourLong, jourLongMajuscule } from "./format.js";
+import { flyerHTML } from "./flyer.js";
 import { sourcesImage } from "./images.js";
 
 /** @typedef {import("./types.js").Programme} Programme */
@@ -53,13 +54,15 @@ export function cartesCinema(programme) {
 }
 
 /**
- * Le mur Musique : les soirées à venir. La radio n’y a qu’une case, celle
- * de sa rubrique, qui dit le live en cours ou le prochain (accueil.js).
+ * Le mur Musique : les soirées à venir et les flyers des lives (celui en
+ * cours, puis ceux à venir), mêlés un à un pour que la radio ne disparaisse
+ * pas sous les affiches.
  * @param {Programme} programme
  * @returns {Carte[]}
  */
 export function cartesMusique(programme) {
-  return programme.soirees
+  /** @type {Carte[]} */
+  const soirees = programme.soirees
     .filter((s) => s.date >= programme.aujourdhui)
     .sort((a, b) => (a.date + a.heure).localeCompare(b.date + b.heure))
     .map((s) => ({
@@ -71,6 +74,31 @@ export function cartesMusique(programme) {
       ligne: `${jourLongMajuscule(s.date)}, ${heureCourte(s.heure)}`,
       etat: "Soirée",
     }));
+
+  /** @type {Carte[]} */
+  const lives = programme.emissions
+    .filter((e) => e.enDirect || e.date >= programme.aujourdhui)
+    .sort((a, b) => Number(b.enDirect) - Number(a.enDirect) || (a.date + a.heure).localeCompare(b.date + b.heure))
+    .map((e) => ({
+      genre: "emission",
+      id: e.id,
+      titre: e.titre,
+      lien: `radio/#${e.id}`,
+      image: e.visuel,
+      ligne: `${jourLongMajuscule(e.date)}, ${heureCourte(e.heure)}`,
+      etat: e.enDirect ? "En direct" : "Live à venir",
+      live: e,
+    }));
+
+  /** @type {Carte[]} */
+  const melange = [];
+  for (let i = 0; i < Math.max(soirees.length, lives.length); i++) {
+    const soiree = soirees[i];
+    const live = lives[i];
+    if (soiree) melange.push(soiree);
+    if (live) melange.push(live);
+  }
+  return melange;
 }
 
 /**
@@ -84,6 +112,7 @@ export function cartesMusique(programme) {
 export function carteHTML(carte, racine, accessible, prioritaire) {
   const cache = accessible ? "" : ' aria-hidden="true" tabindex="-1"';
   if (carte.genre === "rubrique") return rubriqueHTML(carte, racine, cache);
+  if (carte.live) return flyerHTML(carte.live, racine, { lien: racine + carte.lien, attributs: cache, prioritaire });
   const typo = carte.image === null;
   const classes = `carte${typo ? " carte--typo" : ""}${carte.genre === "film" ? "" : ` carte--${carte.genre}`}`;
   const contenu = typo ? contenuTypographique(carte) : imageHTML(carte, racine, prioritaire);
@@ -108,33 +137,6 @@ function rubriqueHTML(carte, racine, cache) {
     `<a class="${classes}" href="${echapper(racine + carte.lien)}"${cache}>${nom}` +
     `<span class="carte__suite">${ligne}<span class="fleche" aria-hidden="true"></span></span></a>`
   );
-}
-
-/**
- * Les rubriques glissées entre les affiches, à intervalles réguliers : la
- * première tout en haut, les autres réparties dans le cycle.
- * @param {Carte[]} affiches
- * @param {Carte[]} rubriques
- * @returns {Carte[]}
- */
-export function intercaler(affiches, rubriques) {
-  const total = affiches.length + rubriques.length;
-  /** @type {Map<number, Carte>} */
-  const places = new Map();
-  rubriques.forEach((r, i) => places.set(Math.floor((i * total) / rubriques.length), r));
-  /** @type {Carte[]} */
-  const liste = [];
-  let a = 0;
-  for (let i = 0; i < total; i++) {
-    const rubrique = places.get(i);
-    const affiche = affiches[a];
-    if (rubrique) liste.push(rubrique);
-    else if (affiche) {
-      liste.push(affiche);
-      a++;
-    }
-  }
-  return liste;
 }
 
 /**

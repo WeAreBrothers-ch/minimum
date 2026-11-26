@@ -1,0 +1,135 @@
+/* Minimum : le flyer d'un live (machine à flyers, js/flyer.js).
+   Le format d'une affiche ; le portrait de l'artiste en noir et blanc, en
+   plein ; en haut, « LIVE YOUTUBE » sur le rose de la musique ; en bas,
+   sur une bande noire, le nom en très grand, puis la date et l'heure en
+   rose. Les tailles suivent la largeur du flyer (cqi) : il se lit pareil
+   dans une colonne du mur et dans la grille de la page Radio. */
+
+.flyer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  aspect-ratio: var(--proportion-affiche);
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--blanc);
+  background: var(--noir);
+  container-type: inline-size;
+}
+
+/* Dans le mur, la hauteur est fixée en pixels entiers (colonne.js). */
+.moitie__colonne .flyer {
+  height: var(--hauteur-case, auto);
+}
+
+.flyer__portrait {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.1);
+}
+
+.flyer__haut {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2cqi;
+  padding: 5cqi;
+}
+
+.flyer__live,
+.flyer__direct {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3em 0.55em;
+  font-size: clamp(0.625rem, 4.5cqi, 1.125rem);
+  white-space: nowrap;
+  font-weight: var(--graisse-nom);
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.flyer__live {
+  color: var(--texte-musique);
+  background: var(--pastille-musique);
+}
+
+.flyer__direct {
+  color: var(--blanc);
+  background: var(--noir);
+}
+
+/* Le point du direct, qui clignote (animations.css). */
+.flyer__direct::before {
+  content: "";
+  width: 0.5em;
+  height: 0.5em;
+  margin-right: 0.45em;
+  background: var(--pastille-musique);
+}
+
+.flyer__bas {
+  position: relative;
+  display: grid;
+  gap: 2cqi;
+  padding: 5cqi;
+  background: var(--noir);
+}
+
+.flyer__nom {
+  font-size: 12cqi;
+  font-weight: var(--graisse-nom);
+  line-height: 0.92;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  overflow-wrap: break-word;
+}
+
+.flyer__quand {
+  display: flex;
+  justify-content: space-between;
+  gap: 4cqi;
+  font-size: 9cqi;
+  font-weight: var(--graisse-nom);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--pastille-musique);
+}
+
+/* Sans portrait : un flyer typographique, tout rose. */
+.flyer--typo {
+  color: var(--texte-musique);
+  background: var(--pastille-musique);
+}
+
+.flyer--typo .flyer__live {
+  color: var(--blanc);
+  background: var(--noir);
+}
+
+.flyer--typo .flyer__bas {
+  background: transparent;
+}
+
+.flyer--typo .flyer__quand {
+  color: var(--noir);
+}
+
+.flyer:focus-visible {
+  outline: var(--trait) solid var(--blanc);
+  outline-offset: calc(var(--trait) * -3);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .flyer:hover .flyer__nom {
+    text-decoration: underline;
+    text-decoration-thickness: var(--trait);
+    text-underline-offset: 0.12em;
+  }
+}

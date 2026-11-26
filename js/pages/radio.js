@@ -6,7 +6,8 @@
    - Le lecteur, en grand : le live en cours de la chaîne, sinon le dernier
      live mis en ligne. À côté, ce qu’il montre (« En direct », le titre, le
      jour) et le lien vers la chaîne.
-   - Les prochains lives, une ligne chacun.
+   - Les prochains lives : leurs flyers, que le site compose à partir du
+     portrait de l’artiste (js/flyer.js).
    - Les lives à revoir : un toucher sur la ligne le met dans le lecteur.
 
    Le lecteur YouTube est celui « sans cookie » ; le son ne part jamais
@@ -15,6 +16,7 @@
 import { CHAINE_YOUTUBE } from "../config.js";
 import { chargerProgramme } from "../donnees.js";
 import { echapper, heureCourte, jourCourt, jourLongMajuscule } from "../format.js";
+import { flyerHTML } from "../flyer.js";
 import { lireVideo } from "./bande-annonce.js";
 import { afficherErreur, zoneAremplir } from "./commun.js";
 
@@ -133,20 +135,16 @@ function infosHTML(ecran) {
 }
 
 /**
- * Une ligne de live : le jour et l’heure, le titre ; « Revoir » quand la
- * vidéo est en ligne.
+ * Une ligne de live passé : le jour et l’heure, l’artiste ; « Revoir »
+ * quand la vidéo est en ligne.
  * @param {Emission} e
- * @param {boolean} passe
  * @returns {string}
  */
-function ligneHTML(e, passe) {
+function ligneHTML(e) {
   const quand =
     `<span class="ligne-live__quand"><span>${echapper(jourCourt(e.date).replace(/ /g, " "))}</span>` +
     `<span>${heureCourte(e.heure)}</span></span>`;
   const titre = `<span class="ligne-live__titre">${echapper(e.titre)}</span>`;
-  if (!passe) {
-    return `<li id="${echapper(e.id)}"><div class="ligne-live">${quand}${titre}<span class="ligne-live__action">Sur YouTube</span></div></li>`;
-  }
   if (!lecteurDe(e)) {
     return `<li id="${echapper(e.id)}"><div class="ligne-live">${quand}${titre}<span class="ligne-live__action">Bientôt en ligne</span></div></li>`;
   }
@@ -157,17 +155,35 @@ function ligneHTML(e, passe) {
 }
 
 /**
- * @param {string} titre
+ * Les lives passés, une ligne chacun.
  * @param {Emission[]} liste
- * @param {boolean} passe
  * @returns {string}
  */
-function sectionHTML(titre, liste, passe) {
+function revoirHTML(liste) {
   if (liste.length === 0) return "";
   return (
-    `<section class="lives" aria-label="${echapper(titre)}"><h2 class="rubrique">${echapper(titre)}</h2>` +
-    `<ul class="lives__liste">${liste.map((e) => ligneHTML(e, passe)).join("")}</ul></section>`
+    `<section class="lives" aria-label="À revoir"><h2 class="rubrique">À revoir</h2>` +
+    `<ul class="lives__liste">${liste.map((e) => ligneHTML(e)).join("")}</ul></section>`
   );
+}
+
+/**
+ * Les prochains lives : leurs flyers, côte à côte (machine à flyers).
+ * Un flyer mène à la chaîne YouTube, quand elle est branchée.
+ * @param {Emission[]} liste
+ * @returns {string}
+ */
+function prochainsHTML(liste) {
+  if (liste.length === 0) return "";
+  const racine = document.body.dataset.racine ?? "";
+  const id = chaine();
+  const flyers = liste
+    .map((e) => {
+      const lien = id ? `https://www.youtube.com/channel/${id}` : `#${e.id}`;
+      return `<li id="${echapper(e.id)}">${flyerHTML(e, racine, { lien, tailles: "(min-width: 56rem) 25vw, 50vw" })}</li>`;
+    })
+    .join("");
+  return `<section class="lives" aria-label="Prochains lives"><h2 class="rubrique">Prochains lives</h2><ul class="flyers">${flyers}</ul></section>`;
 }
 
 /**
@@ -181,8 +197,8 @@ function pageHTML(programme) {
     `<section class="live" aria-label="Le lecteur">` +
     `<div class="live__ecran">${lecteurHTML(ecran)}</div>` +
     `<div class="live__infos" aria-live="polite">${infosHTML(ecran)}</div></section>` +
-    sectionHTML("Prochains lives", lives.aVenir, false) +
-    sectionHTML("À revoir", lives.passes, true);
+    prochainsHTML(lives.aVenir) +
+    revoirHTML(lives.passes);
   return { html, lives };
 }
 

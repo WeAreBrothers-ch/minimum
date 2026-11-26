@@ -203,3 +203,25 @@
     grid-template-columns: 12rem minmax(0, 1fr) 13rem;
   }
 }
+
+/* ---------- Les prochains lives : leurs flyers, côte à côte ---------- */
+/* Deux par rangée sur téléphone, quatre sur ordinateur. Chaque flyer est
+   cerné d'un trait ; la fin de la dernière rangée reste du fond de la
+   page, sans case vide dessinée. */
+.flyers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--trait);
+  padding-bottom: var(--trait);
+  background: var(--fond);
+}
+
+.flyers > li {
+  outline: var(--trait) solid var(--encre);
+}
+
+@media (min-width: 56rem) {
+  .flyers {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

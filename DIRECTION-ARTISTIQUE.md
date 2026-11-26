@@ -104,17 +104,25 @@ désormais **Musique** (adresse `musique/`).
 supprimée sur tout le site. On circule par :
 - **l'accueil** : les deux murs prennent tout l'écran (Musique à gauche, Cinéma à
   droite ; quatre colonnes sur ordinateur, deux sur téléphone). Les rubriques
-  sont des **cases du mur, dans le défilement** (revu le 26.11.2026 : pas de
-  boutons posés par-dessus) : deux fois moins hautes qu'une affiche, pleines
-  de leur couleur, le nom en très grand, une ligne en petit (« 7 soirées »,
-  « 8 films ») et la flèche. Mur gauche : MUSIQUE (tout en haut), RADIO,
-  AGENDA, INFOS ; mur droit : CINÉMA (tout en haut), INFOS, AGENDA. Elles
-  reviennent à chaque tour de la boucle, comme les affiches. Au survol, une
-  case de rubrique passe au blanc. Pas de case MINIMUM (retirée à la demande
-  du client).
-  **La radio n'a qu'une entrée** : la case RADIO, qui dit le live en cours
-  (« En direct : Live au studio ») ou le prochain. Les lives ne sont plus des
-  affiches du mur : tout se passe sur la page Radio ;
+  sont **quatre onglets, dans le défilement** (croquis du client,
+  26.11.2026) : de gauche à droite AGENDA (jaune), MUSIQUE (rose), CINÉMA
+  (rouge), INFOS (grenat). Sur ordinateur, chacun est en tête de sa colonne
+  (Agenda et Musique sur les deux colonnes du mur noir, Cinéma et Infos sur
+  celles du mur blanc) ; sur téléphone, Agenda puis Musique en tête du mur
+  gauche, Cinéma puis Infos en tête du droit. Ils reviennent à la même place à
+  chaque tour de la colonne, jamais ailleurs. Une case d'onglet fait la moitié
+  de la hauteur d'une affiche : le nom en très grand, une ligne en petit
+  (« 7 soirées · 3 lives », « 8 films ») et la flèche ; au survol, elle passe
+  au blanc. Pas de case MINIMUM, pas de case Radio : la radio se trouve par
+  ses flyers (ci-dessous) et le pied de page ;
+- **la machine à flyers** (croquis du client) : chaque live de la radio a
+  son flyer, composé par le site (`js/flyer.js`, `css/flyer.css`) à partir du
+  portrait de l'artiste : la photo en noir et blanc, « LIVE YOUTUBE » sur le
+  rose en haut (et « EN DIRECT » pendant le live), puis sur une bande noire le
+  nom en très grand, la date et l'heure en rose (« 24.12.26 19H00 »). Sans
+  portrait, un flyer tout rose. Les flyers du live en cours et des lives à
+  venir montent sur le mur Musique, entre les soirées, et mènent à la page
+  Radio ; la page Radio les montre aussi, sous le lecteur ;
 - **la case du titre** de chaque rubrique : pleine de sa couleur, avec en haut
   « ← MINIMUM » qui ramène à l'accueil ;
 - **le pied de page** : une rangée de cases, une par rubrique, en noir et
@@ -149,7 +157,7 @@ est en cases, sur le noir de la musique :
   titre, le jour, et le lien vers la chaîne ;
 - « Prochains lives » puis « À revoir » : une ligne par live, le jour dans le
   rose de la radio ; un toucher sur un live à revoir le met dans le lecteur.
-Sur l'accueil, la radio n'a que sa case RADIO, qui dit le live en cours ou le prochain.
+Sous le lecteur, les prochains lives sont leurs flyers (machine à flyers), quatre par rangée sur ordinateur, deux sur téléphone.
 
 ### Couleur
 - `--noir` #000 et `--blanc` #fff, relevés sur le logo (D1), pour tout le site.
