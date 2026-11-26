@@ -19,11 +19,11 @@ son propre projet Sanity, son propre catalogue de films, ses propres jetons.
 - Le site (`js/config.js`, `.htaccess`) et la caisse (`api/`,
   `serveur/config.exemple.php`) lisent ce projet.
 - Adresses autorisées à lire le projet (CORS) : `localhost:8000`,
-  `localhost:3333` (Studio), `wearebrothers-ch.github.io`, `cineminimum.ch`
-  et `www.cineminimum.ch`.
-- **Le Studio n'est pas encore en ligne.** Il compile et son modèle est
-  validé, mais le mettre en ligne demande un compte qui a les droits sur le
-  projet : `npx sanity login`, puis `npm run deploy` (voir ci-dessous).
+  `localhost:3333` et `cine-minimum.sanity.studio` (Studio),
+  `wearebrothers-ch.github.io`, `cineminimum.ch` et `www.cineminimum.ch`.
+- **Le Studio est en ligne : https://cine-minimum.sanity.studio** (mis en
+  ligne le 26.11.2026). On s'y connecte avec un compte Sanity membre du
+  projet « minimum ». Il apparaît aussi dans le tableau de bord sanity.io.
 - À remplir dans le Studio avant d'ouvrir la caisse : « Le lieu → Réglages »
   (tarifs, nombre de places, jauge du club), puis le publier.
 
