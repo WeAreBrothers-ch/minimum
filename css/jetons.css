@@ -70,6 +70,9 @@
   /* Proportion des cases du mur : celle d'une affiche de cinéma. */
   --proportion-affiche: 2 / 3;
 
+  /* Un filtre de l'agenda qui n'est pas choisi : gris, 5:1 sur blanc. */
+  --gris-filtre: #6b6b6b;
+
   /* Un bouton éteint (pas encore de son à jouer). */
   --opacite-eteint: 0.45;
 

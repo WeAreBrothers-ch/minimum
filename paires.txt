@@ -13,3 +13,5 @@
 #000 | #3cab64 | ui
 #000 | #ffc394 | courant
 #000 | #ff7a2f | courant
+# Filtre de l agenda non choisi
+#6b6b6b | #fff | ui

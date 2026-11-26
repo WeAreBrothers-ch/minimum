@@ -425,21 +425,34 @@ main [data-remplir]:empty {
   background-color: var(--remplissage);
 }
 
-/* Agenda : le filtre choisi reste blanc, souligné d'un trait épais comme
-   « Tout » ; la couleur ne reste que dans le petit carré (revu le
-   26.11.2026 : « trop de couleurs »). */
-.agenda .filtre {
-  background-image: linear-gradient(var(--encre), var(--encre));
-  background-position: bottom;
-  background-repeat: no-repeat;
-  background-size: 100% 0;
-  transition: background-size 220ms var(--ease-out);
+/* Agenda : pas de case pleine ni de trait (un aplat noir se soudait à la
+   case noire d'aujourd'hui, juste dessous) : le filtre choisi est écrit en
+   noir, les autres en gris (5:1, lisibles). La couleur ne reste que dans le
+   petit carré (revu le 26.11.2026 : « trop de couleurs »). */
+.agenda .filtre,
+.agenda .filtre--tout {
+  color: var(--gris-filtre);
+  background: var(--fond);
+  background-image: none;
 }
 
 .agenda .filtre[aria-pressed="true"] {
   color: var(--encre);
-  background-color: var(--fond);
-  background-size: 100% 0.375rem;
+  background: var(--fond);
+}
+
+.agenda .filtre:not(.filtre--tout)::before {
+  opacity: 0.6;
+}
+
+.agenda .filtre[aria-pressed="true"]::before {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .agenda .filtre:hover {
+    color: var(--encre);
+  }
 }
 
 .filtres--1 { --n: 1; }
@@ -558,6 +571,7 @@ main [data-remplir]:empty {
 }
 
 .pied__signature {
+  order: 2;
   grid-column: 1 / -1;
   padding: var(--espace-2) var(--marge) calc(var(--espace-2) + env(safe-area-inset-bottom));
   font-size: 0.75rem;

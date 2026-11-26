@@ -127,9 +127,11 @@ supprimée sur tout le site. On circule par :
   « ← MINIMUM » qui ramène à l'accueil ;
 - **le pied de page** : une rangée de cases, une par rubrique, en noir et
   blanc, sans couleur (revu le 26.11.2026 : « on voit rien à cause des
-  couleurs ») ; la page où l'on est, et la case survolée, ont leur nom
-  souligné d'un trait épais ; la case reste noire (passée au blanc, elle se
-  perdait dans une page blanche).
+  couleurs »). La rangée est sous le nom MINIMUM, l'adresse et le contact,
+  juste avant la signature, cernée de noir ; la
+  page où l'on est, et la case survolée, y sont pleines de blanc, texte noir
+  (en haut du pied, la case blanche se perdait dans une page blanche ; le
+  soulignement a été refusé).
   Sur téléphone, Cinéma et Musique sur une ligne, Radio, Agenda et Infos sur
   la suivante. La bande de couleurs au-dessus du pied est retirée.
 
@@ -139,7 +141,8 @@ Rien d'autre : pas de bouton menu, pas de liens en plus dans les pages.
 comprend rien ») : les rendez-vous sont des cases blanches, texte noir ; la
 couleur d'un monde n'est plus qu'un petit carré devant son nom (Cinéma,
 Musique, Radio), comme dans les filtres qui servent de légende. Le filtre
-choisi reste blanc, souligné d'un trait noir épais.
+choisi est écrit en noir, les autres en gris : ni aplat ni trait épais (il se
+soudait à la case noire d'aujourd'hui).
 
 **La page Radio, noir et blanc aussi** : le rose ne reste que dans la case du
 titre et le point du direct ; les jours des lives sont en noir et blanc.

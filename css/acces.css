@@ -5,7 +5,7 @@
    - en haut de chaque page, le nom MINIMUM, qui ramène à l'accueil, dans la
      case du titre, elle-même de la couleur de la rubrique ;
    - en bas, dans le pied de page, une rangée de cases vers les rubriques,
-     en noir et blanc, la page où l'on est soulignée.
+     en noir et blanc, la page où l'on est en blanc.
    Couleurs : jetons.css (rouge le cinéma, rose la musique et la radio, jaune
    l'agenda, grenat les infos). */
 
@@ -60,11 +60,13 @@
 /* ---------- Le pied de page : une case par rubrique ---------- */
 /* Sur le noir du pied, chaque rubrique est une case au trait blanc, son nom
    en blanc : pas de couleur ici (revu le 26.11.2026 : « on voit rien »).
-   La page où l'on est, et la case survolée : le nom souligné, la case
-   reste noire.
+   La rangée est sous le nom, l'adresse et le contact, cernée de noir ; la
+   page où l'on est, et la case survolée, y sont pleines de blanc.
    Téléphone : Cinéma et Musique sur une ligne, Radio, Agenda et Infos sur
    la suivante ; aucune case vide. */
 .pied .pied__rubriques {
+  /* Après l'adresse et le contact, avant la signature : cernée de noir. */
+  order: 1;
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -91,15 +93,12 @@
   grid-column: span 3;
 }
 
-.pied__rubrique {
-  text-decoration-thickness: 0.18em;
-  text-underline-offset: 0.3em;
-}
-
-/* La page où l'on est : son nom souligné d'un trait épais. La case reste
-   noire : passée au blanc, elle se perdait dans une page blanche. */
+/* La page où l'on est, et la case survolée : pleine de blanc, texte noir,
+   comme la rubrique courante de l'ancien menu. La rangée est cernée de
+   noir : la case blanche se voit toujours. */
 .pied .pied__rubrique[aria-current] {
-  text-decoration-line: underline;
+  color: var(--noir);
+  background: var(--blanc);
 }
 
 .pied__rubrique:focus-visible {
@@ -109,7 +108,9 @@
 
 @media (hover: hover) and (pointer: fine) {
   .pied .pied__rubrique:hover {
-    text-decoration-line: underline;
+    text-decoration: none;
+    color: var(--noir);
+    background: var(--blanc);
   }
 }
 
