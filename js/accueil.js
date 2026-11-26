@@ -3,6 +3,7 @@
 
 import { cartesCinema, cartesMusique, intercaler } from "./carte.js";
 import { chargerProgramme } from "./donnees.js";
+import { heureCourte, jourCourt } from "./format.js";
 import { monterMur } from "./mur.js";
 
 /** @typedef {import("./types.js").Programme} Programme */
@@ -51,28 +52,41 @@ function rubrique(teinte, titre, lien, ligne) {
 }
 
 /**
+ * Ce que dit la case Radio : le live en cours, sinon le prochain.
+ * @param {Programme} programme
+ * @returns {string}
+ */
+function etatRadio(programme) {
+  const enCours = programme.emissions.find((e) => e.enDirect);
+  if (enCours) return `En direct : ${enCours.titre}`;
+  const prochain = programme.emissions
+    .filter((e) => e.date >= programme.aujourdhui)
+    .sort((a, b) => (a.date + a.heure).localeCompare(b.date + b.heure))[0];
+  if (prochain) return `Prochain live : ${jourCourt(prochain.date)}, ${heureCourte(prochain.heure)}`;
+  return "Les lives, sur YouTube";
+}
+
+/**
  * Les rubriques de chaque mur (demande du client, 26.11.2026 : pas de
  * menu, les rubriques dans le défilement). Musique et Radio à gauche,
- * Cinéma à droite ; l’Agenda, les Infos et le nom des deux côtés.
+ * Cinéma à droite ; l’Agenda et les Infos des deux côtés.
  * @param {Carte[]} musique
  * @param {Carte[]} cinema
+ * @param {string} radio  Ce que dit la case Radio.
  */
-function rubriques(musique, cinema) {
+function rubriques(musique, cinema, radio) {
   const agenda = rubrique("agenda", "Agenda", "agenda/", "Jour par jour");
   const infos = rubrique("infos", "Infos", "infos/", "Tarifs, adresse, contact");
-  const marque = rubrique("marque", "Minimum", "", "La Case à Chocs, Neuchâtel");
   return {
     musique: [
-      rubrique("musique", "Musique", "musique/", compter(musique, [["soiree", "soirée", "soirées"], ["emission", "live", "lives"]], "Soirées et radio")),
-      rubrique("radio", "Radio", "radio/", "Lives sur YouTube"),
+      rubrique("musique", "Musique", "musique/", compter(musique, [["soiree", "soirée", "soirées"]], "Les soirées du club")),
+      rubrique("radio", "Radio", "radio/", radio),
       agenda,
-      marque,
       infos,
     ],
     cinema: [
       rubrique("cinema", "Cinéma", "cinema/", compter(cinema, [["film", "film", "films"]], "À l’affiche et prochainement")),
       infos,
-      marque,
       agenda,
     ],
   };
@@ -93,21 +107,21 @@ export function initAccueil() {
   const demontages = [];
   let actif = true;
 
-  /** @param {Carte[]} musique @param {Carte[]} cinema */
-  const monter = (musique, cinema) => {
-    const r = rubriques(musique, cinema);
+  /** @param {Carte[]} musique @param {Carte[]} cinema @param {string} radio */
+  const monter = (musique, cinema, radio) => {
+    const r = rubriques(musique, cinema, radio);
     demontages.push(remplir(moitieMusique, intercaler(musique, r.musique), racine));
     demontages.push(remplir(moitieCinema, intercaler(cinema, r.cinema), racine));
   };
 
   chargerProgramme()
     .then((programme) => {
-      if (actif) monter(cartesMusique(programme), cartesCinema(programme));
+      if (actif) monter(cartesMusique(programme), cartesCinema(programme), etatRadio(programme));
     })
     .catch((/** @type {unknown} */ erreur) => {
       /* Sans programme, les rubriques restent : on peut toujours aller ailleurs. */
       console.warn("Minimum : programme indisponible.", erreur);
-      if (actif) monter([], []);
+      if (actif) monter([], [], "Les lives, sur YouTube");
     });
 
   return () => {

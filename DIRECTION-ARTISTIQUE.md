@@ -106,22 +106,33 @@ supprimée sur tout le site. On circule par :
   droite ; quatre colonnes sur ordinateur, deux sur téléphone). Les rubriques
   sont des **cases du mur, dans le défilement** (revu le 26.11.2026 : pas de
   boutons posés par-dessus) : deux fois moins hautes qu'une affiche, pleines
-  de leur couleur, le nom en très grand, ce qu'elles contiennent en petit
-  (« 7 soirées · 3 lives », « 8 films ») et la flèche. Mur gauche : MUSIQUE
-  (tout en haut), RADIO, AGENDA, MINIMUM, INFOS ; mur droit : CINÉMA (tout en
-  haut), INFOS, MINIMUM, AGENDA. Elles reviennent à chaque tour de la boucle,
-  comme les affiches. MINIMUM est une case blanche, le nom d'un bord à
-  l'autre, qui n'est pas un lien. Au survol, une case de rubrique passe au
-  blanc. Un live sans visuel est une affiche typographique blanche (plus
-  rose, pour ne pas se confondre avec les cases Musique et Radio) ;
+  de leur couleur, le nom en très grand, une ligne en petit (« 7 soirées »,
+  « 8 films ») et la flèche. Mur gauche : MUSIQUE (tout en haut), RADIO,
+  AGENDA, INFOS ; mur droit : CINÉMA (tout en haut), INFOS, AGENDA. Elles
+  reviennent à chaque tour de la boucle, comme les affiches. Au survol, une
+  case de rubrique passe au blanc. Pas de case MINIMUM (retirée à la demande
+  du client).
+  **La radio n'a qu'une entrée** : la case RADIO, qui dit le live en cours
+  (« En direct : Live au studio ») ou le prochain. Les lives ne sont plus des
+  affiches du mur : tout se passe sur la page Radio ;
 - **la case du titre** de chaque rubrique : pleine de sa couleur, avec en haut
   « ← MINIMUM » qui ramène à l'accueil ;
-- **le pied de page** : une rangée de cases, une par rubrique, un carré de sa
-  couleur devant le nom ; la page où l'on est se remplit de sa couleur, les
-  autres au survol. Sur téléphone, Cinéma et Musique sur une ligne, Radio,
-  Agenda et Infos sur la suivante. La bande de couleur au-dessus reprend les
-  quatre couleurs (rouge, rose, jaune, grenat).
+- **le pied de page** : une rangée de cases, une par rubrique, en noir et
+  blanc, sans couleur (revu le 26.11.2026 : « on voit rien à cause des
+  couleurs ») ; la page où l'on est, et la case survolée, passent en blanc.
+  Sur téléphone, Cinéma et Musique sur une ligne, Radio, Agenda et Infos sur
+  la suivante. La bande de couleurs au-dessus du pied est retirée.
+
 Rien d'autre : pas de bouton menu, pas de liens en plus dans les pages.
+
+**L'agenda en noir et blanc** (revu le 26.11.2026 : « trop de couleurs, on
+comprend rien ») : les rendez-vous sont des cases blanches, texte noir ; la
+couleur d'un monde n'est plus qu'un petit carré devant son nom (Cinéma,
+Musique, Radio), comme dans les filtres qui servent de légende. Le filtre
+choisi reste blanc, souligné d'un trait noir épais.
+
+**La page Radio, noir et blanc aussi** : le rose ne reste que dans la case du
+titre et le point du direct ; les jours des lives sont en noir et blanc.
 
 **La fiche d'un film ne change pas** (le client la trouve très bien) : seule la
 barre du haut disparaît, et le pied de page reçoit la rangée des rubriques.
@@ -138,7 +149,7 @@ est en cases, sur le noir de la musique :
   titre, le jour, et le lien vers la chaîne ;
 - « Prochains lives » puis « À revoir » : une ligne par live, le jour dans le
   rose de la radio ; un toucher sur un live à revoir le met dans le lecteur.
-Sur l'accueil, seuls le live en cours et les lives à venir montent sur le mur.
+Sur l'accueil, la radio n'a que sa case RADIO, qui dit le live en cours ou le prochain.
 
 ### Couleur
 - `--noir` #000 et `--blanc` #fff, relevés sur le logo (D1), pour tout le site.

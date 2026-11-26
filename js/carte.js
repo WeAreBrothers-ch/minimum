@@ -53,14 +53,13 @@ export function cartesCinema(programme) {
 }
 
 /**
- * Le mur Musique : les soirées à venir et les lives de la radio, mêlés
- * une à une pour que la radio ne disparaisse pas sous les affiches.
+ * Le mur Musique : les soirées à venir. La radio n’y a qu’une case, celle
+ * de sa rubrique, qui dit le live en cours ou le prochain (accueil.js).
  * @param {Programme} programme
  * @returns {Carte[]}
  */
 export function cartesMusique(programme) {
-  /** @type {Carte[]} */
-  const soirees = programme.soirees
+  return programme.soirees
     .filter((s) => s.date >= programme.aujourdhui)
     .sort((a, b) => (a.date + a.heure).localeCompare(b.date + b.heure))
     .map((s) => ({
@@ -72,35 +71,6 @@ export function cartesMusique(programme) {
       ligne: `${jourLongMajuscule(s.date)}, ${heureCourte(s.heure)}`,
       etat: "Soirée",
     }));
-
-  /* Les lives de la radio : celui en cours, puis ceux à venir. Les lives
-     passés restent sur la page Radio, à revoir. */
-  const rang = (/** @type {import("./types.js").Emission} */ e) =>
-    e.enDirect ? 0 : e.date >= programme.aujourdhui ? 1 : 2;
-  /** @type {Carte[]} */
-  const emissions = [...programme.emissions]
-    .filter((e) => rang(e) < 2)
-    .sort((a, b) => rang(a) - rang(b) || (a.date + a.heure).localeCompare(b.date + b.heure))
-    .map((e) => ({
-      genre: "emission",
-      id: e.id,
-      titre: e.titre,
-      lien: `radio/#${e.id}`,
-      image: e.visuel,
-      ligne: `${jourLongMajuscule(e.date)}, ${heureCourte(e.heure)}`,
-      etat: rang(e) === 0 ? "En direct" : "Live à venir",
-    }));
-
-  /** @type {Carte[]} */
-  const melange = [];
-  const longueur = Math.max(soirees.length, emissions.length);
-  for (let i = 0; i < longueur; i++) {
-    const soiree = soirees[i];
-    const emission = emissions[i];
-    if (soiree) melange.push(soiree);
-    if (emission) melange.push(emission);
-  }
-  return melange;
 }
 
 /**
@@ -124,17 +94,16 @@ export function carteHTML(carte, racine, accessible, prioritaire) {
 
 /**
  * Une rubrique dans le mur : une case de sa couleur, moins haute qu’une
- * affiche, son nom en grand. Le nom MINIMUM n’est pas un lien.
+ * affiche, son nom en grand.
  * @param {Carte} carte
  * @param {string} racine
  * @param {string} cache
  * @returns {string}
  */
 function rubriqueHTML(carte, racine, cache) {
-  const classes = `carte carte--rubrique carte--${carte.teinte ?? "marque"}`;
+  const classes = `carte carte--rubrique carte--${carte.teinte ?? "cinema"}`;
   const nom = `<span class="carte__rubrique">${echapper(carte.titre)}</span>`;
   const ligne = carte.ligne ? `<span class="carte__ligne">${echapper(carte.ligne)}</span>` : "";
-  if (!carte.lien) return `<p class="${classes}" aria-hidden="true">${nom}${ligne}</p>`;
   return (
     `<a class="${classes}" href="${echapper(racine + carte.lien)}"${cache}>${nom}` +
     `<span class="carte__suite">${ligne}<span class="fleche" aria-hidden="true"></span></span></a>`

@@ -2,7 +2,8 @@
    26.11.2026 : « plus simple, mais vraiment clean »). Des cases jointes d'un
    trait, comme le reste du site, sur le noir de la musique : le lecteur en
    grand, ce qu'il montre à côté, puis les prochains lives et ceux à revoir,
-   une ligne chacun, le jour dans le rose de la radio. */
+   une ligne chacun. Le rose de la radio ne reste que dans la case du titre
+   et le point du direct. */
 
 /* ---------- Le lecteur et sa case ---------- */
 .live {
@@ -119,7 +120,7 @@
   background: var(--fond);
 }
 
-/* Le jour et l'heure, dans le rose de la radio. */
+/* Le jour et l'heure, en gras : noir et blanc, comme l'agenda. */
 .ligne-live__quand {
   flex-direction: column;
   justify-content: center;
@@ -131,8 +132,6 @@
   text-align: center;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
-  color: var(--texte-radio);
-  background: var(--pastille-radio);
 }
 
 .ligne-live__titre {
@@ -163,10 +162,10 @@
   outline-offset: calc(var(--trait) * -2);
 }
 
-/* Le live qui est dans le lecteur : sa case d'action se remplit de rose. */
+/* Le live qui est dans le lecteur : sa case d'action passe en blanc. */
 .ligne-live--revoir[aria-current="true"] .ligne-live__action {
-  color: var(--texte-radio);
-  background: var(--pastille-radio);
+  color: var(--noir);
+  background: var(--blanc);
 }
 
 @media (hover: hover) and (pointer: fine) {

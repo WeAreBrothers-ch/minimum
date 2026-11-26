@@ -125,8 +125,7 @@
  * @property {Image | null} image
  * @property {string} ligne       Une ligne d’information (date, réalisation…).
  * @property {string} etat        « À l’affiche », « En direct », « Soirée »…
- * @property {"cinema" | "musique" | "radio" | "agenda" | "infos" | "marque"} [teinte]
- *           Une rubrique : sa couleur (« marque » : le nom MINIMUM, en blanc).
+ * @property {"cinema" | "musique" | "radio" | "agenda" | "infos"} [teinte]  Une rubrique : sa couleur.
  */
 
 export {};

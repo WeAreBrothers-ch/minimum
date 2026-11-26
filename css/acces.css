@@ -5,7 +5,7 @@
    - en haut de chaque page, le nom MINIMUM, qui ramène à l'accueil, dans la
      case du titre, elle-même de la couleur de la rubrique ;
    - en bas, dans le pied de page, une rangée de cases vers les rubriques,
-     la page où l'on est pleine de sa couleur.
+     en noir et blanc, la page où l'on est en blanc.
    Couleurs : jetons.css (rouge le cinéma, rose la musique et la radio, jaune
    l'agenda, grenat les infos). */
 
@@ -58,11 +58,12 @@
 }
 
 /* ---------- Le pied de page : une case par rubrique ---------- */
-/* Sur le noir du pied, chaque rubrique est une case au trait blanc, un
-   carré de sa couleur devant son nom ; au survol, et pour la page où l'on
-   est, la case se remplit de sa couleur. Téléphone : Cinéma et Musique sur
-   une ligne, Radio, Agenda et Infos sur la suivante ; aucune case vide. */
-.pied__rubriques {
+/* Sur le noir du pied, chaque rubrique est une case au trait blanc, son nom
+   en blanc : pas de couleur ici (revu le 26.11.2026 : « on voit rien »).
+   La page où l'on est, et la case survolée, passent en blanc, texte noir.
+   Téléphone : Cinéma et Musique sur une ligne, Radio, Agenda et Infos sur
+   la suivante ; aucune case vide. */
+.pied .pied__rubriques {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -71,16 +72,13 @@
 }
 
 .pied__rubrique {
-  --case-fond: var(--blanc);
-  --case-texte: var(--noir);
   display: flex;
   grid-column: span 2;
   align-items: center;
-  gap: var(--espace-2);
   min-width: 0;
   min-height: 3.5rem;
   padding: var(--espace-2) var(--marge);
-  font-size: clamp(0.8125rem, 0.7rem + 0.5vw, 1rem);
+  font-size: clamp(0.875rem, 0.75rem + 0.5vw, 1.0625rem);
   font-weight: var(--graisse-nom);
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
@@ -92,47 +90,23 @@
   grid-column: span 3;
 }
 
-.pied__rubrique::before {
-  content: "";
-  flex: none;
-  width: 0.625rem;
-  height: 0.625rem;
-  background: var(--case-fond);
-  border: var(--trait) solid var(--blanc);
-}
-
-.pied__rubrique--cinema { --case-fond: var(--pastille-cinema); --case-texte: var(--texte-cinema); }
-.pied__rubrique--musique { --case-fond: var(--pastille-musique); --case-texte: var(--texte-musique); }
-.pied__rubrique--radio { --case-fond: var(--pastille-radio); --case-texte: var(--texte-radio); }
-.pied__rubrique--agenda { --case-fond: var(--pastille-agenda); --case-texte: var(--texte-agenda); }
-.pied__rubrique--infos { --case-fond: var(--pastille-infos); --case-texte: var(--texte-infos); }
-
 .pied__rubrique[aria-current],
 .pied__rubrique:focus-visible {
   outline: none;
-  color: var(--case-texte);
-  background: var(--case-fond);
-}
-
-.pied__rubrique[aria-current]::before,
-.pied__rubrique:focus-visible::before {
-  border-color: var(--case-texte);
+  color: var(--noir);
+  background: var(--blanc);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .pied .pied__rubrique:hover {
     text-decoration: none;
-    color: var(--case-texte);
-    background: var(--case-fond);
-  }
-
-  .pied__rubrique:hover::before {
-    border-color: var(--case-texte);
+    color: var(--noir);
+    background: var(--blanc);
   }
 }
 
 @media (min-width: 40rem) {
-  .pied__rubriques {
+  .pied .pied__rubriques {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 

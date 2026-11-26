@@ -133,8 +133,8 @@ function infosHTML(ecran) {
 }
 
 /**
- * Une ligne de live : le jour et l’heure dans la couleur de la radio, le
- * titre ; « Revoir » quand la vidéo est en ligne.
+ * Une ligne de live : le jour et l’heure, le titre ; « Revoir » quand la
+ * vidéo est en ligne.
  * @param {Emission} e
  * @param {boolean} passe
  * @returns {string}

@@ -71,36 +71,11 @@
   outline-offset: calc(var(--trait) * -3);
 }
 
-.carte--emission:active {
-  transform: scale(0.98);
-  transition: transform var(--duree-pression) var(--ease-out);
-}
-
-.carte[data-joue="true"] .carte__etat {
-  text-decoration: underline;
-  text-decoration-thickness: var(--trait);
-  text-underline-offset: 0.25em;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .carte--emission:active {
-    transform: none;
-  }
-}
-
-/* Un live sans visuel : une affiche typographique blanche, plutôt qu'une
-   case vide. Pas rose : elle se confondrait avec les cases Musique et Radio
-   du mur. Le titre grandit pour tenir l'affiche. */
-/* Sa taille suit la largeur de la colonne (9,5 % de celle-ci) : un mot de
-   neuf lettres, « RÉÉCOUTER », tient sur une ligne, sans coupure, du plus
+/* Une affiche typographique, quand il n'y a pas d'image. Sa taille suit
+   la largeur de la colonne (9,5 % de celle-ci) : un mot de neuf lettres, « RÉÉCOUTER », tient sur une ligne, sans coupure, du plus
    petit téléphone au grand écran. */
 .carte--typo .carte__titre {
   font-size: clamp(0.9375rem, 9.5cqi, 2.25rem);
-}
-
-.carte--typo.carte--emission {
-  color: var(--noir);
-  background: var(--blanc);
 }
 
 /* Une soirée sans affiche : rose, la couleur de la musique. Noire, elle se
@@ -110,15 +85,11 @@
   background: var(--pastille-musique);
 }
 
-/* L'état (« En direct », « À l'affiche ») : la pastille noire du site
-   (pastilles.css). */
-
 /* ---------- Une rubrique dans le mur (demande du client, 26.11.2026) ----------
    Pas de menu : les rubriques défilent avec les affiches, dans des cases
    deux fois moins hautes qu'elles, pleines de leur couleur (jetons.css).
    Le nom en très grand (sa taille suit la largeur de la colonne), ce que
-   contient la rubrique en petit, et la flèche. Le nom MINIMUM, en blanc,
-   n'est pas un lien. */
+   contient la rubrique en petit, et la flèche. */
 .carte--rubrique {
   --rubrique-fond: var(--blanc);
   --rubrique-texte: var(--noir);
@@ -152,17 +123,6 @@
   overflow-wrap: break-word;
 }
 
-/* Le nom du lieu : d'un bord à l'autre de sa case, comme dans le pied de page. */
-.carte--marque {
-  justify-content: center;
-}
-
-.carte--marque .carte__rubrique {
-  font-size: calc((100cqi - var(--espace-3) * 2) / 5.4);
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-}
-
 .carte__suite {
   display: flex;
   align-items: flex-end;
@@ -194,7 +154,7 @@
 @media (hover: hover) and (pointer: fine) {
   /* Au survol, la case passe au blanc (jamais au noir : elle se souderait
      aux joints noirs du mur). */
-  a.carte--rubrique:hover {
+  .carte--rubrique:hover {
     color: var(--noir);
     background: var(--blanc);
   }
