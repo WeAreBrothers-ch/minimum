@@ -10,7 +10,7 @@ import { decaler, monterMur } from "./mur.js";
 /**
  * Remplit une moitié et renvoie de quoi la démonter.
  * @param {HTMLElement | null} moitie
- * @param {(ordinateur: boolean) => Carte[][]} colonnesDe
+ * @param {(ordinateur: boolean) => import("./mur.js").Colonne[]} colonnesDe
  * @param {string} racine
  * @returns {() => void}
  */
@@ -52,9 +52,10 @@ function rubrique(teinte, titre, lien, ligne) {
 /**
  * Les quatre onglets de l’accueil (croquis du client, 26.11.2026), de gauche
  * à droite : Agenda (jaune), Musique (rose), Cinéma (rouge), Infos (grenat).
- * Sur ordinateur, chacun est en tête de sa colonne ; sur téléphone, Agenda
- * puis Musique en tête du mur gauche, Cinéma puis Infos en tête du droit.
- * Ils reviennent à la même place à chaque tour de la colonne.
+ * Sur ordinateur, chacun en tête de sa colonne ; sur téléphone, Agenda puis
+ * Musique dans le mur gauche, Cinéma puis Infos dans le droit, une affiche
+ * entre les deux. Jamais alignés : chaque colonne part d’une hauteur
+ * différente (DECALAGES). Ils reviennent à la même place à chaque tour.
  * @param {Carte[]} musique
  * @param {Carte[]} cinema
  */
@@ -70,6 +71,22 @@ function onglets(musique, cinema) {
     cinema: rubrique("cinema", "Cinéma", "cinema/", compter(cinema, [["film", "film", "films"]], "À l’affiche et prochainement")),
     infos: rubrique("infos", "Infos", "infos/", "Tarifs, adresse, contact"),
   };
+}
+
+/** Où arrive l’onglet de chaque colonne, en fraction d’affiche sous le haut
+    de l’écran : des hauteurs différentes, jamais une rangée. Tous restent
+    dans l’écran à l’arrivée. */
+const DECALAGES = { ordinateur: [-0.1, -0.62, -0.3, -0.85], telephone: [-0.08, -0.5] };
+
+/**
+ * Un onglet, une affiche, puis l’autre onglet et le reste des affiches.
+ * @param {Carte} premier
+ * @param {Carte} second
+ * @param {Carte[]} affiches
+ * @returns {Carte[]}
+ */
+function deuxOnglets(premier, second, affiches) {
+  return [premier, ...affiches.slice(0, 1), second, ...affiches.slice(1)];
 }
 
 /**
@@ -90,17 +107,31 @@ export function initAccueil() {
   /** @param {Carte[]} musique @param {Carte[]} cinema */
   const monter = (musique, cinema) => {
     const o = onglets(musique, cinema);
+    const [d1 = 0, d2 = 0, d3 = 0, d4 = 0] = DECALAGES.ordinateur;
+    const [t1 = 0, t2 = 0] = DECALAGES.telephone;
     demontages.push(
       remplir(
         moitieMusique,
-        (ordinateur) => (ordinateur ? [[o.agenda, ...musique], [o.musique, ...decaler(musique)]] : [[o.agenda, o.musique, ...musique]]),
+        (ordinateur) =>
+          ordinateur
+            ? [
+                { cartes: [o.agenda, ...musique], depart: d1 },
+                { cartes: [o.musique, ...decaler(musique)], depart: d2 },
+              ]
+            : [{ cartes: deuxOnglets(o.agenda, o.musique, musique), depart: t1 }],
         racine
       )
     );
     demontages.push(
       remplir(
         moitieCinema,
-        (ordinateur) => (ordinateur ? [[o.cinema, ...cinema], [o.infos, ...decaler(cinema)]] : [[o.cinema, o.infos, ...cinema]]),
+        (ordinateur) =>
+          ordinateur
+            ? [
+                { cartes: [o.cinema, ...cinema], depart: d3 },
+                { cartes: [o.infos, ...decaler(cinema)], depart: d4 },
+              ]
+            : [{ cartes: deuxOnglets(o.cinema, o.infos, cinema), depart: t2 }],
         racine
       )
     );

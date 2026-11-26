@@ -106,11 +106,14 @@ supprimée sur tout le site. On circule par :
   droite ; quatre colonnes sur ordinateur, deux sur téléphone). Les rubriques
   sont **quatre onglets, dans le défilement** (croquis du client,
   26.11.2026) : de gauche à droite AGENDA (jaune), MUSIQUE (rose), CINÉMA
-  (rouge), INFOS (grenat). Sur ordinateur, chacun est en tête de sa colonne
-  (Agenda et Musique sur les deux colonnes du mur noir, Cinéma et Infos sur
-  celles du mur blanc) ; sur téléphone, Agenda puis Musique en tête du mur
-  gauche, Cinéma puis Infos en tête du droit. Ils reviennent à la même place à
-  chaque tour de la colonne, jamais ailleurs. Une case d'onglet fait la moitié
+  (rouge), INFOS (grenat). Sur ordinateur, un par colonne (Agenda et Musique
+  sur les deux colonnes du mur noir, Cinéma et Infos sur celles du mur blanc) ;
+  sur téléphone, Agenda puis Musique dans le mur gauche, Cinéma puis Infos
+  dans le droit, **une affiche entre les deux** (jamais un bloc). **Jamais
+  alignés** (revu le 26.11.2026) : chaque colonne part d'une hauteur
+  différente (`DECALAGES` dans `js/accueil.js`), les onglets arrivent en
+  escalier, tous dans l'écran à l'arrivée sur ordinateur. Ils reviennent à la
+  même place à chaque tour de la colonne, jamais ailleurs. Une case d'onglet fait la moitié
   de la hauteur d'une affiche : le nom en très grand, une ligne en petit
   (« 7 soirées · 3 lives », « 8 films ») et la flèche ; au survol, elle garde
   sa couleur, son nom se souligne et la flèche avance. Pas de case MINIMUM, pas de case Radio : la radio se trouve par

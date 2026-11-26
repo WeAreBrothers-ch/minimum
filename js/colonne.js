@@ -31,7 +31,8 @@ const ATTENTE_ARRET = 120;
  * @property {number[]} ordre       L’ordre des affiches dans le cycle (rangs dans `cartes`).
  * @property {string} racine
  * @property {boolean} accessible   Vrai pour la colonne que lisent le clavier et les lecteurs d’écran.
- * @property {number} depart        Où la colonne commence, en fraction de case (0 : tout en haut).
+ * @property {number} depart        Où la colonne commence, en fraction d’affiche (0 : la première case
+ *                                  tout en haut ; −0,5 : elle arrive une demi-affiche plus bas).
  */
 
 /**
