@@ -152,11 +152,12 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  /* Au survol, la case passe au blanc (jamais au noir : elle se souderait
-     aux joints noirs du mur). */
-  .carte--rubrique:hover {
-    color: var(--noir);
-    background: var(--blanc);
+  /* Au survol, la case garde sa couleur : son nom se souligne et la
+     flèche avance (animations.css). */
+  .carte--rubrique:hover .carte__rubrique {
+    text-decoration: underline;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.12em;
   }
 }
 

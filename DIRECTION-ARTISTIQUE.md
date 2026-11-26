@@ -112,8 +112,8 @@ supprimée sur tout le site. On circule par :
   gauche, Cinéma puis Infos en tête du droit. Ils reviennent à la même place à
   chaque tour de la colonne, jamais ailleurs. Une case d'onglet fait la moitié
   de la hauteur d'une affiche : le nom en très grand, une ligne en petit
-  (« 7 soirées · 3 lives », « 8 films ») et la flèche ; au survol, elle passe
-  au blanc. Pas de case MINIMUM, pas de case Radio : la radio se trouve par
+  (« 7 soirées · 3 lives », « 8 films ») et la flèche ; au survol, elle garde
+  sa couleur, son nom se souligne et la flèche avance. Pas de case MINIMUM, pas de case Radio : la radio se trouve par
   ses flyers (ci-dessous) et le pied de page ;
 - **la machine à flyers** (croquis du client) : chaque live de la radio a
   son flyer, composé par le site (`js/flyer.js`, `css/flyer.css`) à partir du
@@ -127,7 +127,9 @@ supprimée sur tout le site. On circule par :
   « ← MINIMUM » qui ramène à l'accueil ;
 - **le pied de page** : une rangée de cases, une par rubrique, en noir et
   blanc, sans couleur (revu le 26.11.2026 : « on voit rien à cause des
-  couleurs ») ; la page où l'on est, et la case survolée, passent en blanc.
+  couleurs ») ; la page où l'on est, et la case survolée, ont leur nom
+  souligné d'un trait épais ; la case reste noire (passée au blanc, elle se
+  perdait dans une page blanche).
   Sur téléphone, Cinéma et Musique sur une ligne, Radio, Agenda et Infos sur
   la suivante. La bande de couleurs au-dessus du pied est retirée.
 
