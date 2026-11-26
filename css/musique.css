@@ -1,0 +1,178 @@
+/* Minimum : la page Musique, soirées du club et lives de la radio sur une
+   seule page (revu le 26.11.2026 : « vraiment clean »). Sur le noir de la
+   musique : le live en cours tout en haut, puis tout le programme au même
+   format d'affiche, puis les lives à revoir, une ligne chacun. Le rose ne
+   reste que dans les flyers et l'étiquette du direct. */
+
+/* ---------- Le lecteur : le live en cours, ou un live à revoir ---------- */
+.live {
+  display: grid;
+  gap: var(--trait);
+  background: var(--encre);
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.live > * {
+  min-width: 0;
+  background: var(--fond);
+}
+
+.live__ecran {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--noir);
+}
+
+.live__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Tant que la vidéo n'est pas là : le portrait de l'artiste, en noir et
+   blanc, comme son flyer. */
+.live__portrait {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.1);
+  opacity: 0.75;
+}
+
+.live__infos {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: var(--espace-2);
+  padding: var(--espace-4) var(--marge);
+}
+
+.live__etat {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3em 0.55em;
+  font-size: var(--taille-petite);
+  font-weight: var(--graisse-nom);
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  color: var(--texte-musique);
+  background: var(--pastille-musique);
+}
+
+.live__titre {
+  font-size: var(--taille-carte);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.live__chaine {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espace-2);
+  min-height: var(--cible);
+  margin-top: var(--espace-2);
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  text-decoration: none;
+}
+
+/* ---------- Au programme : soirées et lives, au même format ---------- */
+/* Deux par rangée sur téléphone, quatre sur ordinateur. Chaque affiche est
+   cernée d'un trait ; la fin de la dernière rangée reste du fond. */
+.flyers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--trait);
+  padding-bottom: var(--trait);
+  background: var(--fond);
+}
+
+.flyers > li {
+  outline: var(--trait) solid var(--encre);
+  scroll-margin: var(--espace-4);
+}
+
+/* Arrivé sur un live depuis l'accueil ou l'agenda : il est cerné de rose. */
+.flyers > li:target {
+  outline-color: var(--pastille-musique);
+  outline-width: calc(var(--trait) * 3);
+  z-index: 1;
+}
+
+/* ---------- À revoir : une ligne par live ---------- */
+.lives__liste > li {
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.ligne-live {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--espace-3);
+  width: 100%;
+  min-height: 4.25rem;
+  padding: var(--espace-2) var(--marge);
+  font: inherit;
+  text-align: left;
+  color: var(--encre);
+  background: var(--fond);
+  border: 0;
+  cursor: pointer;
+}
+
+.ligne-live__quand {
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+.ligne-live__titre {
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.ligne-live[aria-current="true"] {
+  color: var(--noir);
+  background: var(--blanc);
+}
+
+.ligne-live:focus-visible {
+  outline: var(--trait) solid var(--pastille-musique);
+  outline-offset: calc(var(--trait) * -2);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ligne-live:hover .ligne-live__titre,
+  .live__chaine:hover {
+    text-decoration: underline;
+    text-decoration-thickness: var(--trait);
+    text-underline-offset: 0.2em;
+  }
+}
+
+/* Ordinateur : le lecteur sur trois quarts, sa case sur le dernier quart ;
+   quatre affiches par rangée. */
+@media (min-width: 56rem) {
+  .live {
+    grid-template-columns: 3fr 1fr;
+  }
+
+  .flyers {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .ligne-live {
+    grid-template-columns: 12rem minmax(0, 1fr) auto;
+  }
+}

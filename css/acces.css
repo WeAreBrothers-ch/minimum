@@ -62,21 +62,21 @@
    en blanc : pas de couleur ici (revu le 26.11.2026 : « on voit rien »).
    La rangée est sous le nom, l'adresse et le contact, cernée de noir ; la
    page où l'on est, et la case survolée, y sont pleines de blanc.
-   Téléphone : Cinéma et Musique sur une ligne, Radio, Agenda et Infos sur
-   la suivante ; aucune case vide. */
+   Quatre rubriques, dans l'ordre de l'accueil : Agenda, Musique, Cinéma,
+   Infos (la radio est dans Musique). Deux par ligne sur téléphone, les
+   quatre en ligne ensuite. */
 .pied .pied__rubriques {
   /* Après l'adresse et le contact, avant la signature : cernée de noir. */
   order: 1;
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--joint);
   background: var(--blanc);
 }
 
 .pied__rubrique {
   display: flex;
-  grid-column: span 2;
   align-items: center;
   min-width: 0;
   min-height: 3.5rem;
@@ -87,10 +87,6 @@
   letter-spacing: var(--interlettre-capitales);
   color: var(--blanc);
   background: var(--noir);
-}
-
-.pied__rubrique:nth-child(-n + 2) {
-  grid-column: span 3;
 }
 
 /* La page où l'on est, et la case survolée : pleine de blanc, texte noir,
@@ -116,11 +112,6 @@
 
 @media (min-width: 40rem) {
   .pied .pied__rubriques {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-
-  .pied__rubrique,
-  .pied__rubrique:nth-child(-n + 2) {
-    grid-column: auto;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

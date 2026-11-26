@@ -16,7 +16,6 @@ const PAGES = {
   accueil: () => import("./accueil.js").then((m) => m.initAccueil),
   cinema: () => import("./pages/cinema.js").then((m) => m.initCinema),
   musique: () => import("./pages/musique.js").then((m) => m.initMusique),
-  radio: () => import("./pages/radio.js").then((m) => m.initRadio),
   agenda: () => import("./pages/agenda.js").then((m) => m.initAgenda),
   film: () => import("./pages/film.js").then((m) => m.initFilm),
   soiree: () => import("./pages/soiree.js").then((m) => m.initSoiree),

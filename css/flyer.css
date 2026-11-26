@@ -2,8 +2,11 @@
    Le format d'une affiche ; le portrait de l'artiste en noir et blanc, en
    plein ; en haut, « LIVE YOUTUBE » sur le rose de la musique ; en bas,
    sur une bande noire, le nom en très grand, puis la date et l'heure en
-   rose. Les tailles suivent la largeur du flyer (cqi) : il se lit pareil
-   dans une colonne du mur et dans la grille de la page Radio. */
+   rose. Une seule étiquette en haut : « LIVE YOUTUBE », ou « EN DIRECT »
+   avec le point qui clignote pendant le live. Les soirées, sur la page
+   Musique, ont le même format, leur affiche en couleur et sans étiquette.
+   Les tailles suivent la largeur du flyer (cqi) : il se lit pareil dans
+   une colonne du mur et dans la grille de la page Musique. */
 
 .flyer {
   position: relative;
@@ -33,6 +36,10 @@
   filter: grayscale(1) contrast(1.1);
 }
 
+.flyer--couleur .flyer__portrait {
+  filter: none;
+}
+
 .flyer__haut {
   position: relative;
   display: flex;
@@ -42,8 +49,7 @@
   padding: 5cqi;
 }
 
-.flyer__live,
-.flyer__direct {
+.flyer__live {
   display: inline-flex;
   align-items: center;
   padding: 0.3em 0.55em;
@@ -60,22 +66,19 @@
   background: var(--pastille-musique);
 }
 
-.flyer__direct {
-  color: var(--blanc);
-  background: var(--noir);
-}
-
-/* Le point du direct, qui clignote (animations.css). */
-.flyer__direct::before {
+/* « En direct » : un point noir qui clignote devant (animations.css). */
+.en-direct::before {
   content: "";
   width: 0.5em;
   height: 0.5em;
   margin-right: 0.45em;
-  background: var(--pastille-musique);
+  background: var(--noir);
 }
 
 .flyer__bas {
   position: relative;
+  /* Toujours en bas, même sans étiquette en haut (les soirées). */
+  margin-top: auto;
   display: grid;
   gap: 2cqi;
   padding: 5cqi;

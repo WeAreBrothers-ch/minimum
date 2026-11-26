@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Musique : les soirées du club, Minimum Neuchâtel</title>
-  <meta name="description" content="Les soirées du club Minimum, à La Case à Chocs, quai Philippe-Godet 20 à Neuchâtel." />
+  <meta name="description" content="Les soirées du club Minimum à La Case à Chocs, Neuchâtel, et les lives de la radio en direct sur YouTube." />
   <meta name="theme-color" content="#ffffff" />
   <link rel="icon" href="../favicon.ico" sizes="any" />
   <link rel="icon" href="../assets/img/favicon-32.png" type="image/png" sizes="32x32" />
@@ -15,7 +15,7 @@
   <meta property="og:site_name" content="Minimum" />
   <meta property="og:locale" content="fr_CH" />
   <meta property="og:title" content="Musique : les soirées du club, Minimum Neuchâtel" />
-  <meta property="og:description" content="Les soirées du club Minimum, à La Case à Chocs, quai Philippe-Godet 20 à Neuchâtel." />
+  <meta property="og:description" content="Les soirées du club Minimum à La Case à Chocs, Neuchâtel, et les lives de la radio en direct sur YouTube." />
   <meta property="og:url" content="https://www.cineminimum.ch/musique/" />
   <meta property="og:image" content="https://www.cineminimum.ch/assets/img/partage.jpg" />
   <meta property="og:image:width" content="1200" />
@@ -30,21 +30,24 @@
   <link rel="stylesheet" href="../css/acces.css" />
   <link rel="stylesheet" href="../css/pages.css" />
   <link rel="stylesheet" href="../css/cases.css" />
+  <link rel="stylesheet" href="../css/flyer.css" />
+  <link rel="stylesheet" href="../css/musique.css" />
   <link rel="stylesheet" href="../css/animations.css" />
   <!-- modules : npm run precharger -->
   <link rel="modulepreload" href="../js/main.js" />
   <link rel="modulepreload" href="../js/pages/musique.js" />
   <link rel="modulepreload" href="../js/navigation.js" />
+  <link rel="modulepreload" href="../js/config.js" />
   <link rel="modulepreload" href="../js/donnees.js" />
   <link rel="modulepreload" href="../js/format.js" />
-  <link rel="modulepreload" href="../js/grille.js" />
+  <link rel="modulepreload" href="../js/flyer.js" />
+  <link rel="modulepreload" href="../js/images.js" />
+  <link rel="modulepreload" href="../js/pages/bande-annonce.js" />
   <link rel="modulepreload" href="../js/pages/commun.js" />
-  <link rel="modulepreload" href="../js/config.js" />
   <link rel="modulepreload" href="../js/catalogue.js" />
   <link rel="modulepreload" href="../js/sanity.js" />
   <link rel="modulepreload" href="../js/demo/films.js" />
   <link rel="modulepreload" href="../js/demo/musique.js" />
-  <link rel="modulepreload" href="../js/images.js" />
   <!-- /modules -->
 </head>
 <body data-page="musique" data-racine="../">
@@ -53,7 +56,7 @@
     <header class="page__tete page__tete--musique">
       <a class="page__accueil" href="../"><span class="fleche fleche--retour" aria-hidden="true"></span>Minimum</a>
       <h1 class="page__titre"><span class="masque"><span>Musique</span></span></h1>
-      <p class="page__chapeau">Les soirées du club, à La Case à Chocs</p>
+      <p class="page__chapeau">Les soirées du club et les lives sur YouTube</p>
     </header>
     <div data-remplir></div>
   </main>
@@ -63,10 +66,9 @@
       <p class="pied__devise">Cinéma, club et radio à La Case à Chocs, Neuchâtel</p>
     </div>
     <nav class="pied__rubriques" aria-label="Les rubriques">
-      <a class="pied__rubrique pied__rubrique--cinema" href="../cinema/">Cinéma</a>
-      <a class="pied__rubrique pied__rubrique--musique" href="../musique/" aria-current="page">Musique</a>
-      <a class="pied__rubrique pied__rubrique--radio" href="../radio/">Radio</a>
       <a class="pied__rubrique pied__rubrique--agenda" href="../agenda/">Agenda</a>
+      <a class="pied__rubrique pied__rubrique--musique" href="../musique/" aria-current="page">Musique</a>
+      <a class="pied__rubrique pied__rubrique--cinema" href="../cinema/">Cinéma</a>
       <a class="pied__rubrique pied__rubrique--infos" href="../infos/">Infos</a>
     </nav>
     <div class="pied__case">

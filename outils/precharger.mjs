@@ -17,7 +17,6 @@ const PAGES = {
   "index.html": "js/accueil.js",
   "cinema/index.html": "js/pages/cinema.js",
   "musique/index.html": "js/pages/musique.js",
-  "radio/index.html": "js/pages/radio.js",
   "agenda/index.html": "js/pages/agenda.js",
   "infos/index.html": "js/pages/infos.js",
   "film/index.html": "js/pages/film.js",

@@ -2,86 +2,16 @@
 <html lang="fr-CH">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Radio : le direct et les émissions, Minimum Neuchâtel</title>
-  <meta name="description" content="La web radio de Minimum, à Neuchâtel : le direct et les émissions à réécouter." />
-  <meta name="theme-color" content="#ffffff" />
-  <link rel="icon" href="../favicon.ico" sizes="any" />
-  <link rel="icon" href="../assets/img/favicon-32.png" type="image/png" sizes="32x32" />
-  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png" />
-  <link rel="manifest" href="../site.webmanifest" />
-  <link rel="canonical" href="https://www.cineminimum.ch/radio/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Minimum" />
-  <meta property="og:locale" content="fr_CH" />
-  <meta property="og:title" content="Radio : le direct et les émissions, Minimum Neuchâtel" />
-  <meta property="og:description" content="La web radio de Minimum, à Neuchâtel : le direct et les émissions à réécouter." />
-  <meta property="og:url" content="https://www.cineminimum.ch/radio/" />
-  <meta property="og:image" content="https://www.cineminimum.ch/assets/img/partage.jpg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Minimum : cinéma, musique et radio à La Case à Chocs, Neuchâtel" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <link rel="preload" href="../assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="../css/jetons.css" />
-  <link rel="stylesheet" href="../css/reset.css" />
-  <link rel="stylesheet" href="../css/base.css" />
-  <link rel="stylesheet" href="../css/pastilles.css" />
-  <link rel="stylesheet" href="../css/acces.css" />
-  <link rel="stylesheet" href="../css/pages.css" />
-  <link rel="stylesheet" href="../css/cases.css" />
-  <link rel="stylesheet" href="../css/radio.css" />
-  <link rel="stylesheet" href="../css/flyer.css" />
-  <link rel="stylesheet" href="../css/animations.css" />
-  <!-- modules : npm run precharger -->
-  <link rel="modulepreload" href="../js/main.js" />
-  <link rel="modulepreload" href="../js/pages/radio.js" />
-  <link rel="modulepreload" href="../js/navigation.js" />
-  <link rel="modulepreload" href="../js/config.js" />
-  <link rel="modulepreload" href="../js/donnees.js" />
-  <link rel="modulepreload" href="../js/format.js" />
-  <link rel="modulepreload" href="../js/flyer.js" />
-  <link rel="modulepreload" href="../js/pages/bande-annonce.js" />
-  <link rel="modulepreload" href="../js/pages/commun.js" />
-  <link rel="modulepreload" href="../js/catalogue.js" />
-  <link rel="modulepreload" href="../js/sanity.js" />
-  <link rel="modulepreload" href="../js/demo/films.js" />
-  <link rel="modulepreload" href="../js/demo/musique.js" />
-  <link rel="modulepreload" href="../js/images.js" />
-  <!-- /modules -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Radio : les lives sont sur la page Musique, Minimum Neuchâtel</title>
+  <meta name="robots" content="noindex" />
+  <link rel="canonical" href="https://www.cineminimum.ch/musique/" />
+  <!-- La radio fait partie de la page Musique depuis le 26.11.2026 : les
+       anciens liens (radio/, radio/#live-…) y mènent, avec leur ancre. -->
+  <script>location.replace("../musique/" + location.hash);</script>
+  <meta http-equiv="refresh" content="0; url=../musique/" />
 </head>
-<body data-page="radio" data-racine="../">
-  <a class="evitement" href="#contenu">Aller au contenu</a>
-  <main id="contenu" class="page page--cases surface-nuit" tabindex="-1">
-    <header class="page__tete page__tete--radio">
-      <a class="page__accueil" href="../"><span class="fleche fleche--retour" aria-hidden="true"></span>Minimum</a>
-      <h1 class="page__titre"><span class="masque"><span>Radio</span></span></h1>
-      <p class="page__chapeau">Les lives de Minimum, en direct sur YouTube</p>
-    </header>
-    <div data-remplir></div>
-  </main>
-  <footer class="pied">
-    <div class="pied__tete">
-      <a class="pied__marque" href="../">Minimum</a>
-      <p class="pied__devise">Cinéma, club et radio à La Case à Chocs, Neuchâtel</p>
-    </div>
-    <nav class="pied__rubriques" aria-label="Les rubriques">
-      <a class="pied__rubrique pied__rubrique--cinema" href="../cinema/">Cinéma</a>
-      <a class="pied__rubrique pied__rubrique--musique" href="../musique/">Musique</a>
-      <a class="pied__rubrique pied__rubrique--radio" href="../radio/" aria-current="page">Radio</a>
-      <a class="pied__rubrique pied__rubrique--agenda" href="../agenda/">Agenda</a>
-      <a class="pied__rubrique pied__rubrique--infos" href="../infos/">Infos</a>
-    </nav>
-    <div class="pied__case">
-      <p class="pied__terme">Adresse</p>
-      <p>Quai Philippe‑Godet 20<br />2000 Neuchâtel</p>
-    </div>
-    <div class="pied__case">
-      <p class="pied__terme">Contact</p>
-      <p><a href="tel:+41325453737">032 545 37 37</a><br /><a href="mailto:cineminimum@gmail.com">cineminimum@<wbr />gmail.com</a></p>
-    </div>
-    <p class="pied__signature">Site par WeAreBrothers</p>
-  </footer>
-  <script type="module" src="../js/main.js"></script>
+<body>
+  <p><a href="../musique/">Les lives de la radio sont sur la page Musique.</a></p>
 </body>
 </html>

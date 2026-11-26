@@ -1,366 +1,129 @@
-/* Minimum : la page Agenda. Des filtres par monde, les jours en cases et la
-   journée choisie sur téléphone, la semaine en tableau sur grand écran, puis
-   ce qui est annoncé plus tard. Noir et blanc (revu le 26.11.2026 : « trop
-   de couleurs ») : la couleur d'un monde n'est plus qu'un petit carré
-   devant son nom, comme dans les filtres qui servent de légende. Chargée
-   seulement sur cette page. */
+/* Minimum : la page Agenda (simplifiée le 26.11.2026 : « le client aime les
+   choses simples »). Une seule liste, jour par jour : le jour en titre, une
+   ligne par rendez-vous. Noir et blanc ; la couleur d'un monde n'est qu'un
+   petit carré au bout de la ligne, comme dans les filtres qui servent de
+   légende, et le jaune de l'agenda marque aujourd'hui. Chargée seulement
+   sur cette page. */
 
-.agenda > * {
+.journee {
   border-bottom: var(--trait) solid var(--encre);
 }
 
-.agenda > :last-child {
+.journee:last-child {
   border-bottom: 0;
 }
 
-/* ---------- Téléphone : les jours en cases ---------- */
-.jours {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: var(--trait);
-  background: var(--encre);
-}
-
-.jour {
+/* Le jour : son nom, puis la date. */
+.journee__tete {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.125rem;
-  min-height: 4.25rem;
-  padding: var(--espace-2) 0;
-  font: inherit;
-  color: var(--encre);
-  background: var(--fond);
-  border: 0;
-  cursor: pointer;
-}
-
-.jour__nom {
-  font-size: clamp(0.625rem, 0.45rem + 0.9vw, 0.8125rem);
-  font-weight: var(--graisse-nom);
-  text-transform: uppercase;
-}
-
-.jour__num {
-  font-size: clamp(1.125rem, 0.9rem + 1vw, 1.5rem);
-  font-weight: var(--graisse-nom);
-  line-height: 1;
-}
-
-.jour__reperes {
-  display: flex;
-  gap: 2px;
-  min-height: 0.5rem;
-}
-
-.repere {
-  width: 0.5rem;
-  height: 0.5rem;
-  border: 1px solid var(--noir);
-}
-
-.repere--cinema { background: var(--pastille-cinema); }
-.repere--musique { background: var(--pastille-musique); }
-.repere--radio { background: var(--pastille-radio); }
-
-.jour[aria-pressed="true"] {
-  color: var(--blanc);
-  background: var(--noir);
-}
-
-.jour[aria-pressed="true"] .repere {
-  border-color: var(--blanc);
-}
-
-/* ---------- Téléphone : la journée choisie ---------- */
-.jour-titre {
-  display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  justify-content: space-between;
-  gap: var(--espace-3);
+  gap: 0 var(--espace-2);
   padding: var(--espace-3) var(--marge);
   font-size: var(--taille-texte);
   font-weight: var(--graisse-nom);
+  line-height: 1.1;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
   border-bottom: var(--trait) solid var(--encre);
 }
 
-.agenda__vide {
-  padding: var(--espace-4) var(--marge);
-  border-bottom: var(--trait) solid var(--encre);
+.journee--auj .journee__tete {
+  color: var(--texte-agenda);
+  background: var(--pastille-agenda);
 }
 
-/* Le jour d'avant et le jour d'après ; s'il n'y en a qu'un, il prend toute
-   la largeur : jamais de case vide. */
-.jour-nav {
-  display: grid;
-  grid-auto-columns: minmax(0, 1fr);
-  grid-auto-flow: column;
-  gap: var(--trait);
-  background: var(--encre);
-}
-
-.jour-nav > * {
-  background: var(--fond);
-}
-
-.jour-nav__pas {
-  display: flex;
-  align-items: center;
-  min-height: 3.25rem;
-  padding: var(--espace-2) var(--marge);
-  font: inherit;
-  font-size: var(--taille-petite);
-  font-weight: var(--graisse-nom);
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
-  color: var(--encre);
-  border: 0;
-  cursor: pointer;
-}
-
-.jour-nav__pas--apres {
-  justify-content: flex-end;
-}
-
-/* ---------- Une ligne de rendez-vous ---------- */
-.rdvs {
-  display: grid;
-  gap: var(--trait);
-  list-style: none;
-  background: var(--encre);
-}
-
-/* Téléphone : la dernière rangée du jour se ferme d'un trait, avant le jour
-   d'avant et d'après. */
-.jour-vue .rdvs {
-  border-bottom: var(--trait) solid var(--encre);
+/* ---------- Une ligne : l'heure, le titre, le carré du monde ---------- */
+.rdvs > li + li {
+  border-top: var(--trait) solid var(--encre);
 }
 
 .rdv {
   --teinte: var(--pastille-cinema);
   display: grid;
-  grid-template-columns: 5rem minmax(0, 1fr);
-  gap: var(--trait);
-  min-height: 5.25rem;
-  text-decoration: none;
-  color: var(--encre);
-  background: var(--encre);
-}
-
-.rdv--musique,
-.bloc-rdv--musique { --teinte: var(--pastille-musique); }
-
-.rdv--radio,
-.bloc-rdv--radio { --teinte: var(--pastille-radio); }
-
-/* Le repère du monde : un petit carré de sa couleur, devant son nom. */
-.rdv__monde::before,
-.bloc-rdv__haut span::before {
-  content: "";
-  display: inline-block;
-  width: 0.5rem;
-  height: 0.5rem;
-  margin-right: 0.35em;
-  vertical-align: 0.05em;
-  background: var(--teinte);
-  border: 1px solid var(--noir);
-}
-
-.rdv > * {
-  min-width: 0;
-  background: var(--fond);
-}
-
-/* L'heure, en gras, dans sa case. */
-.rdv__heure {
-  display: flex;
-  flex-direction: column;
+  grid-template-columns: 3.25rem minmax(0, 1fr) auto auto;
   align-items: center;
-  justify-content: center;
-  font-size: var(--taille-texte);
+  gap: var(--espace-3);
+  min-height: 4.25rem;
+  padding: var(--espace-2) var(--marge);
+  color: var(--encre);
+  text-decoration: none;
+}
+
+.rdv--musique { --teinte: var(--pastille-musique); }
+
+.rdv__heure {
   font-weight: var(--graisse-nom);
   font-variant-numeric: tabular-nums;
-  text-align: center;
-}
-
-.rdv__date {
-  padding-inline: 0.25rem;
-  font-size: 0.6875rem;
-  line-height: 1.2;
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
+  white-space: nowrap;
 }
 
 .rdv__texte {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  display: grid;
   gap: 0.125rem;
-  padding: var(--espace-2) var(--marge);
-}
-
-.rdv__monde {
-  font-size: 0.6875rem;
-  font-weight: var(--graisse-nom);
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
 }
 
 .rdv__titre {
   font-weight: var(--graisse-nom);
-  line-height: var(--interligne-titre);
+  line-height: 1.1;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
 }
 
 .rdv__sous {
   font-size: var(--taille-petite);
-  line-height: 1.3;
+  color: var(--gris-filtre);
 }
 
-/* L'action et sa flèche : seulement là où il y a la place. */
-.rdv__action {
-  display: none;
+.rdv__monde {
+  width: 0.75rem;
+  height: 0.75rem;
+  background: var(--teinte);
+  border: 1px solid var(--noir);
 }
 
-/* ---------- Grand écran : la semaine en tableau ---------- */
-.semaine {
-  display: none;
-}
-
-.semaine__jour {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  background: var(--fond);
-}
-
-.semaine__tete {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--espace-2);
-  padding: var(--espace-3);
-  font-size: var(--taille-petite);
-  font-weight: var(--graisse-nom);
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
-  border-bottom: var(--trait) solid var(--encre);
-}
-
-.semaine__tete b {
-  font-size: var(--taille-carte);
-  line-height: 1;
-}
-
-.semaine__jour--auj .semaine__tete {
-  color: var(--blanc);
-  background: var(--noir);
-}
-
-/* Le trait sous la dernière case d'une colonne est une ombre : elle se pose
-   exactement sur le trait du bas du tableau quand la colonne est la plus
-   longue (un seul trait, jamais deux), et ferme la case sinon. */
-.semaine__liste {
-  display: grid;
-  gap: var(--trait);
-  list-style: none;
-  background: var(--encre);
-  box-shadow: 0 var(--trait) 0 var(--encre);
-}
-
-.bloc-rdv {
-  --teinte: var(--pastille-cinema);
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-height: 6rem;
-  padding: var(--espace-2) var(--espace-3) var(--espace-3);
-  text-decoration: none;
-  color: var(--encre);
-  background: var(--fond);
-}
-
-.bloc-rdv__haut {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--espace-2);
-  font-size: 0.6875rem;
-  font-weight: var(--graisse-nom);
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
-}
-
-.bloc-rdv__haut b {
-  font-size: var(--taille-texte);
-  font-variant-numeric: tabular-nums;
-}
-
-.bloc-rdv__titre {
-  font-size: var(--taille-petite);
-  font-weight: var(--graisse-nom);
-  line-height: var(--interligne-titre);
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
-  overflow-wrap: break-word;
-  hyphens: auto;
-}
-
-.bloc-rdv__sous {
-  margin-top: auto;
-  font-size: 0.75rem;
+.rdv:focus-visible {
+  outline: var(--trait) solid var(--encre);
+  outline-offset: calc(var(--trait) * -3);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .bloc-rdv:hover .bloc-rdv__titre,
-  .rdv:hover .rdv__titre,
-  .jour-nav__pas:hover {
-    text-decoration: underline;
-    text-decoration-thickness: var(--trait);
-    text-underline-offset: 0.2em;
-  }
-
-
-
-  .jour:not([aria-pressed="true"]):hover {
+  .rdv:hover .rdv__titre {
     text-decoration: underline;
     text-decoration-thickness: var(--trait);
     text-underline-offset: 0.2em;
   }
 }
 
-@media (min-width: 40rem) {
-  .rdv {
-    grid-template-columns: 7rem minmax(0, 1fr) auto;
-  }
-
-  .rdv__action {
-    display: flex;
-    align-items: center;
-    gap: var(--espace-2);
-    padding: 0 var(--marge);
-    font-size: var(--taille-petite);
-    font-weight: var(--graisse-nom);
-    text-transform: uppercase;
-    letter-spacing: var(--interlettre-capitales);
-    white-space: nowrap;
-  }
-}
-
+/* ---------- Grand écran : le jour à gauche, ses rendez-vous à droite ---------- */
 @media (min-width: 56rem) {
-  .jours,
-  .jour-vue {
-    display: none;
+  .journee {
+    display: grid;
+    grid-template-columns: 18rem minmax(0, 1fr);
   }
 
-  .semaine {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: var(--trait);
-    min-height: 24rem;
-    background: var(--encre);
+  .journee__tete {
+    flex-direction: column;
+    gap: var(--espace-1);
+    border-right: var(--trait) solid var(--encre);
+    border-bottom: 0;
+  }
+
+  .journee__nom {
+    font-size: 1.5rem;
+  }
+
+  .rdv {
+    grid-template-columns: 5rem minmax(0, 1fr) auto auto;
+    gap: var(--espace-4);
+    min-height: 4.5rem;
+  }
+
+  .rdv__heure {
+    font-size: 1.125rem;
+  }
+
+  .rdv__titre {
+    font-size: 1.125rem;
   }
 }

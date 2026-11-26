@@ -121,58 +121,67 @@ supprimée sur tout le site. On circule par :
   largeur. Si l'écran est trop bas pour tout respecter, les écarts se
   relâchent, jamais la règle « tout dans l'écran ». Une fois tirés, ils
   reviennent à la même place à chaque tour de la colonne. Une case d'onglet est moins haute qu'une
-  affiche : le nom en très grand, une ligne en petit
-  (« 7 soirées · 3 lives », « 8 films ») et la flèche ; au survol, elle garde
-  sa couleur, son nom se souligne et la flèche avance. Pas de case MINIMUM, pas de case Radio : la radio se trouve par
-  ses flyers (ci-dessous) et le pied de page ;
+  affiche : le nom en très grand et la flèche, **pas de petits mots**
+  (revu le 26.11.2026) ; au survol, elle garde sa couleur, son nom se
+  souligne et la flèche avance. Pas de case MINIMUM, pas de case Radio : la
+  radio fait partie de Musique ;
 - **la machine à flyers** (croquis du client) : chaque live de la radio a
   son flyer, composé par le site (`js/flyer.js`, `css/flyer.css`) à partir du
-  portrait de l'artiste : la photo en noir et blanc, « LIVE YOUTUBE » sur le
-  rose en haut (et « EN DIRECT » pendant le live), puis sur une bande noire le
-  nom en très grand, la date et l'heure en rose (« 24.12.26 19H00 »). Sans
-  portrait, un flyer tout rose. Les flyers du live en cours et des lives à
-  venir montent sur le mur Musique, entre les soirées, et mènent à la page
-  Radio ; la page Radio les montre aussi, sous le lecteur ;
+  portrait de l'artiste : la photo en noir et blanc, une seule étiquette rose
+  en haut, « LIVE YOUTUBE », ou « EN DIRECT » avec un point noir qui clignote
+  pendant le live, puis sur une bande noire le nom en très grand, la date et
+  l'heure en rose (« 24.12.26 19H00 »). Sans portrait, un flyer tout rose.
+  Les flyers du live en cours et des lives à venir montent sur le mur
+  Musique, entre les soirées, et mènent à la page Musique. Sur la page
+  Musique, les soirées ont le même format : leur affiche en couleur, sans
+  étiquette, le nom et la date sur la bande noire ;
 - **la case du titre** de chaque rubrique : pleine de sa couleur, avec en haut
   « ← MINIMUM » qui ramène à l'accueil ;
-- **le pied de page** : une rangée de cases, une par rubrique, en noir et
+- **le pied de page** : une rangée de quatre cases, une par rubrique, dans
+  l'ordre de l'accueil (Agenda, Musique, Cinéma, Infos), en noir et
   blanc, sans couleur (revu le 26.11.2026 : « on voit rien à cause des
   couleurs »). La rangée est sous le nom MINIMUM, l'adresse et le contact,
   juste avant la signature, cernée de noir ; la
   page où l'on est, et la case survolée, y sont pleines de blanc, texte noir
   (en haut du pied, la case blanche se perdait dans une page blanche ; le
   soulignement a été refusé).
-  Sur téléphone, Cinéma et Musique sur une ligne, Radio, Agenda et Infos sur
-  la suivante. La bande de couleurs au-dessus du pied est retirée.
+  Deux par ligne sur téléphone, quatre en ligne ensuite. La bande de couleurs
+  au-dessus du pied est retirée.
 
 Rien d'autre : pas de bouton menu, pas de liens en plus dans les pages.
 
-**L'agenda en noir et blanc** (revu le 26.11.2026 : « trop de couleurs, on
-comprend rien ») : les rendez-vous sont des cases blanches, texte noir ; la
-couleur d'un monde n'est plus qu'un petit carré devant son nom (Cinéma,
-Musique, Radio), comme dans les filtres qui servent de légende. Le filtre
-choisi est écrit en noir, les autres en gris : ni aplat ni trait épais (il se
-soudait à la case noire d'aujourd'hui).
-
-**La page Radio, noir et blanc aussi** : le rose ne reste que dans la case du
-titre et le point du direct ; les jours des lives sont en noir et blanc.
+**L'agenda, tout simple** (revu le 26.11.2026 : « trop de couleurs », puis
+« le client aime les choses simples ») : une seule liste, jour par jour, à
+partir d'aujourd'hui. Plus de semaine en tableau, plus de jours en cases,
+plus de « Plus tard ». Le jour en titre (sur ordinateur, dans une colonne à
+gauche ; aujourd'hui sur le jaune de l'agenda), puis une ligne par
+rendez-vous : l'heure, le titre et sa ligne en gris, un petit carré de la
+couleur de son monde, la flèche. Toute la ligne mène à la fiche, sans mot
+d'action. Trois filtres : Tout, Cinéma, Musique (les lives en font partie) ;
+le filtre choisi est écrit en noir, les autres en gris, le carré de couleur
+sert de légende.
 
 **La fiche d'un film ne change pas** (le client la trouve très bien) : seule la
 barre du haut disparaît, et le pied de page reçoit la rangée des rubriques.
 
-**La radio, ce sont des lives YouTube.** Le bureau d'ordinateur (soso radio),
-le lecteur audio et sa case dans la barre du haut sont retirés. La page Radio
-est en cases, sur le noir de la musique :
-- la case du titre, rose ;
-- le lecteur YouTube en grand (trois quarts de la largeur sur ordinateur) : le
-  live en cours de la chaîne, sinon le dernier live mis en ligne. Tant que la
-  chaîne n'est pas branchée (`CHAINE_YOUTUBE` dans `js/config.js`), la case
-  noire dit « Le live s'affiche ici » et quand revenir ;
-- à côté, ce qu'il montre : « En direct » (un point rose qui clignote), le
-  titre, le jour, et le lien vers la chaîne ;
-- « Prochains lives » puis « À revoir » : une ligne par live, le jour dans le
-  rose de la radio ; un toucher sur un live à revoir le met dans le lecteur.
-Sous le lecteur, les prochains lives sont leurs flyers (machine à flyers), quatre par rangée sur ordinateur, deux sur téléphone.
+**La radio, ce sont des lives YouTube, sur la page Musique** (revu le
+26.11.2026 : « une seule page pour la musique, mais vraiment clean »). Le
+bureau d'ordinateur (soso radio) et le lecteur audio sont retirés, et la page
+Radio aussi : `radio/` renvoie vers `musique/` (avec l'ancre d'un live). La
+page Musique, sur le noir de la musique :
+- la case du titre, rose : « Les soirées du club et les lives sur YouTube » ;
+- **en direct**, seulement pendant un live : le lecteur YouTube en grand
+  (trois quarts de la largeur sur ordinateur) et à côté l'étiquette rose
+  « En direct », l'artiste, le jour et le lien vers la chaîne. Tant que la
+  chaîne n'est pas branchée (`CHAINE_YOUTUBE` dans `js/config.js`), le
+  lecteur montre le portrait de l'artiste en noir et blanc ;
+- **au programme** : soirées et lives ensemble, dans l'ordre des dates, au
+  même format d'affiche (quatre par rangée sur ordinateur, deux sur
+  téléphone). Une soirée mène à sa fiche (line-up, billets), un live à la
+  chaîne YouTube. Plus de boutons « Line-up » et « Billets » sous chaque
+  affiche : tout est sur la fiche ;
+- **à revoir**, seulement s'il y a des vidéos en ligne : une ligne par live ;
+  un toucher la met dans le lecteur, en haut.
 
 ### Couleur
 - `--noir` #000 et `--blanc` #fff, relevés sur le logo (D1), pour tout le site.
@@ -512,6 +521,6 @@ les boutons « Billets » (page Nuit, fiche) ouvrent la caisse directement.
 La ligne de tirets du programme de 2009 (D2), tapée en vrais caractères.
 
 ## Hypothèses à valider
-- La Radio prend le rose de la Musique (le client n'a pas donné de couleur à la radio).
+- La radio fait partie de la Musique, et en prend le rose (le client n'a pas donné de couleur à la radio).
 - Les soirées affichées sur le mur : seulement celles à venir, ou aussi les archives.
 - La police définitive (celle du logo, si elle existe en version web).

@@ -81,8 +81,7 @@
   }
 
   /* ---------- La radio : le point du direct ---------- */
-  .en-direct::before,
-  .flyer__direct::before {
+  .en-direct::before {
     animation: 1.4s steps(2, jump-none) infinite clignote;
   }
 }

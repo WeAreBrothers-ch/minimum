@@ -63,12 +63,15 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
 - Billetterie : la liste des séances et la caisse sont dans `js/billetterie/`
   (`panneau-html.js` pour le dessin, `panneau.js` pour la marche), le serveur dans
   `api/` (PHP). Mode d'emploi et liste avant ouverture : `BILLETTERIE.md`.
-- Page Radio : les lives YouTube (`js/pages/radio.js`, `css/radio.css`) : le
-  lecteur (live en cours de la chaîne, sinon le dernier live en ligne), les
-  prochains lives (leurs flyers) et ceux à revoir. Chaque live a son nom
-  d'artiste (`titre`), son portrait (`visuel`) et son adresse YouTube (`video`).
+- Page Musique : soirées du club et lives YouTube sur une seule page
+  (`js/pages/musique.js`, `css/musique.css`) : le lecteur pendant un live (live
+  en cours de la chaîne), puis soirées et lives à venir au même format
+  d'affiche, puis les lives à revoir. Chaque live a son nom d'artiste
+  (`titre`), son portrait (`visuel`) et son adresse YouTube (`video`).
+  `radio/` renvoie vers `musique/`.
 - Machine à flyers : `js/flyer.js` compose le flyer d'un live (portrait, nom,
-  date, heure), pour le mur Musique de l'accueil et la page Radio.
+  date, heure) et celui d'une soirée, pour le mur de l'accueil et la page
+  Musique.
 - Design : celui de Zinéma, déguisé (tableau de cases, `css/cases.css`,
   `css/acces.css`) ; voir `DIRECTION-ARTISTIQUE.md`.
 - Toutes les valeurs de style sont dans `css/jetons.css`.

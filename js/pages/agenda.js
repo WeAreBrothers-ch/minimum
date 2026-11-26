@@ -1,22 +1,21 @@
 // @ts-check
-/* Minimum : l’agenda, tout ce qui se passe à Minimum.
+/* Minimum : l’agenda, tout ce qui se passe à Minimum (simplifié le
+   26.11.2026 : « le client aime les choses simples »).
 
-   - Des filtres par monde : Tout, Cinéma, Musique, Radio, chacun de sa couleur.
-   - Téléphone : un jour à la fois. Les sept jours en cases, avec un repère
-     de couleur par monde ce jour-là ; dessous, les rendez-vous du jour, et
-     de quoi passer au jour suivant.
-   - Grand écran : la semaine en tableau, sept colonnes, chaque rendez-vous
-     dans une case de la couleur de son monde.
-   - Plus tard : ce qui est annoncé au-delà de la semaine. */
+   Une seule liste, jour par jour, à partir d’aujourd’hui : le jour en
+   titre, puis une ligne par rendez-vous (l’heure, le titre, un petit carré
+   de la couleur de son monde). Toute la ligne mène à la fiche. Au-dessus,
+   trois filtres : Tout, Cinéma, Musique (les lives de la radio font partie
+   de la musique). */
 
 import { chargerProgramme, filmParId } from "../donnees.js";
-import { decalerDate, echapper, heureCourte, jourCourt, jourLongMajuscule, lireDate } from "../format.js";
+import { echapper, heureCourte, jourLongMajuscule } from "../format.js";
 import { afficherErreur, zoneAremplir } from "./commun.js";
 import { lienFilm } from "./film-commun.js";
 
 /** @typedef {import("../types.js").Programme} Programme */
 
-/** @typedef {"cinema" | "musique" | "radio"} Monde */
+/** @typedef {"cinema" | "musique"} Monde */
 /** @typedef {"tout" | Monde} Filtre */
 
 /**
@@ -24,17 +23,13 @@ import { lienFilm } from "./film-commun.js";
  * @property {string} date
  * @property {string} heure
  * @property {string} titre
- * @property {string} sous     Une ligne de plus : réalisation, horaires, état.
+ * @property {string} sous     Une ligne de plus : réalisation, horaires, live.
  * @property {string} lien
  * @property {Monde} monde
- * @property {string} action   « Le film », « La soirée », « Regarder » : la fiche s’ouvre en haut.
  */
 
 /** @type {Record<Monde, string>} */
-const NOMS = { cinema: "Cinéma", musique: "Musique", radio: "Radio" };
-
-const SEMAINE = 7;
-const ABREGES = ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."];
+const NOMS = { cinema: "Cinéma", musique: "Musique" };
 
 /**
  * Tous les rendez-vous à partir d’aujourd’hui, dans l’ordre.
@@ -55,7 +50,6 @@ function rendezVous(programme) {
       sous: etat || `${film.realisation}, ${film.version}`,
       lien: lienFilm("", film.id, s.id),
       monde: "cinema",
-      action: "Le film",
     });
   }
   for (const s of programme.soirees) {
@@ -67,7 +61,6 @@ function rendezVous(programme) {
       sous: `${heureCourte(s.heure)}${fin}${s.lineUp.length ? `, ${s.lineUp.length} passages` : ""}`,
       lien: `soiree/?id=${encodeURIComponent(s.id)}`,
       monde: "musique",
-      action: "La soirée",
     });
   }
   for (const e of programme.emissions) {
@@ -76,9 +69,8 @@ function rendezVous(programme) {
       heure: e.heure,
       titre: e.titre,
       sous: e.enDirect ? "En direct sur YouTube" : "Live sur YouTube",
-      lien: `radio/#${e.id}`,
-      monde: "radio",
-      action: "Regarder",
+      lien: `musique/#${e.id}`,
+      monde: "musique",
     });
   }
   return liste
@@ -87,20 +79,19 @@ function rendezVous(programme) {
 }
 
 /**
- * Une ligne : l’heure dans la couleur du monde, le titre, l’action.
+ * Une ligne : l’heure, le titre et sa ligne, le carré du monde.
  * @param {Rendez} r
  * @param {string} racine
- * @param {boolean} avecDate  Plus tard : la date au-dessus de l’heure.
  * @returns {string}
  */
-function ligneHTML(r, racine, avecDate) {
-  const heure = heureCourte(r.heure).replace(" ", " ");
+function ligneHTML(r, racine) {
   return (
     `<li><a class="rdv rdv--${r.monde}" href="${echapper(racine + r.lien)}">` +
-    `<span class="rdv__heure">${avecDate ? `<span class="rdv__date">${echapper(jourCourt(r.date).replace(/\u00a0/g, " "))}</span>` : ""}${heure}</span>` +
-    `<span class="rdv__texte"><span class="rdv__monde">${NOMS[r.monde]}</span>` +
-    `<span class="rdv__titre">${echapper(r.titre)}</span><span class="rdv__sous">${echapper(r.sous)}</span></span>` +
-    `<span class="rdv__action">${echapper(r.action)} <span class="fleche" aria-hidden="true"></span></span></a></li>`
+    `<span class="rdv__heure">${heureCourte(r.heure).replace(" ", "\u00a0")}</span>` +
+    `<span class="rdv__texte"><span class="rdv__titre">${echapper(r.titre)}</span>` +
+    `<span class="rdv__sous">${echapper(r.sous)}</span></span>` +
+    `<span class="rdv__monde" title="${NOMS[r.monde]}"><span class="visuellement-cache">${NOMS[r.monde]}</span></span>` +
+    `<span class="fleche" aria-hidden="true"></span></a></li>`
   );
 }
 
@@ -110,112 +101,36 @@ function ligneHTML(r, racine, avecDate) {
  */
 function filtresHTML(filtre) {
   /** @type {Filtre[]} */
-  const filtres = ["tout", "cinema", "musique", "radio"];
+  const filtres = ["tout", "cinema", "musique"];
   return (
-    `<div class="filtres filtres--4" role="group" aria-label="Afficher">` +
+    `<div class="filtres filtres--3" role="group" aria-label="Afficher">` +
     filtres
-      .map((f) => {
-        return (
+      .map(
+        (f) =>
           `<button type="button" class="filtre filtre--${f}" data-filtre="${f}" aria-pressed="${f === filtre}">` +
           `${f === "tout" ? "Tout" : NOMS[f]}</button>`
-        );
-      })
+      )
       .join("") +
     `</div>`
   );
 }
 
 /**
- * Téléphone : les sept jours en cases, avec un repère par monde.
- * @param {string[]} jours
- * @param {string} jour
- * @param {Rendez[]} liste
- * @param {string} aujourdhui
- * @returns {string}
- */
-function joursHTML(jours, jour, liste, aujourdhui) {
-  return (
-    `<div class="jours" role="group" aria-label="Jour">` +
-    jours
-      .map((j) => {
-        const d = lireDate(j);
-        const mondes = [...new Set(liste.filter((r) => r.date === j).map((r) => r.monde))];
-        const reperes = mondes.map((m) => `<i class="repere repere--${m}"></i>`).join("");
-        const nom = j === aujourdhui ? "Auj." : ABREGES[d.getDay()];
-        return (
-          `<button type="button" class="jour" data-jour="${j}" aria-pressed="${j === jour}" ` +
-          `aria-label="${echapper(`${jourLongMajuscule(j)}, ${mondes.length ? `${liste.filter((r) => r.date === j).length} rendez-vous` : "rien"}`)}">` +
-          `<span class="jour__nom">${nom}</span><b class="jour__num">${d.getDate()}</b>` +
-          `<span class="jour__reperes" aria-hidden="true">${reperes}</span></button>`
-        );
-      })
-      .join("") +
-    `</div>`
-  );
-}
-
-/**
- * Téléphone : les rendez-vous du jour choisi, et le jour d’avant et d’après.
- * @param {string[]} jours
+ * Un jour : son nom en titre, puis ses rendez-vous.
  * @param {string} jour
  * @param {Rendez[]} liste
  * @param {string} aujourdhui
  * @param {string} racine
  * @returns {string}
  */
-function jourHTML(jours, jour, liste, aujourdhui, racine) {
-  const duJour = liste.filter((r) => r.date === jour);
-  const rang = jours.indexOf(jour);
-  const avant = jours[rang - 1];
-  const apres = jours[rang + 1];
-  const nom = (/** @type {string} */ j) => (j === aujourdhui ? "Aujourd’hui" : jourCourt(j));
+function jourHTML(jour, liste, aujourdhui, racine) {
+  const [nom = "", ...date] = jourLongMajuscule(jour).split(" ");
+  const auj = jour === aujourdhui;
   return (
-    `<section class="jour-vue" aria-labelledby="jour-titre">` +
-    `<h2 class="jour-titre" id="jour-titre"><span>${echapper(jour === aujourdhui ? "Aujourd’hui" : jourLongMajuscule(jour))}</span>` +
-    `</h2>` +
-    (duJour.length
-      ? `<ul class="rdvs">${duJour.map((r) => ligneHTML(r, racine, false)).join("")}</ul>`
-      : `<p class="agenda__vide">Rien ce jour-là. Le jour suivant, peut-être ?</p>`) +
-    `<div class="jour-nav">` +
-    (avant ? `<button type="button" class="jour-nav__pas" data-jour="${avant}"><span class="fleche fleche--retour" aria-hidden="true"></span> ${echapper(nom(avant))}</button>` : "") +
-    (apres ? `<button type="button" class="jour-nav__pas jour-nav__pas--apres" data-jour="${apres}">${echapper(nom(apres))} <span class="fleche" aria-hidden="true"></span></button>` : "") +
-    `</div></section>`
-  );
-}
-
-/**
- * Grand écran : la semaine en tableau.
- * @param {string[]} jours
- * @param {Rendez[]} liste
- * @param {string} aujourdhui
- * @param {string} racine
- * @returns {string}
- */
-function semaineHTML(jours, liste, aujourdhui, racine) {
-  return (
-    `<div class="semaine">` +
-    jours
-      .map((j) => {
-        const d = lireDate(j);
-        const duJour = liste.filter((r) => r.date === j);
-        const blocs = duJour
-          .map(
-            (r) =>
-              `<li><a class="bloc-rdv bloc-rdv--${r.monde}" href="${echapper(racine + r.lien)}">` +
-              `<span class="bloc-rdv__haut"><b>${heureCourte(r.heure).replace(" ", " ")}</b><span>${NOMS[r.monde]}</span></span>` +
-              `<span class="bloc-rdv__titre">${echapper(r.titre)}</span>` +
-              `<span class="bloc-rdv__sous">${echapper(r.sous)}</span></a></li>`
-          )
-          .join("");
-        return (
-          `<section class="semaine__jour${j === aujourdhui ? " semaine__jour--auj" : ""}" aria-label="${echapper(jourLongMajuscule(j))}">` +
-          `<h2 class="semaine__tete"><span>${j === aujourdhui ? "Aujourd’hui" : ABREGES[d.getDay()]}</span><b>${d.getDate()}</b></h2>` +
-          (blocs ? `<ul class="semaine__liste">${blocs}</ul>` : "") +
-          `</section>`
-        );
-      })
-      .join("") +
-    `</div>`
+    `<section class="journee${auj ? " journee--auj" : ""}" aria-label="${echapper(jourLongMajuscule(jour))}">` +
+    `<h2 class="journee__tete"><span class="journee__nom">${auj ? "Aujourd’hui" : echapper(nom)}</span>` +
+    `<span class="journee__date">${echapper(date.join("\u00a0"))}</span></h2>` +
+    `<ul class="rdvs">${liste.map((r) => ligneHTML(r, racine)).join("")}</ul></section>`
   );
 }
 
@@ -237,43 +152,28 @@ export function initAgenda() {
         zone.innerHTML = '<p class="page__vide">Rien d’annoncé pour l’instant.</p>';
         return;
       }
-      const aujourdhui = programme.aujourdhui;
-      const jours = Array.from({ length: SEMAINE }, (_, i) => decalerDate(aujourdhui, i));
       /** @type {Filtre} */
       let filtre = "tout";
-      let jour = jours.find((j) => tous.some((r) => r.date === j)) ?? aujourdhui;
 
       const dessiner = () => {
         const liste = filtre === "tout" ? tous : tous.filter((r) => r.monde === filtre);
-        const semaine = liste.filter((r) => jours.includes(r.date));
-        const plusTard = liste.filter((r) => !jours.includes(r.date));
+        const jours = [...new Set(liste.map((r) => r.date))];
         zone.innerHTML =
           `<div class="agenda" data-filtre="${filtre}">` +
           filtresHTML(filtre) +
-          joursHTML(jours, jour, semaine, aujourdhui) +
-          jourHTML(jours, jour, semaine, aujourdhui, racine) +
-          semaineHTML(jours, semaine, aujourdhui, racine) +
-          (plusTard.length
-            ? `<section class="plus-tard" aria-labelledby="plus-tard"><h2 class="rubrique" id="plus-tard"><span>Plus tard</span></h2>` +
-              `<ul class="rdvs">${plusTard.map((r) => ligneHTML(r, racine, true)).join("")}</ul></section>`
-            : "") +
+          jours
+            .map((j) => jourHTML(j, liste.filter((r) => r.date === j), programme.aujourdhui, racine))
+            .join("") +
           `</div>`;
       };
 
       auClic = (e) => {
         const cible = e.target instanceof Element ? e.target : null;
-        const bouton = cible?.closest("[data-filtre], [data-jour]");
-        if (!(bouton instanceof HTMLElement)) return;
-        let selecteur = "";
-        if (bouton.dataset.filtre) {
-          filtre = /** @type {Filtre} */ (bouton.dataset.filtre);
-          selecteur = `.filtre[data-filtre="${filtre}"]`;
-        } else if (bouton.dataset.jour) {
-          jour = bouton.dataset.jour;
-          selecteur = `.jour[data-jour="${jour}"]`;
-        }
+        const bouton = cible?.closest("[data-filtre]");
+        if (!(bouton instanceof HTMLElement) || !bouton.dataset.filtre) return;
+        filtre = /** @type {Filtre} */ (bouton.dataset.filtre);
         dessiner();
-        const actif = zone.querySelector(selecteur);
+        const actif = zone.querySelector(`.filtre[data-filtre="${filtre}"]`);
         if (actif instanceof HTMLElement) actif.focus({ preventScroll: true });
       };
       zone.addEventListener("click", auClic);

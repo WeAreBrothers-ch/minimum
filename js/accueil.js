@@ -22,32 +22,14 @@ function remplir(moitie, colonnesDe, racine) {
 }
 
 /**
- * Ce que contient un mur : « 7 soirées · 3 lives ».
- * @param {Carte[]} cartes
- * @param {Array<[Carte["genre"], string, string]>} genres  Genre, singulier, pluriel.
- * @param {string} sinon  Quand il n’y a rien.
- * @returns {string}
- */
-function compter(cartes, genres, sinon) {
-  const parties = genres
-    .map(([genre, un, plusieurs]) => {
-      const n = cartes.filter((c) => c.genre === genre).length;
-      return n ? `${n}\u00a0${n > 1 ? plusieurs : un}` : "";
-    })
-    .filter(Boolean);
-  return parties.length ? parties.join(" · ") : sinon;
-}
-
-/**
  * Une rubrique du site, comme case du mur.
  * @param {NonNullable<Carte["teinte"]>} teinte
  * @param {string} titre
  * @param {string} lien
- * @param {string} ligne
  * @returns {Carte}
  */
-function rubrique(teinte, titre, lien, ligne) {
-  return { genre: "rubrique", id: `rubrique-${teinte}`, titre, lien, image: null, ligne, etat: "", teinte };
+function rubrique(teinte, titre, lien) {
+  return { genre: "rubrique", id: `rubrique-${teinte}`, titre, lien, image: null, ligne: "", etat: "", teinte };
 }
 
 /**
@@ -57,21 +39,15 @@ function rubrique(teinte, titre, lien, ligne) {
  * Musique dans le mur gauche, Cinéma puis Infos dans le droit, une affiche
  * entre les deux. Leur taille et leur place sont tirées au sort à chaque
  * arrivée (tirerOrdinateur, tirerTelephone) ; elles restent les mêmes à
- * chaque tour de la colonne.
- * @param {Carte[]} musique
- * @param {Carte[]} cinema
+ * chaque tour de la colonne. Rien que leur nom et la flèche, pas de
+ * petits mots (revu le 26.11.2026).
  */
-function onglets(musique, cinema) {
+function onglets() {
   return {
-    agenda: rubrique("agenda", "Agenda", "agenda/", "Jour par jour"),
-    musique: rubrique(
-      "musique",
-      "Musique",
-      "musique/",
-      compter(musique, [["soiree", "soirée", "soirées"], ["emission", "live", "lives"]], "Soirées et lives")
-    ),
-    cinema: rubrique("cinema", "Cinéma", "cinema/", compter(cinema, [["film", "film", "films"]], "À l’affiche et prochainement")),
-    infos: rubrique("infos", "Infos", "infos/", "Tarifs, adresse, contact"),
+    agenda: rubrique("agenda", "Agenda", "agenda/"),
+    musique: rubrique("musique", "Musique", "musique/"),
+    cinema: rubrique("cinema", "Cinéma", "cinema/"),
+    infos: rubrique("infos", "Infos", "infos/"),
   };
 }
 
@@ -259,7 +235,7 @@ export function initAccueil() {
   const colonnes = (musique, cinema, ordinateur) => {
     const deja = tirages.get(ordinateur);
     if (deja) return deja;
-    const o = onglets(musique, cinema);
+    const o = onglets();
     const largeurMur = moitieMusique?.clientWidth || window.innerWidth / 2;
     const largeur = ordinateur ? largeurMur / 2 : largeurMur;
     const ecran = (moitieMusique?.clientHeight || window.innerHeight) / Math.max(1, largeur);

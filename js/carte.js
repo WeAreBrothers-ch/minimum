@@ -83,7 +83,7 @@ export function cartesMusique(programme) {
       genre: "emission",
       id: e.id,
       titre: e.titre,
-      lien: `radio/#${e.id}`,
+      lien: `musique/#${e.id}`,
       image: e.visuel,
       ligne: `${jourLongMajuscule(e.date)}, ${heureCourte(e.heure)}`,
       etat: e.enDirect ? "En direct" : "Live à venir",
@@ -118,7 +118,7 @@ export function carteHTML(carte, racine, accessible, prioritaire, hauteur) {
   const classes = `carte${typo ? " carte--typo" : ""}${carte.genre === "film" ? "" : ` carte--${carte.genre}`}`;
   const contenu = typo ? contenuTypographique(carte) : imageHTML(carte, racine, prioritaire);
 
-  /* Un live mène à la page Radio, sur sa ligne. */
+  /* Un live mène à la page Musique, sur son flyer. */
   return `<a class="${classes}" href="${echapper(racine + carte.lien)}"${cache}>${contenu}</a>`;
 }
 
