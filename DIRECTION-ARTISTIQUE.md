@@ -151,15 +151,24 @@ supprimée sur tout le site. On circule par :
 Rien d'autre : pas de bouton menu, pas de liens en plus dans les pages.
 
 **L'agenda, tout simple** (revu le 26.11.2026 : « trop de couleurs », puis
-« le client aime les choses simples ») : une seule liste, jour par jour, à
-partir d'aujourd'hui. Plus de semaine en tableau, plus de jours en cases,
-plus de « Plus tard ». Le jour en titre (sur ordinateur, dans une colonne à
-gauche ; aujourd'hui sur le jaune de l'agenda), puis une ligne par
-rendez-vous : l'heure, le titre et sa ligne en gris, un petit carré de la
-couleur de son monde, la flèche. Toute la ligne mène à la fiche, sans mot
-d'action. Trois filtres : Tout, Cinéma, Musique (les lives en font partie) ;
-le filtre choisi est écrit en noir, les autres en gris, le carré de couleur
-sert de légende.
+« le client aime les choses simples », puis « une semaine chargée ferait une
+page énorme, et sur mobile ce n'est pas lisible ») :
+- **une semaine à la fois** : « Cette semaine » et ses dates, une flèche de
+  chaque côté pour la précédente et la suivante ; les semaines vides sont
+  sautées ;
+- **sur ordinateur**, toute la semaine, jour par jour : le jour dans une
+  colonne à gauche (aujourd'hui sur le jaune de l'agenda), qui reste en haut
+  de l'écran pendant qu'on lit ses rendez-vous ;
+- **sur téléphone, un jour à la fois** : les sept jours de la semaine en
+  cases (le jour choisi en jaune, un jour sans rien en gris clair), le jour
+  choisi dessous, et en bas le jour suivant, sur toute la largeur ;
+- une ligne par rendez-vous : l'heure, le titre et sa ligne en gris, un
+  petit carré de la couleur de son monde, la flèche (pas de flèche sur
+  téléphone, pour laisser la place au titre). Toute la ligne mène à la
+  fiche, sans mot d'action ;
+- trois filtres : Tout, Cinéma, Musique (les lives en font partie) ; le
+  filtre choisi est écrit en noir, les autres en gris, le carré de couleur
+  sert de légende.
 
 **La fiche d'un film ne change pas** (le client la trouve très bien) : seule la
 barre du haut disparaît, et le pied de page reçoit la rangée des rubriques.

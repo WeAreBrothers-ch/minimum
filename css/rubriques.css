@@ -1,10 +1,157 @@
 /* Minimum : la page Agenda (simplifiée le 26.11.2026 : « le client aime les
-   choses simples »). Une seule liste, jour par jour : le jour en titre, une
+   choses simples »). Une semaine à la fois, jour par jour : le jour en
+   titre, qui reste en haut de l'écran pendant qu'on lit ses rendez-vous, une
    ligne par rendez-vous. Noir et blanc ; la couleur d'un monde n'est qu'un
    petit carré au bout de la ligne, comme dans les filtres qui servent de
    légende, et le jaune de l'agenda marque aujourd'hui. Chargée seulement
    sur cette page. */
 
+/* ---------- La semaine : son nom, ses dates, les flèches ---------- */
+.semaine {
+  display: grid;
+  grid-template-columns: var(--cible-large) minmax(0, 1fr) var(--cible-large);
+  gap: var(--trait);
+  background: var(--encre);
+  border-bottom: var(--trait) solid var(--encre);
+  --cible-large: 3.5rem;
+}
+
+.semaine > * {
+  background: var(--fond);
+}
+
+.semaine__pas {
+  display: grid;
+  place-items: center;
+  min-height: 3.5rem;
+  padding: 0;
+  font: inherit;
+  color: var(--encre);
+  border: 0;
+  cursor: pointer;
+}
+
+.semaine__pas:disabled {
+  cursor: default;
+}
+
+.semaine__pas:disabled .fleche {
+  opacity: 0.2;
+}
+
+.semaine__pas:focus-visible {
+  outline: var(--trait) solid var(--encre);
+  outline-offset: calc(var(--trait) * -3);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .semaine__pas:not(:disabled):hover {
+    color: var(--fond);
+    background: var(--encre);
+  }
+}
+
+.semaine__nom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0 var(--espace-2);
+  padding: var(--espace-2) var(--espace-1);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.semaine__nom b {
+  font-weight: var(--graisse-nom);
+}
+
+.semaine__nom span {
+  font-size: var(--taille-petite);
+  font-weight: var(--graisse-nom);
+  color: var(--gris-filtre);
+}
+
+/* ---------- Téléphone : les sept jours, un jour à la fois ---------- */
+.jours {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--trait);
+  background: var(--encre);
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.jour {
+  display: grid;
+  justify-items: center;
+  gap: 0.125rem;
+  padding: var(--espace-2) 0;
+  font: inherit;
+  color: var(--encre);
+  background: var(--fond);
+  border: 0;
+  cursor: pointer;
+}
+
+.jour__nom {
+  font-size: 0.75rem;
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+}
+
+.jour__num {
+  font-size: 1.375rem;
+  font-weight: var(--graisse-nom);
+  line-height: 1;
+}
+
+/* Sans rendez-vous : le jour reste là, en gris clair (pas de transparence
+   sur la case : le noir des joints passerait au travers). */
+.jour:disabled {
+  color: var(--gris-filtre);
+  cursor: default;
+}
+
+.jour:disabled > * {
+  opacity: 0.4;
+}
+
+/* Le jour choisi : plein du jaune de l'agenda. */
+.jour[aria-pressed="true"] {
+  color: var(--texte-agenda);
+  background: var(--pastille-agenda);
+}
+
+.jour:focus-visible,
+.jour-suivant:focus-visible {
+  outline: var(--trait) solid var(--encre);
+  outline-offset: calc(var(--trait) * -3);
+}
+
+.journee:not(.journee--choisie) {
+  display: none;
+}
+
+/* En bas du jour : le jour suivant, sur toute la largeur. */
+.jour-suivant {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  min-height: 3.5rem;
+  padding: var(--espace-2) var(--marge);
+  font: inherit;
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  color: var(--encre);
+  background: var(--fond);
+  border: 0;
+  cursor: pointer;
+}
+
+/* ---------- Un jour ---------- */
 .journee {
   border-bottom: var(--trait) solid var(--encre);
 }
@@ -25,7 +172,12 @@
   line-height: 1.1;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
+  background: var(--fond);
   border-bottom: var(--trait) solid var(--encre);
+  /* Le jour reste en haut de l'écran tant qu'on lit ses rendez-vous. */
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .journee--auj .journee__tete {
@@ -41,11 +193,11 @@
 .rdv {
   --teinte: var(--pastille-cinema);
   display: grid;
-  grid-template-columns: 3.25rem minmax(0, 1fr) auto auto;
+  grid-template-columns: 3.5rem minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--espace-3);
-  min-height: 4.25rem;
-  padding: var(--espace-2) var(--marge);
+  min-height: 4.75rem;
+  padding: var(--espace-3) var(--marge);
   color: var(--encre);
   text-decoration: none;
 }
@@ -53,6 +205,7 @@
 .rdv--musique { --teinte: var(--pastille-musique); }
 
 .rdv__heure {
+  font-size: 1.0625rem;
   font-weight: var(--graisse-nom);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -60,19 +213,37 @@
 
 .rdv__texte {
   display: grid;
-  gap: 0.125rem;
+  gap: 0.25rem;
 }
 
 .rdv__titre {
+  font-size: 1.0625rem;
   font-weight: var(--graisse-nom);
-  line-height: 1.1;
+  line-height: 1.15;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
 }
 
 .rdv__sous {
-  font-size: var(--taille-petite);
+  font-size: 0.9375rem;
+  line-height: 1.3;
   color: var(--gris-filtre);
+}
+
+/* Téléphone : pas de flèche, toute la largeur pour le titre ; la ligne
+   entière est le lien. */
+.rdv > .fleche {
+  display: none;
+}
+
+@media (min-width: 40rem) {
+  .rdv {
+    grid-template-columns: 4rem minmax(0, 1fr) auto auto;
+  }
+
+  .rdv > .fleche {
+    display: inline-block;
+  }
 }
 
 .rdv__monde {
@@ -95,18 +266,37 @@
   }
 }
 
-/* ---------- Grand écran : le jour à gauche, ses rendez-vous à droite ---------- */
+/* ---------- Grand écran : toute la semaine, le jour à gauche ---------- */
 @media (min-width: 56rem) {
+  .jours,
+  .jour-suivant {
+    display: none;
+  }
+
+  .journee:not(.journee--choisie) {
+    display: grid;
+  }
+
   .journee {
     display: grid;
     grid-template-columns: 18rem minmax(0, 1fr);
   }
 
+  /* Le jour dans la colonne de gauche, en haut de l'écran tant qu'on lit sa
+     journée ; le trait de la colonne est porté par la liste. */
   .journee__tete {
     flex-direction: column;
+    align-self: start;
     gap: var(--espace-1);
-    border-right: var(--trait) solid var(--encre);
     border-bottom: 0;
+  }
+
+  .journee--auj .journee__tete {
+    align-self: stretch;
+  }
+
+  .journee .rdvs {
+    border-left: var(--trait) solid var(--encre);
   }
 
   .journee__nom {
