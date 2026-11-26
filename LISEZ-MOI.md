@@ -88,10 +88,11 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
 
 ## Reste à faire
 
-1. **Sanity commun** : ajouter le lieu (Zinéma / Minimum) aux séances, créer les
-   fiches « Soirée » et « Émission », et faire filtrer Zinéma sur ses propres
-   séances AVANT d'y saisir celles de Minimum. Zinéma est en production : à
-   valider avec Eliott avant toute mise en ligne.
+1. **Sanity de Minimum, indépendant de Zinéma** (décision d'Eliott,
+   26.11.2026 : rien n'est partagé avec le projet de Zinéma, qui ne doit pas
+   être modifié). Le Studio est dans `studio/` (voir `studio/LISEZ-MOI.md`).
+   Reste à créer le projet Sanity, y copier le catalogue de films, puis faire
+   lire ce projet au site (`js/config.js`, `api/`, `.htaccess`).
 2. Brancher `donnees.js` sur Sanity, puis `DEMONSTRATION = false`.
 3. Billetterie : construite et essayée, en mode démonstration. Avant de
    l'ouvrir : compte SumUp au nom de Minimum, champs Sanity, e-mail de

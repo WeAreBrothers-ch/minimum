@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Retirer ce qui ne doit pas être public
-        run: rm -rf serveur api .github node_modules *.md package*.json tsconfig.json paires.txt .htaccess
+        run: rm -rf serveur api studio .github node_modules *.md package*.json tsconfig.json paires.txt .htaccess
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
