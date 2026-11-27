@@ -8,7 +8,7 @@
    Une grille de six colonnes sur téléphone, de douze sur ordinateur ; la
    largeur de chaque brique est fixée dans la page (brique--m3 : trois
    sixièmes sur téléphone ; brique--o5 : cinq douzièmes sur ordinateur).
-   Les remerciements : un seul bloc grenat, MERCI et tous les noms. */
+   Les remerciements : une boucle sans fin qu'on lance (js/pages/infos.js). */
 
 .briques {
   display: grid;
@@ -138,45 +138,85 @@
   margin-inline-start: 0.25em;
 }
 
-/* ---------- Les remerciements : un seul bloc grenat ---------- */
-/* MERCI en très grand, puis tous les noms à la suite, en blanc, séparés
-   d'une barre (revu le 27.11.2026 : le bandeau ne montrait que deux noms,
-   le mur d'une case par nom écrasait le reste de la page). Une seule
-   brique, pleine du grenat des infos : tout se lit d'un coup. */
+/* ---------- Les remerciements : une boucle sans fin qu'on lance ---------- */
+/* La case grenat MERCI, puis les noms, à la même taille que MERCI, séparés
+   d'un simple trait noir (revu le 27.11.2026). Le bandeau est une boucle :
+   on le tire et on le lance, il garde son élan (js/pages/infos.js) ; plus
+   il va vite, plus les noms se penchent. Sur téléphone, MERCI au-dessus,
+   sur toute la largeur ; sur ordinateur, sur la même ligne. */
 .merci {
+  --taille-merci: clamp(3rem, 19vw, 6rem);
   grid-column: 1 / -1;
-  display: grid;
-  gap: var(--espace-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--joint);
   min-width: 0;
-  padding: var(--espace-4) var(--marge);
+  background: var(--encre);
+}
+
+.merci__titre {
+  display: flex;
+  flex: none;
+  align-items: center;
+  padding: var(--espace-3) var(--marge);
+  font-size: var(--taille-merci);
+  font-weight: var(--graisse-nom);
+  line-height: 0.9;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
   color: var(--texte-infos);
   background: var(--pastille-infos);
 }
 
-.merci__titre {
-  font-size: clamp(3rem, 21vw, 6rem);
-  font-weight: var(--graisse-nom);
-  line-height: 0.85;
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
+.merci__defile {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--fond);
+  cursor: grab;
+  /* Le doigt fait défiler la page de haut en bas ; de gauche à droite, il
+     tire le bandeau. */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.merci__defile[data-tire="true"] {
+  cursor: grabbing;
+}
+
+.merci__defile:focus-visible {
+  outline: var(--trait) solid var(--encre);
+  outline-offset: calc(var(--trait) * -3);
+}
+
+.merci__piste {
+  display: flex;
+  width: max-content;
+  height: 100%;
+  will-change: transform;
 }
 
 .merci__liste {
   display: flex;
-  flex-wrap: wrap;
-  align-content: center;
-  row-gap: 0.3em;
-  font-size: clamp(1rem, 0.75rem + 1vw, 1.75rem);
-  font-weight: var(--graisse-nom);
-  line-height: 1.15;
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
+  flex: none;
 }
 
-.merci__liste li:not(:last-child)::after {
-  content: "/";
-  margin-inline: 0.5em;
-  opacity: 0.45;
+.merci__liste li {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: var(--espace-3) var(--espace-4);
+  font-size: var(--taille-merci);
+  font-weight: var(--graisse-nom);
+  line-height: 0.9;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  white-space: nowrap;
+  border-right: var(--trait) solid var(--encre);
+  /* Le penchant de la course (js/pages/infos.js). */
+  transform: skewX(var(--penche, 0deg));
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -209,16 +249,14 @@
   .brique--o6 { grid-column: span 6; }
   .brique--o7 { grid-column: span 7; }
 
-  /* Ordinateur : MERCI à gauche, les noms à droite. */
+  /* Ordinateur : MERCI et le bandeau sur la même ligne. */
   .merci {
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: center;
-    column-gap: var(--espace-5, 3rem);
-    padding-block: var(--espace-5, 3rem);
+    --taille-merci: clamp(4rem, 1rem + 5.5vw, 9rem);
+    flex-direction: row;
   }
 
   .merci__titre {
-    font-size: clamp(4rem, 1rem + 6vw, 10rem);
+    padding-block: var(--espace-4);
   }
 
   /* L'adresse et la photo : la rangée suit l'adresse, la photo la remplit

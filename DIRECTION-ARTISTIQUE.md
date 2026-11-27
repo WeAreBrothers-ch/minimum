@@ -234,11 +234,17 @@ l'e-mail sont des briques qu'on presse (noires au survol). La photo de la
 salle est en couleur ; les prix sont surlignés du vert de l'argent (remis à
 la demande du client). Sur un grand écran, les textes grandissent avec
 l'écran, et la rangée de l'adresse suit l'adresse (la photo la remplit) :
-plus de grand vide sous l'adresse. Les remerciements sont **un seul bloc
-grenat** (revu le 27.11.2026 : le bandeau à faire défiler ne montrait que
-deux noms, puis un mur d'une case par nom écrasait la page, « horrible ») :
-MERCI en très grand (à gauche sur ordinateur), puis tous les noms à la
-suite, en blanc, séparés d'une barre. La page n'a plus de code propre.
+plus de grand vide sous l'adresse. Les remerciements sont **une boucle sans fin
+qu'on lance** (revu le 27.11.2026, après un mur de noms puis un bloc grenat) :
+la case grenat MERCI, puis les noms **à la même taille que MERCI**, séparés
+d'un simple trait noir. On tire le bandeau (doigt, souris) et on le lâche :
+il garde son élan et ralentit peu à peu ; plus il va vite, plus les noms se
+penchent dans le sens de la course. Le pavé (geste horizontal) et les
+flèches du clavier le poussent aussi ; au doigt, un geste vertical fait
+toujours défiler la page. La première fois qu'il arrive dans l'écran, il
+part d'une petite poussée, pour montrer qu'il bouge, puis s'arrête. Avec
+« mouvement réduit », on le tire sans élan ni penchant
+(`js/pages/infos.js`).
 
 ### Couleur
 - `--noir` #000 et `--blanc` #fff, relevés sur le logo (D1), pour tout le site.
