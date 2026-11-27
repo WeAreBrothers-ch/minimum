@@ -141,8 +141,7 @@
 /* ---------- Les remerciements : une boucle sans fin qu'on lance ---------- */
 /* La case grenat MERCI, puis les noms, à la même taille que MERCI, séparés
    d'un simple trait noir (revu le 27.11.2026). Le bandeau est une boucle :
-   on le tire et on le lance, il garde son élan (js/pages/infos.js) ; plus
-   il va vite, plus les noms se penchent. Sur téléphone, MERCI au-dessus,
+   on le tire et on le lance, il garde son élan (js/pages/infos.js). Sur téléphone, MERCI au-dessus,
    sur toute la largeur ; sur ordinateur, sur la même ligne. */
 .merci {
   --taille-merci: clamp(3rem, 19vw, 6rem);
@@ -215,8 +214,6 @@
   letter-spacing: var(--interlettre-capitales);
   white-space: nowrap;
   border-right: var(--trait) solid var(--encre);
-  /* Le penchant de la course (js/pages/infos.js). */
-  transform: skewX(var(--penche, 0deg));
 }
 
 @media (hover: hover) and (pointer: fine) {

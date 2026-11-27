@@ -5,15 +5,15 @@
 
    On tire le bandeau (doigt, souris, stylet) ; lâché, il garde son élan et
    ralentit peu à peu, comme une roue qu’on a lancée. La molette ou le pavé
-   (gestes horizontaux) et les flèches du clavier le poussent aussi. Plus
-   il va vite, plus les noms se penchent dans le sens de la course. Quand
+   (gestes horizontaux) et les flèches du clavier le poussent aussi. Les
+   noms restent droits, quelle que soit la vitesse. Quand
    le bandeau arrive dans l’écran la première fois, il part de lui-même,
    d’une petite poussée, pour montrer qu’il bouge.
 
    La liste des noms est recopiée autant qu’il faut pour couvrir le bandeau
    (copies cachées aux lecteurs d’écran) ; la position revient dans un seul
    tour de liste, le saut ne se voit pas. Mouvement réduit demandé : on
-   tire toujours le bandeau, mais sans élan, sans penchant ni départ seul. */
+   tire toujours le bandeau, mais sans élan ni départ seul. */
 
 /** Perte de vitesse par image (à 60 images par seconde) : l’élan dure. */
 const FROTTEMENT = 0.965;
@@ -21,8 +21,6 @@ const FROTTEMENT = 0.965;
 const ARRET = 0.004;
 /** Vitesse maximale d’un lancer. */
 const VITESSE_MAX = 6;
-/** Penchant maximal des noms, en degrés. */
-const PENCHE_MAX = 10;
 /** La poussée de départ, et celle d’une flèche du clavier. */
 const POUSSEE_DEPART = 1.6;
 const POUSSEE_CLAVIER = 1.4;
@@ -64,9 +62,7 @@ export function initInfos() {
   const dessiner = () => {
     if (cycle <= 0) return;
     const p = ((x % cycle) + cycle) % cycle;
-    const penche = calme.matches ? 0 : Math.max(-PENCHE_MAX, Math.min(PENCHE_MAX, -vitesse * 4));
     piste.style.transform = `translate3d(${-p}px, 0, 0)`;
-    piste.style.setProperty("--penche", `${penche.toFixed(2)}deg`);
   };
 
   /* L’élan : la vitesse diminue à chaque image, jusqu’à l’arrêt. */

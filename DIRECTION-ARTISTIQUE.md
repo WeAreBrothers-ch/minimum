@@ -238,12 +238,12 @@ plus de grand vide sous l'adresse. Les remerciements sont **une boucle sans fin
 qu'on lance** (revu le 27.11.2026, après un mur de noms puis un bloc grenat) :
 la case grenat MERCI, puis les noms **à la même taille que MERCI**, séparés
 d'un simple trait noir. On tire le bandeau (doigt, souris) et on le lâche :
-il garde son élan et ralentit peu à peu ; plus il va vite, plus les noms se
-penchent dans le sens de la course. Le pavé (geste horizontal) et les
+il garde son élan et ralentit peu à peu ; les noms restent droits (l'effet
+de penchant avec la vitesse a été refusé). Le pavé (geste horizontal) et les
 flèches du clavier le poussent aussi ; au doigt, un geste vertical fait
 toujours défiler la page. La première fois qu'il arrive dans l'écran, il
 part d'une petite poussée, pour montrer qu'il bouge, puis s'arrête. Avec
-« mouvement réduit », on le tire sans élan ni penchant
+« mouvement réduit », on le tire sans élan
 (`js/pages/infos.js`).
 
 ### Couleur
