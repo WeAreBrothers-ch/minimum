@@ -8,7 +8,7 @@
    Une grille de six colonnes sur téléphone, de douze sur ordinateur ; la
    largeur de chaque brique est fixée dans la page (brique--m3 : trois
    sixièmes sur téléphone ; brique--o5 : cinq douzièmes sur ordinateur).
-   Les remerciements sont un mur de noms, une brique par nom. */
+   Les remerciements : un seul bloc grenat, MERCI et tous les noms. */
 
 .briques {
   display: grid;
@@ -74,10 +74,14 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Un prix : en noir, sans surlignage (revu le 27.11.2026 : « trop de
-   couleurs mélangées ») ; les chiffres gardent leur largeur. */
+/* Un prix : surligné du vert de l'argent, comme partout sur le site. */
 .brique__prix {
+  padding-inline: 0.15em;
+  margin-inline: -0.15em;
   font-variant-numeric: tabular-nums;
+  background: var(--pastille-argent);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 .brique__texte {
@@ -134,73 +138,45 @@
   margin-inline-start: 0.25em;
 }
 
-/* ---------- Les remerciements : un mur de noms ---------- */
-/* Chaque nom est une brique du mur (revu le 27.11.2026 : « fais quelque
-   chose de mieux » que le bandeau à faire défiler, où l'on ne voyait que
-   deux noms). La grande brique grenat MERCI ouvre le mur, puis tous les
-   noms, chacun dans sa brique, en grand, à la suite. Les briques
-   s'allongent pour que chaque rangée soit pleine : les joints ne tombent
-   jamais au même endroit d'une rangée à l'autre, comme dans le reste de la
-   page. Au survol, une brique se remplit du grenat des infos. */
+/* ---------- Les remerciements : un seul bloc grenat ---------- */
+/* MERCI en très grand, puis tous les noms à la suite, en blanc, séparés
+   d'une barre (revu le 27.11.2026 : le bandeau ne montrait que deux noms,
+   le mur d'une case par nom écrasait le reste de la page). Une seule
+   brique, pleine du grenat des infos : tout se lit d'un coup. */
 .merci {
   grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--joint);
+  display: grid;
+  gap: var(--espace-3);
   min-width: 0;
-  background: var(--encre);
-}
-
-.merci__titre {
-  display: flex;
-  flex: 1 1 100%;
-  align-items: center;
-  padding: var(--espace-3) var(--marge);
-  font-size: clamp(3rem, 21vw, 6rem);
-  font-weight: var(--graisse-nom);
-  line-height: 0.9;
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
+  padding: var(--espace-4) var(--marge);
   color: var(--texte-infos);
   background: var(--pastille-infos);
 }
 
-/* La liste ne fait pas de case : ses noms sont des briques du même mur que
-   MERCI (role="list" garde la liste pour les lecteurs d'écran). */
-.merci__liste {
-  display: contents;
-}
-
-.merci__liste li {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-  justify-content: center;
-  max-width: 100%;
-  min-height: 3.5rem;
-  padding: var(--espace-2) var(--espace-3);
-  /* Téléphone : assez petit pour que deux ou trois noms tiennent par
-     rangée, comme des briques, et non une colonne d'un nom par ligne. */
-  font-size: clamp(0.9375rem, 0.5rem + 2vw, 2.125rem);
-  /* La brique part de la largeur de son mot le plus long (prénom et nom
-     sur deux lignes au besoin), puis s'allonge : deux ou trois par rangée,
-     de largeurs différentes. */
-  width: min-content;
+.merci__titre {
+  font-size: clamp(3rem, 21vw, 6rem);
   font-weight: var(--graisse-nom);
-  line-height: 1.05;
-  text-align: center;
+  line-height: 0.85;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
-  color: var(--encre);
-  background: var(--fond);
-  transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .merci__liste li:hover {
-    color: var(--texte-infos);
-    background: var(--pastille-infos);
-  }
+.merci__liste {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  row-gap: 0.3em;
+  font-size: clamp(1rem, 0.75rem + 1vw, 1.75rem);
+  font-weight: var(--graisse-nom);
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.merci__liste li:not(:last-child)::after {
+  content: "/";
+  margin-inline: 0.5em;
+  opacity: 0.45;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -233,18 +209,49 @@
   .brique--o6 { grid-column: span 6; }
   .brique--o7 { grid-column: span 7; }
 
-  /* Ordinateur : MERCI ouvre la première rangée, les noms suivent. */
-  .merci__titre {
-    flex: 0 0 auto;
-    padding-block: var(--espace-4);
-    font-size: clamp(3rem, 1.5rem + 3vw, 5.5rem);
+  /* Ordinateur : MERCI à gauche, les noms à droite. */
+  .merci {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--espace-5, 3rem);
+    padding-block: var(--espace-5, 3rem);
   }
 
-  .merci__liste li {
-    min-height: 6.5rem;
-    width: auto;
-    padding: var(--espace-3) var(--espace-4);
-    font-size: clamp(1.25rem, 0.9rem + 1.2vw, 2.125rem);
-    white-space: nowrap;
+  .merci__titre {
+    font-size: clamp(4rem, 1rem + 6vw, 10rem);
+  }
+
+  /* L'adresse et la photo : la rangée suit l'adresse, la photo la remplit
+     (au format 3:2, elle laissait un grand vide sous l'adresse sur un
+     grand écran). */
+  .brique--photo {
+    aspect-ratio: auto;
+    min-height: clamp(16rem, 22vw, 32rem);
+  }
+
+  /* Les textes grandissent avec l'écran : sur un très grand écran, la page
+     ne devient pas un tableau de petits caractères. */
+  .brique__terme {
+    font-size: min(clamp(1rem, 0.55rem + 0.6vw, 1.625rem), 12cqi);
+  }
+
+  .brique__valeur {
+    font-size: min(clamp(1.125rem, 0.6rem + 1vw, 2.25rem), 14cqi);
+  }
+
+  .brique__valeur--grand {
+    font-size: clamp(1.75rem, 0.6rem + 2.6vw, 4.5rem);
+  }
+
+  .brique__texte {
+    font-size: clamp(1rem, 0.75rem + 0.35vw, 1.375rem);
+  }
+
+  .brique__detail {
+    font-size: clamp(0.875rem, 0.65rem + 0.3vw, 1.125rem);
+  }
+
+  .brique {
+    padding-block: clamp(1.75rem, 1rem + 0.8vw, 2.75rem);
   }
 }

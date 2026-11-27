@@ -231,15 +231,14 @@ même endroit, et chaque rangée est pleine. Une brique : l'intitulé en
 capitales grasses, la valeur en grand, au besoin une ligne de détail. Six
 colonnes sur téléphone, douze sur ordinateur. Le plan, les téléphones et
 l'e-mail sont des briques qu'on presse (noires au survol). La photo de la
-salle est en couleur. Les prix sont en noir, sans le surlignage vert
-(« trop de couleurs mélangées ») ; il ne reste que le grenat des infos (la
-case du titre et la case MERCI) et la photo. Les remerciements sont **un mur de noms** (revu le 27.11.2026 : « fais
-quelque chose de mieux » que le bandeau à faire défiler, où l'on ne voyait que
-deux noms) : la grande brique grenat MERCI ouvre le mur, puis chaque nom est
-une brique, en grand, tous visibles d'un coup. Les briques s'allongent pour
-que chaque rangée soit pleine, de largeurs différentes ; sur téléphone,
-prénom et nom passent sur deux lignes, deux ou trois briques par rangée. Au
-survol, une brique se remplit de grenat. La page n'a plus de code propre.
+salle est en couleur ; les prix sont surlignés du vert de l'argent (remis à
+la demande du client). Sur un grand écran, les textes grandissent avec
+l'écran, et la rangée de l'adresse suit l'adresse (la photo la remplit) :
+plus de grand vide sous l'adresse. Les remerciements sont **un seul bloc
+grenat** (revu le 27.11.2026 : le bandeau à faire défiler ne montrait que
+deux noms, puis un mur d'une case par nom écrasait la page, « horrible ») :
+MERCI en très grand (à gauche sur ordinateur), puis tous les noms à la
+suite, en blanc, séparés d'une barre. La page n'a plus de code propre.
 
 ### Couleur
 - `--noir` #000 et `--blanc` #fff, relevés sur le logo (D1), pour tout le site.
