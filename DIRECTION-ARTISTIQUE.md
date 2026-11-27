@@ -92,7 +92,7 @@ l'accueil, case du titre de chaque page, agenda, pied de page.
 | Rouge (`--rouge`, #a72920, le rouge feu RAL 3000 de la salle) | Cinéma | blanc, 7:1 |
 | Rose (`--rose`, #f48fbf) | Musique (l'ancienne « Nuit » : les soirées du club) et Radio, qui en fait partie | noir, 9,5:1 |
 | Jaune (`--jaune`, #f6d82b) | Agenda | noir, 14,8:1 |
-| Grenat (`--grenat`, #6b1222) | Infos | blanc, 12:1 |
+| Grenat (`--grenat`, #6b1222) | Infos (et la case MERCI) | blanc, 12:1 |
 | Vert (#3cab64) | L'argent, inchangé | noir, 7,2:1 |
 | Orange | Un problème, inchangé | noir |
 
@@ -195,7 +195,7 @@ page Musique, sur le noir de la musique :
 ### Soirée, Musique, Infos (demande du client, 27.11.2026)
 Cette section remplace ce qui la contredit plus bas (la fiche d'une soirée
 « comme celle d'un film », la page Infos en « mur de briques »). Pour la page
-Infos, c'est sa version en noir et blanc, ci-dessous, qui compte.
+Infos, c'est le mur de briques, ci-dessous, qui compte.
 
 **La fiche d'une soirée est son flyer, ouvert** (« trop sobre, elle fait
 tâche », `css/soiree.css`, `js/pages/soiree.js`). Toujours des cases jointes
@@ -222,20 +222,20 @@ première en grand (`affichesEnGrand` dans `js/pages/musique.js`). Une seule
 date : elle prend toute la rangée. La case « En direct », à côté du lecteur,
 écrit le nom en grand et cale le jour en bas.
 
-**Page Infos : rangée comme l'agenda, en noir et blanc** (revue le
-27.11.2026 : « trop brouillon, trop de couleurs mélangées » ; remplace les
-« quatre temps » aux cases vertes et barres noires du même jour, le mur de
-briques et le bandeau MERCI du 19.11.2026, `css/infos.css`). Noir et blanc : seule la
-  case du titre garde le grenat. Une rubrique par bloc (Adresse, Contact,
-  Tarifs, Billets, Soutenir et louer, Merci, Crédits), son nom en titre (dans
-  une colonne à gauche sur ordinateur), puis une ligne par information : ce
-  que c'est à gauche, en capitales, avec au besoin une ligne grise dessous ;
-  la valeur à droite (un prix, un numéro). Plus de vert sur les prix, plus
-  de case rouge. La photo de la salle est en noir et blanc, comme les
-  portraits des flyers. Le plan, les téléphones et l'e-mail sont des lignes
-  qu'on presse (la valeur se souligne au survol). Les remerciements sont les
-  noms à la suite, en grand, séparés d'une barre ; la page n'a plus de code
-  propre.
+**Page Infos : le mur de briques** (27.11.2026 : après deux autres essais,
+les « quatre temps » aux cases vertes, puis une page en lignes noir et blanc,
+le client préfère le mur de briques ; `css/infos.css`, `js/pages/infos.js`).
+Chaque information est une brique serrée, jointe d'un trait, de largeur
+variable ; d'une rangée à l'autre, les joints verticaux ne tombent pas au
+même endroit, et chaque rangée est pleine. Une brique : l'intitulé en
+capitales grasses, la valeur en grand, au besoin une ligne de détail. Six
+colonnes sur téléphone, douze sur ordinateur. Le plan, les téléphones et
+l'e-mail sont des briques qu'on presse (noires au survol). La photo de la
+salle est en couleur. Les prix sont en noir, sans le surlignage vert
+(« trop de couleurs mélangées ») ; il ne reste que le grenat des infos (la
+case du titre et la case MERCI) et la photo. Les remerciements défilent
+dans un bandeau, à la main, sans fin : la case MERCI, puis les noms en
+grand, chacun dans sa case.
 
 ### Couleur
 - `--noir` #000 et `--blanc` #fff, relevés sur le logo (D1), pour tout le site.
