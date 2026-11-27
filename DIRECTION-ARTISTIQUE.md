@@ -119,7 +119,14 @@ supprimée sur tout le site. On circule par :
   27.11.2026 : l'aléatoire ne se voyait pas assez) ; deux onglets voisins ne commencent ni ne finissent
   à la même hauteur et n'ont pas la même taille (jamais de rangée ni de
   symétrie) ; un onglet va d'un peu plus d'une demi-largeur de colonne à une
-  largeur et un tiers (une largeur au plus sur téléphone). Si l'écran est trop bas pour tout respecter, les écarts se
+  largeur et un tiers (une largeur au plus sur téléphone).
+  Sur téléphone aussi (revu le 27.11.2026 : « plus aléatoire ») : l'ordre
+  des deux onglets d'une colonne est tiré au sort (Musique peut passer
+  au-dessus d'Agenda, Infos au-dessus de Cinéma), une ou deux affiches les
+  séparent (deux une fois sur trois, si l'écran est assez haut), et les
+  tailles vont d'un peu plus d'une demi-largeur à une largeur. Le premier
+  onglet de chaque colonne est entier dans l'écran ; le second commence au
+  moins dans l'écran. Si l'écran est trop bas pour tout respecter, les écarts se
   relâchent, jamais la règle « tout dans l'écran ». Une fois tirés, ils
   reviennent à la même place à chaque tour de la colonne. Une case d'onglet est moins haute qu'une
   affiche : le nom en très grand et la flèche, **pas de petits mots**

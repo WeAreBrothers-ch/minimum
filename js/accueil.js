@@ -64,9 +64,11 @@ const AFFICHE = 1.5;
 const ONGLET_MIN = 0.55;
 const ONGLET_MAX = 1.3;
 /** Sur téléphone, un onglet ne dépasse pas une largeur de colonne. */
-const ONGLET_MAX_TELEPHONE = 0.95;
+const ONGLET_MAX_TELEPHONE = 1.05;
+/** Sur téléphone, ce qu’on voit au moins du second onglet d’une colonne. */
+const ENTAME = 0.3;
 /** Sur téléphone, la colonne est étroite : le nom et sa ligne prennent plus de place. */
-const ONGLET_MIN_TELEPHONE = 0.65;
+const ONGLET_MIN_TELEPHONE = 0.6;
 /** Écart minimal entre deux onglets voisins : leurs hauts, leurs bas, leurs tailles. */
 const ECART_HAUT = 0.45;
 const ECART_BAS = 0.2;
@@ -167,28 +169,37 @@ function tirerOrdinateur(ecran) {
 }
 
 /**
- * Téléphone : deux onglets par colonne, une affiche entre les deux.
- * Renvoie, pour chaque colonne, le haut du premier et la taille de chacun.
+ * Téléphone : deux onglets par colonne, une ou deux affiches entre les
+ * deux. Pour chaque colonne : le haut du premier onglet, la taille de
+ * chacun, l’ordre des deux (inverse : le second de la paire passe en
+ * premier) et le nombre d’affiches entre eux. Le premier onglet est
+ * toujours entier dans l’écran ; le second commence au moins dans l’écran
+ * (revu le 27.11.2026 : « plus aléatoire » sur téléphone aussi).
  * @param {number} ecran
- * @returns {Array<{ haut: number, tailles: [number, number] }>}
+ * @returns {Array<{ haut: number, tailles: [number, number], inverse: boolean, entre: number }>}
  */
 function tirerTelephone(ecran) {
-  /** @type {Array<{ haut: number, tailles: [number, number] }>} */
+  /** @type {Array<{ haut: number, tailles: [number, number], inverse: boolean, entre: number }>} */
   let tirage = [];
   for (let essai = 0; essai < ESSAIS; essai++) {
     const souplesse = souplesseDe(essai);
     tirage = [0, 1].map(() => {
-      /* Le second onglet d’abord, puis le premier et son haut dans ce qui reste. */
       const second = entre(ONGLET_MIN_TELEPHONE, ONGLET_MAX_TELEPHONE);
-      const premier = tirerOnglet(ecran - 0.05 - AFFICHE - second, ONGLET_MIN_TELEPHONE, ONGLET_MAX_TELEPHONE);
+      /* Deux affiches entre les onglets une fois sur trois, si l’écran le permet. */
+      const deux = Math.random() < 1 / 3 && ecran - 0.05 - 2 * AFFICHE - ENTAME - ONGLET_MIN_TELEPHONE > 0.3;
+      const nombre = deux ? 2 : 1;
+      /* Le second onglet doit commencer dans l’écran (entamé d’ENTAME) ;
+         s’il n’y a qu’une affiche entre les deux, il y tient en entier. */
+      const reste = nombre === 1 ? ecran - 0.05 - AFFICHE - second : ecran - 0.05 - 2 * AFFICHE - ENTAME;
+      const premier = tirerOnglet(reste, ONGLET_MIN_TELEPHONE, ONGLET_MAX_TELEPHONE);
       /** @type {[number, number]} */
       const tailles = [premier.taille, second];
-      return { haut: premier.haut, tailles };
+      return { haut: premier.haut, tailles, inverse: Math.random() < 0.5, entre: nombre };
     });
     /* Les quatre onglets, colonne par colonne. */
-    const [gauche, droite] = tirage.map(({ haut, tailles: [a, b] }) => [
+    const [gauche, droite] = tirage.map(({ haut, tailles: [a, b], entre: n }) => [
       { haut, taille: a },
-      { haut: haut + a + AFFICHE, taille: b },
+      { haut: haut + a + n * AFFICHE, taille: b },
     ]);
     if (!gauche || !droite) break;
     const ok =
@@ -200,14 +211,15 @@ function tirerTelephone(ecran) {
 }
 
 /**
- * Un onglet, une affiche, puis l’autre onglet et le reste des affiches.
+ * Un onglet, une ou deux affiches, puis l’autre onglet et le reste des affiches.
  * @param {Carte} premier
  * @param {Carte} second
  * @param {Carte[]} affiches
+ * @param {number} [nombre]  Combien d’affiches entre les deux onglets.
  * @returns {Carte[]}
  */
-function deuxOnglets(premier, second, affiches) {
-  return [premier, ...affiches.slice(0, 1), second, ...affiches.slice(1)];
+function deuxOnglets(premier, second, affiches, nombre = 1) {
+  return [premier, ...affiches.slice(0, nombre), second, ...affiches.slice(nombre)];
 }
 
 /**
@@ -268,11 +280,13 @@ export function initAccueil() {
         [o.cinema, o.infos, c],
       ];
       liste = paires.map(([premier, second, affiches], i) => {
-        const { haut = 0, tailles = [ONGLET_MIN, ONGLET_MAX] } = tirage[i] ?? {};
+        const { haut = 0, tailles = [ONGLET_MIN, ONGLET_MAX], inverse = false, entre: n = 1 } = tirage[i] ?? {};
+        const [a, b] = inverse ? [second, premier] : [premier, second];
         const cartes = deuxOnglets(
-          { .../** @type {Carte} */ (premier), hauteur: tailles[0] },
-          { .../** @type {Carte} */ (second), hauteur: tailles[1] },
-          /** @type {Carte[]} */ (affiches)
+          { .../** @type {Carte} */ (a), hauteur: tailles[0] },
+          { .../** @type {Carte} */ (b), hauteur: tailles[1] },
+          /** @type {Carte[]} */ (affiches),
+          n
         );
         return { cartes, depart: -haut / AFFICHE, rubrique: tailles[0] };
       });
