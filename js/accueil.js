@@ -62,11 +62,13 @@ function onglets() {
 const AFFICHE = 1.5;
 /** Hauteur d’un onglet, en largeurs de colonne : de quoi lire son nom, jamais plus qu’une affiche. */
 const ONGLET_MIN = 0.55;
-const ONGLET_MAX = 1;
+const ONGLET_MAX = 1.3;
+/** Sur téléphone, un onglet ne dépasse pas une largeur de colonne. */
+const ONGLET_MAX_TELEPHONE = 0.95;
 /** Sur téléphone, la colonne est étroite : le nom et sa ligne prennent plus de place. */
 const ONGLET_MIN_TELEPHONE = 0.65;
 /** Écart minimal entre deux onglets voisins : leurs hauts, leurs bas, leurs tailles. */
-const ECART_HAUT = 0.3;
+const ECART_HAUT = 0.45;
 const ECART_BAS = 0.2;
 const ECART_TAILLE = 0.1;
 const ESSAIS = 400;
@@ -135,12 +137,15 @@ function souplesseDe(essai) {
  * ce qui reste sous le haut de l’écran pour lui et ce qui le suit).
  * @param {number} place
  * @param {number} [min]  Taille minimale.
+ * @param {number} [max]  Taille maximale.
  * @returns {Tirage}
  */
-function tirerOnglet(place, min = ONGLET_MIN) {
-  const taille = entre(min, Math.max(min, Math.min(ONGLET_MAX, place)));
-  /* Jamais collé au haut de l’écran : un liseré d’affiche au-dessus ferait défaut. */
-  const plusBas = Math.max(0, Math.min(AFFICHE, place - taille));
+function tirerOnglet(place, min = ONGLET_MIN, max = ONGLET_MAX) {
+  const taille = entre(min, Math.max(min, Math.min(max, place)));
+  /* N’importe où dans l’écran, du haut jusqu’en bas (revu le 27.11.2026 :
+     l’aléatoire ne se voyait pas assez, les onglets restaient en haut) ;
+     jamais collé au haut : un liseré d’affiche au-dessus ferait défaut. */
+  const plusBas = Math.max(0, place - taille);
   return { haut: entre(Math.min(0.15, plusBas), plusBas), taille };
 }
 
@@ -174,8 +179,8 @@ function tirerTelephone(ecran) {
     const souplesse = souplesseDe(essai);
     tirage = [0, 1].map(() => {
       /* Le second onglet d’abord, puis le premier et son haut dans ce qui reste. */
-      const second = entre(ONGLET_MIN_TELEPHONE, ONGLET_MAX - 0.1);
-      const premier = tirerOnglet(ecran - 0.05 - AFFICHE - second, ONGLET_MIN_TELEPHONE);
+      const second = entre(ONGLET_MIN_TELEPHONE, ONGLET_MAX_TELEPHONE);
+      const premier = tirerOnglet(ecran - 0.05 - AFFICHE - second, ONGLET_MIN_TELEPHONE, ONGLET_MAX_TELEPHONE);
       /** @type {[number, number]} */
       const tailles = [premier.taille, second];
       return { haut: premier.haut, tailles };

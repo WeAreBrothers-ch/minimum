@@ -115,10 +115,11 @@ supprimée sur tout le site. On circule par :
   arrive et l'ordre des affiches changent à chaque visite
   (`tirerOrdinateur`, `tirerTelephone` dans `js/accueil.js`). Le hasard a
   ses règles : chaque onglet entre en entier dans l'écran à l'arrivée, sans
-  coller au bord du haut ; deux onglets voisins ne commencent ni ne finissent
+  coller au bord du haut, n'importe où du haut jusqu'en bas de l'écran (revu le
+  27.11.2026 : l'aléatoire ne se voyait pas assez) ; deux onglets voisins ne commencent ni ne finissent
   à la même hauteur et n'ont pas la même taille (jamais de rangée ni de
   symétrie) ; un onglet va d'un peu plus d'une demi-largeur de colonne à une
-  largeur. Si l'écran est trop bas pour tout respecter, les écarts se
+  largeur et un tiers (une largeur au plus sur téléphone). Si l'écran est trop bas pour tout respecter, les écarts se
   relâchent, jamais la règle « tout dans l'écran ». Une fois tirés, ils
   reviennent à la même place à chaque tour de la colonne. Une case d'onglet est moins haute qu'une
   affiche : le nom en très grand et la flèche, **pas de petits mots**
