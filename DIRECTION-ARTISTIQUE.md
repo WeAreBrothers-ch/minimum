@@ -224,7 +224,7 @@ date : elle prend toute la rangée. La case « En direct », à côté du lecteu
 
 **Page Infos : le mur de briques** (27.11.2026 : après deux autres essais,
 les « quatre temps » aux cases vertes, puis une page en lignes noir et blanc,
-le client préfère le mur de briques ; `css/infos.css`, `js/pages/infos.js`).
+le client préfère le mur de briques ; `css/infos.css`).
 Chaque information est une brique serrée, jointe d'un trait, de largeur
 variable ; d'une rangée à l'autre, les joints verticaux ne tombent pas au
 même endroit, et chaque rangée est pleine. Une brique : l'intitulé en
@@ -233,9 +233,13 @@ colonnes sur téléphone, douze sur ordinateur. Le plan, les téléphones et
 l'e-mail sont des briques qu'on presse (noires au survol). La photo de la
 salle est en couleur. Les prix sont en noir, sans le surlignage vert
 (« trop de couleurs mélangées ») ; il ne reste que le grenat des infos (la
-case du titre et la case MERCI) et la photo. Les remerciements défilent
-dans un bandeau, à la main, sans fin : la case MERCI, puis les noms en
-grand, chacun dans sa case.
+case du titre et la case MERCI) et la photo. Les remerciements sont **un mur de noms** (revu le 27.11.2026 : « fais
+quelque chose de mieux » que le bandeau à faire défiler, où l'on ne voyait que
+deux noms) : la grande brique grenat MERCI ouvre le mur, puis chaque nom est
+une brique, en grand, tous visibles d'un coup. Les briques s'allongent pour
+que chaque rangée soit pleine, de largeurs différentes ; sur téléphone,
+prénom et nom passent sur deux lignes, deux ou trois briques par rangée. Au
+survol, une brique se remplit de grenat. La page n'a plus de code propre.
 
 ### Couleur
 - `--noir` #000 et `--blanc` #fff, relevés sur le logo (D1), pour tout le site.

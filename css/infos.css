@@ -8,8 +8,7 @@
    Une grille de six colonnes sur téléphone, de douze sur ordinateur ; la
    largeur de chaque brique est fixée dans la page (brique--m3 : trois
    sixièmes sur téléphone ; brique--o5 : cinq douzièmes sur ordinateur).
-   Les remerciements défilent dans un bandeau, à la main, sans fin
-   (js/pages/infos.js). */
+   Les remerciements sont un mur de noms, une brique par nom. */
 
 .briques {
   display: grid;
@@ -135,24 +134,26 @@
   margin-inline-start: 0.25em;
 }
 
-/* ---------- Les remerciements : un bandeau qu'on fait défiler ---------- */
-/* Une grande case rouge rubis « MERCI », puis les noms en grand, chacun dans sa
-   case, séparés d'un trait noir comme les briques. Sur téléphone, MERCI
-   occupe toute la largeur, au-dessus du bandeau ; sur ordinateur, il est sur
-   la même ligne, dans une case d'un quart. On fait défiler les noms au
-   doigt, au pavé ou en tirant à la souris ; la liste revient sans fin. */
+/* ---------- Les remerciements : un mur de noms ---------- */
+/* Chaque nom est une brique du mur (revu le 27.11.2026 : « fais quelque
+   chose de mieux » que le bandeau à faire défiler, où l'on ne voyait que
+   deux noms). La grande brique grenat MERCI ouvre le mur, puis tous les
+   noms, chacun dans sa brique, en grand, à la suite. Les briques
+   s'allongent pour que chaque rangée soit pleine : les joints ne tombent
+   jamais au même endroit d'une rangée à l'autre, comme dans le reste de la
+   page. Au survol, une brique se remplit du grenat des infos. */
 .merci {
   grid-column: 1 / -1;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  gap: var(--joint);
   min-width: 0;
   background: var(--encre);
-  gap: var(--joint);
 }
 
 .merci__titre {
   display: flex;
-  flex: none;
+  flex: 1 1 100%;
   align-items: center;
   padding: var(--espace-3) var(--marge);
   font-size: clamp(3rem, 21vw, 6rem);
@@ -160,60 +161,46 @@
   line-height: 0.9;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
-  /* Le rouge le plus foncé des trois, le rubis (RAL 3003), texte blanc. */
   color: var(--texte-infos);
   background: var(--pastille-infos);
 }
 
-.merci__defile {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  background: var(--fond);
-  cursor: grab;
-  touch-action: pan-x pan-y;
-}
-
-.merci__defile::-webkit-scrollbar {
-  display: none;
-}
-
-.merci__defile[data-tire="true"] {
-  cursor: grabbing;
-  user-select: none;
-}
-
-.merci__defile:focus-visible {
-  outline: var(--trait) solid var(--encre);
-  outline-offset: calc(var(--trait) * -3);
-}
-
-.merci__piste {
-  display: flex;
-  width: max-content;
-}
-
+/* La liste ne fait pas de case : ses noms sont des briques du même mur que
+   MERCI (role="list" garde la liste pour les lecteurs d'écran). */
 .merci__liste {
-  display: flex;
-  flex: none;
+  display: contents;
 }
 
 .merci__liste li {
   display: flex;
+  flex: 1 1 auto;
   align-items: center;
-  min-height: 5.5rem;
-  padding-inline: var(--espace-4);
-  font-size: clamp(1.375rem, 1rem + 1.6vw, 2.25rem);
+  justify-content: center;
+  max-width: 100%;
+  min-height: 3.5rem;
+  padding: var(--espace-2) var(--espace-3);
+  /* Téléphone : assez petit pour que deux ou trois noms tiennent par
+     rangée, comme des briques, et non une colonne d'un nom par ligne. */
+  font-size: clamp(0.9375rem, 0.5rem + 2vw, 2.125rem);
+  /* La brique part de la largeur de son mot le plus long (prénom et nom
+     sur deux lignes au besoin), puis s'allonge : deux ou trois par rangée,
+     de largeurs différentes. */
+  width: min-content;
   font-weight: var(--graisse-nom);
-  line-height: 1;
+  line-height: 1.05;
+  text-align: center;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
-  white-space: nowrap;
-  border-right: var(--trait) solid var(--encre);
+  color: var(--encre);
+  background: var(--fond);
+  transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .merci__liste li:hover {
+    color: var(--texte-infos);
+    background: var(--pastille-infos);
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -246,18 +233,18 @@
   .brique--o6 { grid-column: span 6; }
   .brique--o7 { grid-column: span 7; }
 
-  /* Ordinateur : MERCI sur la même ligne, dans une case d'un quart. */
-  .merci {
-    flex-direction: row;
-  }
-
+  /* Ordinateur : MERCI ouvre la première rangée, les noms suivent. */
   .merci__titre {
-    flex: 0 0 calc((100% - 3 * var(--joint)) / 4);
-    padding-block: 0;
+    flex: 0 0 auto;
+    padding-block: var(--espace-4);
     font-size: clamp(3rem, 1.5rem + 3vw, 5.5rem);
   }
 
   .merci__liste li {
-    min-height: 8.5rem;
+    min-height: 6.5rem;
+    width: auto;
+    padding: var(--espace-3) var(--espace-4);
+    font-size: clamp(1.25rem, 0.9rem + 1.2vw, 2.125rem);
+    white-space: nowrap;
   }
 }

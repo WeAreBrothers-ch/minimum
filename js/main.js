@@ -20,7 +20,6 @@ const PAGES = {
   film: () => import("./pages/film.js").then((m) => m.initFilm),
   soiree: () => import("./pages/soiree.js").then((m) => m.initSoiree),
   billet: () => import("./pages/billet.js").then((m) => m.initBillet),
-  infos: () => import("./pages/infos.js").then((m) => m.initInfos),
 };
 
 /** @type {Array<() => void>} */
