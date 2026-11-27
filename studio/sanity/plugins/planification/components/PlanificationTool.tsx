@@ -1,0 +1,198 @@
+/**
+ * Onglet « Planification » du Studio.
+ *
+ * La semaine de cinéma, du mercredi au mardi, affichée comme une
+ * grille de créneaux : 19 h et 21 h (17 h et 19 h le dimanche),
+ * Salle 1 et Salle 2. On y déplace
+ * une séance à la souris, on clique une case libre pour y poser un
+ * film, et des assistants font le gros du travail — programmer un
+ * film sur plusieurs semaines, dupliquer une semaine (au besoin en
+ * rebattant les cartes), la remplir au hasard, puis en sortir la
+ * newsletter et la feuille A4 à imprimer.
+ */
+import {WarningOutlineIcon} from '@sanity/icons'
+import {Card, Container, Flex, Stack, Text, useToast} from '@sanity/ui'
+import {useCallback, useMemo, useState} from 'react'
+import {useClient} from 'sanity'
+
+import {useChangementDeSalle} from '../hooks/useChangementDeSalle'
+import {useDeplacementSeances} from '../hooks/useDeplacementSeances'
+import {useAnnulation} from '../hooks/useAnnulation'
+import {useDonneesPlanning} from '../hooks/useDonneesPlanning'
+import {FournisseurHistorique, useHistoriqueDeLOnglet} from '../hooks/useHistorique'
+import {useRetraitCaseSansFilm} from '../hooks/useRetraitCaseSansFilm'
+import {useSemaineAffichee} from '../hooks/useSemaineAffichee'
+import {useSoireesAJour} from '../hooks/useSoireesAJour'
+import {
+  API_VERSION,
+  type ActionsPlanning,
+  type CreneauDate,
+  type SeancePlanning,
+} from '../types'
+import {idsEnConflit} from '../utils/conflits'
+import {couleurDeLaSemaine, couleursDesFilms} from '../utils/couleurs'
+import {finDeSemaine} from '../utils/dates'
+import {semainesDe} from '../utils/historique'
+import {filmsDeLaSemaine} from '../utils/films-de-la-semaine'
+import {supprimerSeance} from '../utils/mutations'
+import {AssistantsDeLaSemaine} from './AssistantsDeLaSemaine'
+import {BarreSemaine, type DialogOuvert} from './BarreSemaine'
+import {CompteurFilms} from './CompteurFilms'
+import {DialogFilmDuCreneau} from './DialogFilmDuCreneau'
+import {DialogSupprimerSeance} from './DialogSupprimerSeance'
+import {GrilleSemaine} from './GrilleSemaine'
+
+/** La case ou la séance dont on est en train de choisir le film. */
+type ChoixDeFilm = {creneau: CreneauDate} | {seance: SeancePlanning} | null
+
+export function PlanificationTool(): React.JSX.Element {
+  const client = useClient({apiVersion: API_VERSION})
+  const toast = useToast()
+
+  /* La semaine de cinéma va du mercredi au mardi : c'est ce mercredi-là.
+     Elle est retenue d'une visite de l'onglet à l'autre. */
+  const {debutSemaine, semainePrecedente, semaineSuivante, semaineActuelle} = useSemaineAffichee()
+  const [dialogOuvert, setDialogOuvert] = useState<DialogOuvert>(null)
+  const [choixDeFilm, setChoixDeFilm] = useState<ChoixDeFilm>(null)
+  const [seanceASupprimer, setSeanceASupprimer] = useState<SeancePlanning | null>(null)
+  const [suppressionEnCours, setSuppressionEnCours] = useState(false)
+
+  const finSemaine = useMemo(() => finDeSemaine(debutSemaine), [debutSemaine])
+  const {films, seances, casesSansFilm, chargement, erreur, recharger} = useDonneesPlanning(
+    debutSemaine,
+    finSemaine,
+  )
+  const conflits = useMemo(() => idsEnConflit(seances), [seances])
+
+  const rafraichir = useSoireesAJour(debutSemaine, finSemaine, recharger)
+  const historique = useHistoriqueDeLOnglet()
+  const annulation = useAnnulation(historique, recharger)
+  const glisser = useDeplacementSeances(rafraichir, historique)
+  const changerDeSalle = useChangementDeSalle(seances, rafraichir, historique)
+  const retirerCaseSansFilm = useRetraitCaseSansFilm(rafraichir, historique)
+  /* Les films de la semaine, dans l'ordre du compteur : c'est aussi
+     l'ordre dans lequel ils reçoivent leur couleur. */
+  const lesFilmsDeLaSemaine = useMemo(() => filmsDeLaSemaine(films, seances), [films, seances])
+  const couleurDe = useMemo(
+    () => couleursDesFilms(lesFilmsDeLaSemaine.map((ligne) => ligne.filmId)),
+    [lesFilmsDeLaSemaine],
+  )
+  const fermerDialog = useCallback(() => setDialogOuvert(null), [])
+  const fermerChoixDeFilm = useCallback(() => setChoixDeFilm(null), [])
+
+  const actions: ActionsPlanning = useMemo(
+    () => ({
+      onSupprimer: setSeanceASupprimer,
+      onChangerFilm: (seance) => setChoixDeFilm({seance}),
+      onChangerDeSalle: (seance) => void changerDeSalle(seance),
+      onAjouter: (creneau) => setChoixDeFilm({creneau}),
+      onRetirerCaseSansFilm: (caseSansFilm) => void retirerCaseSansFilm(caseSansFilm),
+      couleurDe,
+    }),
+    [changerDeSalle, couleurDe, retirerCaseSansFilm],
+  )
+
+  const confirmerSuppression = useCallback(async () => {
+    if (!seanceASupprimer) return
+    setSuppressionEnCours(true)
+    try {
+      await historique.avantDeModifier('supprimer une séance', semainesDe(seanceASupprimer.date))
+      await supprimerSeance(client, seanceASupprimer._id)
+      toast.push({status: 'success', title: 'Séance supprimée.'})
+      setSeanceASupprimer(null)
+      rafraichir()
+    } catch {
+      toast.push({status: 'error', title: 'La suppression a échoué. Réessayez.'})
+    } finally {
+      setSuppressionEnCours(false)
+    }
+  }, [client, historique, rafraichir, seanceASupprimer, toast])
+
+  return (
+    <FournisseurHistorique value={historique}>
+      <Container width={5} padding={4}>
+        <Stack space={4}>
+          <BarreSemaine
+            debutSemaine={debutSemaine}
+            nbSeances={seances.length}
+            onSemainePrecedente={semainePrecedente}
+            onSemaineActuelle={semaineActuelle}
+            onSemaineSuivante={semaineSuivante}
+            onActualiser={recharger}
+            onOuvrir={setDialogOuvert}
+            dernierGeste={historique.dernierGeste}
+            annulationEnCours={annulation.enCours}
+            onAnnuler={() => void annulation.annuler()}
+          />
+
+          {erreur && (
+            <Card padding={3} radius={2} tone="critical">
+              <Text size={1}>{erreur}</Text>
+            </Card>
+          )}
+
+          {conflits.size > 0 && (
+            <Card padding={3} radius={2} tone="caution">
+              <Flex gap={2} align="center">
+                <Text size={1}>
+                  <WarningOutlineIcon />
+                </Text>
+                <Text size={1}>
+                  {conflits.size} séance{conflits.size > 1 ? 's' : ''} se chevauche
+                  {conflits.size > 1 ? 'nt' : ''} dans une même salle — elles apparaissent en rouge
+                  ci-dessous. Déplacez-en une, ou corrigez son heure.
+                </Text>
+              </Flex>
+            </Card>
+          )}
+
+          <CompteurFilms lignes={lesFilmsDeLaSemaine} couleurDe={couleurDe} />
+
+          <GrilleSemaine
+            debutSemaine={debutSemaine}
+            couleurSemaine={couleurDeLaSemaine(debutSemaine)}
+            seances={seances}
+            casesSansFilm={casesSansFilm}
+            conflits={conflits}
+            chargement={chargement}
+            actions={actions}
+            glisser={glisser}
+          />
+
+          <Text size={1} muted>
+            Glissez une séance pour la déplacer (sur une case occupée, les deux films échangent),
+            cliquez une case vide pour la remplir — d'un film, ou de « Vacances », « Projection
+            privée ». Menu ⋮ d'une séance pour changer son film. Tout est publié immédiatement sur
+            le site.
+          </Text>
+        </Stack>
+
+        <AssistantsDeLaSemaine
+          ouvert={dialogOuvert}
+          debutSemaine={debutSemaine}
+          films={films}
+          seances={seances}
+          casesSansFilm={casesSansFilm}
+          onFermer={fermerDialog}
+          onCree={rafraichir}
+        />
+        {choixDeFilm && (
+          <DialogFilmDuCreneau
+            films={films}
+            cible={choixDeFilm}
+            onFermer={fermerChoixDeFilm}
+            onFait={rafraichir}
+          />
+        )}
+        {seanceASupprimer && (
+          <DialogSupprimerSeance
+            seance={seanceASupprimer}
+            enCours={suppressionEnCours}
+            onConfirmer={confirmerSuppression}
+            onAnnuler={() => setSeanceASupprimer(null)}
+          />
+        )}
+      </Container>
+    </FournisseurHistorique>
+  )
+}

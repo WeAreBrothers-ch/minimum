@@ -37,17 +37,18 @@ Dans `js/config.js`, la ligne `BILLETTERIE` :
 Pas celui de Zinéma : l'argent doit arriver sur le compte de Minimum. Il faut
 la clé API (`sup_sk_…`, sur developer.sumup.com) et le code marchand (`M…`).
 
-### 2. Sanity (projet commun `vle63mzm`)
+### 2. Sanity (projet de Minimum, `hvxsup1j`)
 
-Zinéma est en production sur ce projet : **rien ne s'y change sans l'accord
-d'Eliott**, et Zinéma doit d'abord filtrer ses propres séances.
+Minimum a son propre projet Sanity, indépendant de celui de Zinéma (décision
+d'Eliott, 26.11.2026) : la caisse n'y lit et n'y écrit que du contenu de
+Minimum. Ces types existent dans le Studio (`studio/`) :
 
-| Type | Ce qu'il faut ajouter |
+| Type | Ce que la caisse y lit ou y écrit |
 |---|---|
-| `screening` (séance) | un champ `lieu` : « zinema » ou « minimum » |
-| `soiree` (nouveau) | `lieu`, `title`, `date`, `ouverture` (HH:MM), `fin`, `status` (« disponible » pour vendre), `tarifs` (liste : `cle`, `libelle`, `detail`, `prix`), `capacite`, line-up, affiche, description, âge |
+| `screening` (séance) | `film`, `date`, `time`, `status` |
+| `soiree` | `title`, `date`, `ouverture` (HH:MM), `fin`, `status` (« disponible » pour vendre), `tarifs` (liste : `cle`, `libelle`, `detail`, `prix`), `capacite`, line-up, affiche, description, âge |
 | `reglagesMinimum` (document unique, identifiant `reglagesMinimum`) | `tarifsCinema` (même forme que les tarifs des soirées), `placesCinema`, `placesClub` (jauge par défaut des soirées) |
-| `commande` | les champs écrits par Minimum : `lieu`, `genre`, `evenement` (référence), `evenementTitre`, `evenementDate`, `evenementHeure`, `billets` (lignes), `nombreBillets`, `montant`, `email`, `statut`, `creeLe`, `payeeLe`, `sumupCheckoutId`, `reference` |
+| `commande` | les champs écrits par la caisse : `genre`, `evenement` (référence), `evenementTitre`, `evenementDate`, `evenementHeure`, `billets` (lignes), `nombreBillets`, `montant`, `email`, `statut`, `creeLe`, `payeeLe`, `sumupCheckoutId`, `reference` |
 
 Les clés des tarifs de cinéma doivent rester `ordinaire`, `avs` et `soutien` :
 la page et le serveur s'en servent pour reconnaître le tarif.
@@ -55,8 +56,8 @@ la page et le serveur s'en servent pour reconnaître le tarif.
 Sans tarif ou sans jauge, le serveur refuse de vendre : mieux vaut une caisse
 fermée qu'une salle vendue deux fois.
 
-Un jeton Sanity propre à Minimum (droits « Editor ») : on pourra le retirer sans
-couper la caisse de Zinéma.
+Un jeton Sanity réservé à la caisse (projet `minimum`, droits « Editor ») : on
+pourra le retirer sans rien couper d'autre.
 
 ### 3. L'hébergement
 

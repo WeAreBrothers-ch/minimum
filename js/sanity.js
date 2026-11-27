@@ -1,5 +1,5 @@
 // @ts-check
-/* Minimum : lecture du contenu publié dans Sanity (projet commun avec Zinéma). */
+/* Minimum : lecture du contenu publié dans Sanity (le projet de Minimum, config.js). */
 
 import { SANITY } from "./config.js";
 
@@ -39,7 +39,7 @@ function estUneImage(valeur) {
 }
 
 /**
- * Ce que le catalogue commun (saisi pour Zinéma) sait d’un film.
+ * Ce que le catalogue de Minimum (Sanity) sait d’un film.
  * @typedef {Object} FicheCatalogue
  * @property {Image | null} affiche
  * @property {string | null} titreOriginal
@@ -104,7 +104,7 @@ function lireFiche(ligne) {
 }
 
 /**
- * Les fiches du catalogue commun, retrouvées par le titre du film.
+ * Les fiches du catalogue, retrouvées par le titre du film.
  * Si deux fiches portent le même titre, celle qui a une affiche l’emporte.
  * Clé : le titre en minuscules.
  * @param {string[]} titres

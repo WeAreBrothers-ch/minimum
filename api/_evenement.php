@@ -6,10 +6,10 @@
    date, l'état de la vente, les tarifs, le nombre de places et
    les billets déjà pris. Rien ne vient de la page.
 
-   Ce que le serveur attend de Sanity (à créer dans le Studio
-   commun, voir BILLETTERIE.md) :
-     - screening : le champ « lieu » (« minimum » ou « zinema ») ;
-     - soiree    : lieu, title, date, ouverture, status, tarifs,
+   Ce que le serveur attend de Sanity (le Studio de Minimum,
+   dossier studio/, voir BILLETTERIE.md) :
+     - screening : film, date, time, status ;
+     - soiree    : title, date, ouverture, status, tarifs,
                    capacite ;
      - reglagesMinimum (document unique) : tarifsCinema,
                    placesCinema, placesClub ;
@@ -24,9 +24,9 @@ require_once __DIR__ . '/_sanity.php';
 const MINUTES_RESERVATION = 30;
 
 const GENRES = [
-    'seance' => '*[_type == "screening" && _id == $id && lieu == $lieu][0]{
+    'seance' => '*[_type == "screening" && _id == $id][0]{
         _id, date, "heure": time, status, "titre": film->title}',
-    'soiree' => '*[_type == "soiree" && _id == $id && lieu == $lieu][0]{
+    'soiree' => '*[_type == "soiree" && _id == $id][0]{
         _id, date, "heure": ouverture, status, "titre": title,
         "tarifs": tarifs[]{cle, libelle, prix}, "places": capacite}',
 ];
@@ -34,13 +34,13 @@ const GENRES = [
 /* Les billets qui comptent encore : payés, ou en attente récente. */
 function requetePrises(): string
 {
-    return '*[_type == "commande" && lieu == $lieu && evenement._ref == $id
+    return '*[_type == "commande" && evenement._ref == $id
         && (statut == "payee" || (statut == "en-attente" && creeLe > $limite))].nombreBillets';
 }
 
 function parametresPrises(string $id): array
 {
-    return ['id' => $id, 'lieu' => LIEU, 'limite' => gmdate('Y-m-d\TH:i:s\Z', time() - MINUTES_RESERVATION * 60)];
+    return ['id' => $id, 'limite' => gmdate('Y-m-d\TH:i:s\Z', time() - MINUTES_RESERVATION * 60)];
 }
 
 /* Garde les tarifs complets : clé, libellé, prix positif. Clé : la clé du tarif. */

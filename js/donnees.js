@@ -16,7 +16,7 @@ import { EMISSIONS_DEMO, SOIREES_DEMO } from "./demo/musique.js";
 /** @type {Promise<Programme> | null} */
 let enCours = null;
 
-/** Au-delà, la fiche d’un film s’affiche sans attendre le catalogue commun. */
+/** Au-delà, la fiche d’un film s’affiche sans attendre le catalogue. */
 const ATTENTE_CATALOGUE = 2000;
 
 /** @type {Promise<Programme> | null} */
@@ -57,7 +57,7 @@ export function chargerProgramme() {
 }
 
 /**
- * Le programme, complété par le catalogue commun (saisi pour Zinéma) : titres
+ * Le programme, complété par le catalogue de Minimum (Sanity) : titres
  * originaux, images des films et presse. Seule la fiche d’un film s’en sert ;
  * les autres pages n’attendent pas Sanity. Si le catalogue ne répond pas, ou
  * pas assez vite, le programme reste tel quel : rien n’est inventé.
@@ -69,7 +69,7 @@ export function chargerProgrammeComplet() {
       try {
         /** @type {Promise<never>} */
         const delai = new Promise((_, refus) =>
-          setTimeout(() => refus(new Error("Le catalogue commun met trop de temps à répondre.")), ATTENTE_CATALOGUE)
+          setTimeout(() => refus(new Error("Le catalogue met trop de temps à répondre.")), ATTENTE_CATALOGUE)
         );
         const fiches = await Promise.race([fichesParTitre(programme.films.map((f) => f.titre)), delai]);
         return {
@@ -77,7 +77,7 @@ export function chargerProgrammeComplet() {
           films: programme.films.map((film) => completerFilm(film, fiches.get(film.titre.toLowerCase()))),
         };
       } catch (erreur) {
-        console.warn("Minimum : catalogue commun indisponible, fiches sans images ni presse.", erreur);
+        console.warn("Minimum : catalogue indisponible, fiches sans images ni presse.", erreur);
         return programme;
       }
     });

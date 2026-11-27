@@ -3,7 +3,7 @@
    repris de cineminimum.ch (résumés reformulés, liens et bandes-annonces
    tels que publiés). Les affiches sont celles du programme de cineminimum.ch,
    enregistrées avec le site (assets/img/affiches/) : elles s’affichent même
-   quand le catalogue commun (Sanity) ne répond pas. */
+   quand le catalogue (Sanity) ne répond pas. */
 
 /** @typedef {import("../types.js").Film} Film */
 /** @typedef {import("../types.js").Seance} Seance */

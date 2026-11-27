@@ -21,8 +21,10 @@ export function zoneAremplir() {
  * (une affiche de soirée n’est pas recadrée) et se charge en priorité.
  * @param {Image | null} image
  * @param {string} titre
- * @param {{ detail?: boolean, prioritaire?: boolean }} [reglages]
+ * @param {{ detail?: boolean, prioritaire?: boolean, tailles?: string }} [reglages]
  *   `prioritaire` : une affiche visible dès l’arrivée, chargée tout de suite.
+ *   `tailles` : la place qu’elle prend à l’écran (attribut sizes), si ce
+ *   n’est pas un quart de la page.
  * @returns {string}
  */
 export function afficheHTML(image, titre, reglages = {}) {
@@ -31,10 +33,11 @@ export function afficheHTML(image, titre, reglages = {}) {
     return `<div class="fiche__affiche fiche__affiche--typo" aria-hidden="true"><span>${echapper(titre)}</span></div>`;
   }
   const racine = document.body.dataset.racine ?? "";
-  const tailles = detail
-    ? "(min-width: 56rem) 25vw, 50vw"
-    : "(min-width: 75rem) 25vw, (min-width: 40rem) 33vw, 38vw";
-  const { src, srcset, sizes } = sourcesImage(image, racine, [240, 360, 480, 720], tailles);
+  const tailles =
+    reglages.tailles ??
+    (detail ? "(min-width: 56rem) 25vw, 50vw" : "(min-width: 75rem) 25vw, (min-width: 40rem) 33vw, 38vw");
+  const largeurs = reglages.tailles ? [360, 720, 1080, 1440] : [240, 360, 480, 720];
+  const { src, srcset, sizes } = sourcesImage(image, racine, largeurs, tailles);
   const variantes = srcset ? ` srcset="${echapper(srcset)}" sizes="${echapper(sizes)}"` : "";
   const naturelle = detail && image.largeur && image.hauteur;
   const dimensions = naturelle ? `width="${image.largeur}" height="${image.hauteur}"` : 'width="360" height="540"';

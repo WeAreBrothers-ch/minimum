@@ -1,7 +1,8 @@
 # Minimum : cinéma, club et radio
 
 Site de Minimum, à La Case à Chocs, Neuchâtel. Même famille que Zinéma
-(`../Zinema/nouveau-site`) : mêmes exploitants, catalogue de films commun dans Sanity.
+(`../Zinema/nouveau-site`) : mêmes exploitants, mais **un projet Sanity à part**
+(`hvxsup1j`, Studio dans `studio/`) : rien n'est partagé avec celui de Zinéma.
 Direction artistique : `DIRECTION-ARTISTIQUE.md`.
 
 ## Voir le site
@@ -80,7 +81,7 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
 
 `js/config.js`, `DEMONSTRATION = true` :
 - **Cinéma** : programme réel de la semaine du 11 au 17 novembre 2026, repris de
-  cineminimum.ch, avec les affiches du catalogue Sanity commun quand elles y sont.
+  cineminimum.ch, complété par le catalogue Sanity de Minimum (titre original, presse).
 - **Musique et Radio** : soirées et lives d'essai, sans mention « exemple » à
   l'écran (choix d'Eliott, 16.11.2026). Les affiches de soirée viennent d'images
   du Bureau d'Eliott, pas de Minimum : **à remplacer avant la mise en ligne**
@@ -88,10 +89,14 @@ node ~/.claude/skills/principes/scripts/verifier.mjs tout . --paires paires.txt 
 
 ## Reste à faire
 
-1. **Sanity commun** : ajouter le lieu (Zinéma / Minimum) aux séances, créer les
-   fiches « Soirée » et « Émission », et faire filtrer Zinéma sur ses propres
-   séances AVANT d'y saisir celles de Minimum. Zinéma est en production : à
-   valider avec Eliott avant toute mise en ligne.
+1. **Sanity de Minimum, indépendant de Zinéma** (décision d'Eliott,
+   26.11.2026 : rien n'est partagé avec le projet de Zinéma, qui ne doit pas
+   être modifié). Le Studio est dans `studio/` (voir `studio/LISEZ-MOI.md`).
+   Fait le 26.11.2026 : projet `hvxsup1j` créé, les 27 films de Zinéma copiés
+   une fois (marqués « Terminé »), le site et la caisse lisent ce projet. Le
+   Studio est en ligne (https://cine-minimum.sanity.studio) : c'est celui de
+   Zinéma (même Planification, même menu), avec la Musique et les posts
+   Instagram en plus.
 2. Brancher `donnees.js` sur Sanity, puis `DEMONSTRATION = false`.
 3. Billetterie : construite et essayée, en mode démonstration. Avant de
    l'ouvrir : compte SumUp au nom de Minimum, champs Sanity, e-mail de

@@ -192,6 +192,51 @@ page Musique, sur le noir de la musique :
 - **à revoir**, seulement s'il y a des vidéos en ligne : une ligne par live ;
   un toucher la met dans le lecteur, en haut.
 
+### Soirée, Musique, Infos (demande du client, 27.11.2026)
+Cette section remplace ce qui la contredit plus bas (la fiche d'une soirée
+« comme celle d'un film », la page Infos en « mur de briques »). Pour la page
+Infos, c'est sa version en noir et blanc, ci-dessous, qui compte.
+
+**La fiche d'une soirée est son flyer, ouvert** (« trop sobre, elle fait
+tâche », `css/soiree.css`, `js/pages/soiree.js`). Toujours des cases jointes
+d'un trait, à l'échelle d'une affiche de club :
+- la case du titre est **rose**, le nom en très grand (il remplit la case ;
+  un mot trop long rétrécit le titre, il n'est jamais coupé), le jour dessous ;
+- l'affiche est en grand : la moitié de l'écran sur ordinateur, toute la
+  largeur sur téléphone. Affiche en hauteur : elle tient toute la moitié
+  gauche, le reste s'empile à droite. Image en largeur : le titre prend toute
+  la ligne, l'image est dessous à gauche, le line-up à droite ;
+- les repères (ouverture, fermeture, âge) sont écrits comme sur un flyer, en
+  rose et en grand (« 23H00 ») ; l'adresse ouvre le plan ;
+- le line-up : une grande ligne par passage, l'heure en rose, le nom en très
+  grand ; les lignes se partagent la hauteur, aucune case vide ;
+- la case Billets reste verte (une bande sous le titre, ou une case à sa
+  droite) ; la rangée « Entrée » est retirée, elle répétait la case Billets.
+La fiche d'un film ne change pas.
+
+**Page Musique : jamais de grand carré noir** en fin de programme. Les
+prochaines dates passent en grand (deux colonnes de large), autant qu'il en
+faut pour que la dernière rangée soit pleine : neuf dates sur quatre colonnes,
+les trois premières en grand ; sur téléphone, un nombre impair de dates, la
+première en grand (`affichesEnGrand` dans `js/pages/musique.js`). Une seule
+date : elle prend toute la rangée. La case « En direct », à côté du lecteur,
+écrit le nom en grand et cale le jour en bas.
+
+**Page Infos : rangée comme l'agenda, en noir et blanc** (revue le
+27.11.2026 : « trop brouillon, trop de couleurs mélangées » ; remplace les
+« quatre temps » aux cases vertes et barres noires du même jour, le mur de
+briques et le bandeau MERCI du 19.11.2026, `css/infos.css`). Noir et blanc : seule la
+  case du titre garde le grenat. Une rubrique par bloc (Adresse, Contact,
+  Tarifs, Billets, Soutenir et louer, Merci, Crédits), son nom en titre (dans
+  une colonne à gauche sur ordinateur), puis une ligne par information : ce
+  que c'est à gauche, en capitales, avec au besoin une ligne grise dessous ;
+  la valeur à droite (un prix, un numéro). Plus de vert sur les prix, plus
+  de case rouge. La photo de la salle est en noir et blanc, comme les
+  portraits des flyers. Le plan, les téléphones et l'e-mail sont des lignes
+  qu'on presse (la valeur se souligne au survol). Les remerciements sont les
+  noms à la suite, en grand, séparés d'une barre ; la page n'a plus de code
+  propre.
+
 ### Couleur
 - `--noir` #000 et `--blanc` #fff, relevés sur le logo (D1), pour tout le site.
 - Une surface qui s'inverse (Nuit, lecteur) redéfinit `--encre` et `--fond` localement.
@@ -328,20 +373,6 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
 - **Navigation sans rechargement** : la page suivante apporte ses feuilles de
   style (`js/navigation.js`), sans quoi une page avec sa propre feuille (Infos)
   s'affichait sans style quand on y arrivait depuis une autre page.
-- **La page Infos, rangée comme l'agenda** (revue le 27.11.2026 : « trop
-  brouillon, trop de couleurs mélangées » ; remplace le mur de briques et le
-  bandeau MERCI du 19.11.2026, `css/infos.css`). Noir et blanc : seule la
-  case du titre garde le grenat. Une rubrique par bloc (Adresse, Contact,
-  Tarifs, Billets, Soutenir et louer, Merci, Crédits), son nom en titre (dans
-  une colonne à gauche sur ordinateur), puis une ligne par information : ce
-  que c'est à gauche, en capitales, avec au besoin une ligne grise dessous ;
-  la valeur à droite (un prix, un numéro). Plus de vert sur les prix, plus
-  de case rouge. La photo de la salle est en noir et blanc, comme les
-  portraits des flyers. Le plan, les téléphones et l'e-mail sont des lignes
-  qu'on presse (la valeur se souligne au survol). Les remerciements sont les
-  noms à la suite, en grand, séparés d'une barre ; la page n'a plus de code
-  propre.
-
 ### Le bureau de la radio (page Radio, demande d'Eliott, 18.11.2026)
 La page Radio reprend le **principe** de soso radio (R2), un faux bureau
 d'ordinateur, mais pas son look des années 90 (gris biseauté, barres bleu marine,

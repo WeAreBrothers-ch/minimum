@@ -1,0 +1,281 @@
+import { defineField, defineType } from "sanity";
+import { listeDesSalles } from "../salles";
+import { libelleDuTypeEvenement } from "../typesEvenement";
+
+/* ============================================================
+   Un événement : cycle, brunch, ciné-club, séance spéciale,
+   festival, ou simple information à faire passer.
+
+   Les dates font tout le travail : tant que l'événement est en
+   cours ou à venir, il s'affiche sur la page Événements et peut
+   remonter sur l'accueil. Une fois la date de fin passée, il
+   s'archive tout seul — rien à décocher, rien à supprimer.
+   ============================================================ */
+
+const AUJOURDHUI = () => new Date().toISOString().slice(0, 10);
+
+const HEURE_VALIDE = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+interface PeriodeEvenement {
+  dateDebut?: string;
+  dateFin?: string;
+}
+
+export const evenement = defineType({
+  name: "evenement",
+  title: "Événement",
+  type: "document",
+  /* Comme pour les films : pas d'onglets, et le visuel juste sous
+     le titre — on ne peut pas le rater en créant un événement. */
+  fieldsets: [
+    {
+      name: "adresse",
+      title: "Adresse de la page sur le site (facultatif)",
+      options: { collapsible: true, collapsed: true },
+    },
+  ],
+  fields: [
+    defineField({
+      name: "title",
+      title: "Titre de l'événement",
+      type: "string",
+      description: "Ex. « Projections privées et anniversaires », « Fermeture estivale ».",
+      validation: (Rule) => Rule.required().error("Donnez un titre à l'événement."),
+    }),
+    defineField({
+      name: "image",
+      title: "Visuel de l'événement",
+      type: "imageMinimum",
+      description:
+        "L'image de l'événement sur la page Événements. Format libre ; une image large (paysage) rend le mieux. Sans image, l'événement s'affiche en texte seul — c'est très bien aussi.",
+    }),
+    /* Le mur de l'accueil est fait d'affiches verticales : un flyer en
+       paysage y est rogné, et le même flyer pivoté devient immense sur
+       la page Événements. D'où deux visuels (demande du cinéma,
+       12 octobre 2026). Facultatif : sans lui, l'accueil reprend le
+       visuel ci-dessus. */
+    defineField({
+      name: "imageAccueil",
+      title: "Visuel vertical pour l'accueil (facultatif)",
+      type: "imageMinimum",
+      description:
+        "La version portrait (en hauteur) du visuel, pour le mur d'affiches de la page d'accueil, pendant toute la durée de l'événement. Laissez vide pour reprendre le visuel ci-dessus.",
+    }),
+
+    /* Le type s'écrit en toutes lettres, comme le cinéma veut le voir
+       sur le site : un simple champ texte, rien à créer ailleurs
+       (demande du cinéma, 7 octobre 2026). Pas obligatoire : sans
+       type, le site n'affiche simplement pas de libellé. */
+    defineField({
+      name: "typeEvenement",
+      title: "Type d'événement",
+      type: "string",
+      description:
+        "Écrivez-le tel qu'il doit s'afficher sur le site : Festival, Première, Soirée, Brunch… Laissez vide pour ne rien afficher.",
+      validation: (Rule) => Rule.max(60).warning("Un type court se lit mieux (60 signes au plus)."),
+    }),
+    /* L'ancienne liste fermée, gardée en lecture seule pour les
+       événements saisis avant les types libres : le site affiche ce
+       type tant qu'aucun n'est écrit au-dessus. Invisible sur les
+       nouveaux événements. */
+    defineField({
+      name: "category",
+      title: "Ancien type (avant les types libres)",
+      type: "string",
+      readOnly: true,
+      description:
+        "Affiché sur le site tant que le champ « Type d'événement » ci-dessus est vide. Il suffit d'y écrire un type pour le remplacer.",
+      hidden: ({ document }) => !document?.category || Boolean(document?.typeEvenement),
+      options: {
+        list: [
+          { title: "Cycle / rétrospective", value: "cycle" },
+          { title: "Ciné-club", value: "cine-club" },
+          { title: "Brunch", value: "brunch" },
+          { title: "Séance spéciale (rencontre, avant-première…)", value: "seance-speciale" },
+          { title: "Festival", value: "festival" },
+          { title: "Information du cinéma", value: "info" },
+        ],
+      },
+    }),
+    defineField({
+      name: "dateDebut",
+      title: "Premier jour",
+      type: "date",
+      options: { dateFormat: "dddd D MMMM YYYY" },
+      description:
+        "Le jour où l'événement commence. Le site l'écrit sur l'événement (« du … au … ») et range les événements dans cet ordre. L'événement est visible sur le site dès sa publication, même avant ce jour : on peut l'annoncer à l'avance.",
+      initialValue: AUJOURDHUI,
+      validation: (Rule) => Rule.required().error("Indiquez le premier jour."),
+    }),
+    defineField({
+      name: "dateFin",
+      title: "Dernier jour",
+      type: "date",
+      options: { dateFormat: "dddd D MMMM YYYY" },
+      description:
+        "Le jour où l'événement se termine. Passé ce jour, il quitte automatiquement les pages publiques. Pour un événement d'un seul jour, remettez la même date qu'au-dessus. Pour un événement en plusieurs soirs, mettez le dernier soir. Laissé vide, l'événement reste en ligne jusqu'à ce qu'on le supprime : à réserver aux informations sans fin prévue.",
+      validation: (Rule) =>
+        Rule.custom((fin, contexte) => {
+          const debut = (contexte.document as { dateDebut?: string } | undefined)?.dateDebut;
+          if (!fin || !debut) return true;
+          return fin >= debut
+            ? true
+            : "Le dernier jour ne peut pas être avant le premier jour.";
+        }),
+    }),
+    /* Plusieurs soirs pour un même événement, et la piqûre de rappel
+       dans la newsletter (demandes du cinéma, 3 novembre 2026) : juste
+       sous la période, là où l'on pense aux dates. */
+    defineField({
+      name: "rendezVous",
+      title: "Les dates (événement en plusieurs soirs)",
+      type: "array",
+      description:
+        "Un match d'impro par mois, un ciné-club du dimanche : ajoutez ici chaque soir (jour, heure, lieu) plutôt que de les écrire dans le résumé. Le site les affiche sur l'événement, la newsletter met chaque soir (avec son heure) dans le programme du jour, et les dates passées disparaissent d'elles-mêmes. Pour un événement d'un seul jour, inutile : le premier jour suffit.",
+      of: [
+        {
+          type: "object",
+          name: "rendezVous",
+          title: "Date",
+          fields: [
+            defineField({
+              name: "date",
+              title: "Jour",
+              type: "date",
+              options: { dateFormat: "dddd D MMMM YYYY" },
+              validation: (Rule) => [
+                Rule.required().error("Indiquez le jour."),
+                Rule.custom((jour, contexte) => {
+                  const { dateDebut, dateFin } = (contexte.document ?? {}) as PeriodeEvenement;
+                  if (typeof jour !== "string") return true;
+                  if ((dateDebut && jour < dateDebut) || (dateFin && jour > dateFin)) {
+                    return "Ce jour est en dehors du premier et du dernier jour de l'événement : la newsletter ne l'annoncera pas.";
+                  }
+                  return true;
+                }).warning(),
+              ],
+            }),
+            defineField({
+              name: "heure",
+              title: "Heure",
+              type: "string",
+              placeholder: "20:00",
+              validation: (Rule) =>
+                Rule.regex(HEURE_VALIDE, { name: "heure (HH:MM)" }).error(
+                  "Écrivez l'heure sous la forme 20:30."
+                ),
+            }),
+            defineField({
+              name: "salle",
+              title: "Lieu",
+              type: "string",
+              options: { list: listeDesSalles },
+            }),
+          ],
+          preview: {
+            select: { date: "date", heure: "heure", salle: "salle" },
+            prepare({ date, heure, salle }) {
+              const [annee, mois, jour] = String(date ?? "").split("-");
+              const quand = annee && mois && jour ? `${jour}/${mois}/${annee}` : "Jour à choisir";
+              return {
+                title: [quand, heure].filter(Boolean).join(" à "),
+                subtitle: typeof salle === "string" ? salle : undefined,
+              };
+            },
+          },
+        },
+      ],
+    }),
+    defineField({
+      name: "rappelNewsletter",
+      title: "Le rappeler dans chaque newsletter",
+      type: "boolean",
+      initialValue: false,
+      description:
+        "La newsletter annonce déjà d'elle-même tout événement qui a lieu dans sa semaine. Cochée, cette case l'annonce aussi les autres semaines, jusqu'à quatre semaines avant son premier jour, dans la rubrique « Rendez-vous » avec ses trois prochaines dates. Le rappel s'arrête tout seul après la dernière date.",
+    }),
+    defineField({
+      name: "excerpt",
+      title: "Résumé en deux ou trois phrases (facultatif)",
+      type: "text",
+      rows: 3,
+      description:
+        "Le texte court affiché dans la liste des événements. Facultatif : un événement sans résumé s'affiche sans lui. Si vous en écrivez un, allez à l'essentiel (quoi, quand, combien).",
+      validation: (Rule) =>
+        Rule.max(400).error("Le résumé est limité à 400 signes."),
+    }),
+    defineField({
+      name: "body",
+      title: "Texte complet",
+      type: "array",
+      of: [{ type: "block" }],
+      description:
+        "Facultatif. Le détail de l'événement : programme, invités, conditions. Vous pouvez mettre en gras, en italique et faire des listes.",
+    }),
+
+    defineField({
+      name: "films",
+      title: "Films concernés",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "film" }] }],
+      description:
+        "Reliez les films de ce cycle ou de cette soirée : leurs affiches et leurs séances apparaîtront automatiquement sur la page de l'événement, sans rien recopier.",
+    }),
+    defineField({
+      name: "linkUrl",
+      title: "Lien externe",
+      type: "url",
+      description:
+        "Facultatif : billetterie extérieure, formulaire de réservation, site d'un partenaire. Un bouton apparaîtra sur l'événement.",
+    }),
+    defineField({
+      name: "linkLabel",
+      title: "Texte du bouton",
+      type: "string",
+      description: "Ex. « Réserver la salle ». Par défaut : « En savoir plus ».",
+      hidden: ({ document }) => !document?.linkUrl,
+    }),
+    defineField({
+      name: "slug",
+      title: "Adresse de la page",
+      type: "slug",
+      fieldset: "adresse",
+      description:
+        "Vous pouvez ignorer ce champ : le site fabrique l'adresse tout seul. « Generate » donne simplement une adresse plus jolie, construite à partir du titre.",
+      options: { source: "title", maxLength: 96 },
+    }),
+  ],
+  orderings: [
+    {
+      title: "Du plus proche au plus lointain",
+      name: "debutAsc",
+      by: [{ field: "dateDebut", direction: "asc" }],
+    },
+    {
+      title: "Du plus récent au plus ancien",
+      name: "debutDesc",
+      by: [{ field: "dateDebut", direction: "desc" }],
+    },
+  ],
+  preview: {
+    select: {
+      title: "title",
+      category: "category",
+      typeNom: "typeEvenement",
+      debut: "dateDebut",
+      fin: "dateFin",
+      media: "image",
+    },
+    prepare({ title, category, typeNom, debut, fin, media }) {
+      const periode = fin && fin !== debut ? `${debut} → ${fin}` : debut;
+      const termine = fin && fin < new Date().toISOString().slice(0, 10);
+      return {
+        title: title || "Événement sans titre",
+        subtitle: [libelleDuTypeEvenement(typeNom, category), periode, termine ? "terminé" : null]
+          .filter(Boolean)
+          .join(" · "),
+        media,
+      };
+    },
+  },
+});

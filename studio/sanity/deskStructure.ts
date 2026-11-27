@@ -1,0 +1,356 @@
+import type { DefaultDocumentNodeResolver, StructureResolver } from "sanity/structure";
+import {
+  ArchiveIcon,
+  BookIcon,
+  CalendarIcon,
+  CogIcon,
+  CreditCardIcon,
+  HomeIcon,
+  ImageIcon,
+  InsertAboveIcon,
+  MoonIcon,
+  PlayIcon,
+  RemoveCircleIcon,
+  SparklesIcon,
+  UserIcon,
+  UsersIcon,
+  VideoIcon,
+} from "@sanity/icons";
+
+import { FilmsPartages } from "./minimum/banque/FilmsPartages";
+import { AUTRE } from "./minimum/banque/reglages";
+import { TYPES_INSTAGRAM } from "./minimum/insta/requetes";
+import { VueInstagram } from "./minimum/insta/vue-instagram";
+
+import { groqCoche } from "./plugins/planification/utils/etats-du-film";
+import { FILTRE_PROJECTION_A_VENIR } from "./plugins/planification/utils/projection-de-la-fiche";
+
+/* ============================================================
+   L'organisation du Studio.
+
+   Deux règles, et rien d'autre :
+
+   1. Chaque entrée porte le nom de la page du site où son contenu
+      apparaît — Films, Agenda, Musique, Événements, Location,
+      Histoire, Membership, Infos. Aucun mot inventé.
+
+   C'est le menu du Studio de Zinéma, dans le même ordre, avec une
+   entrée de plus : Musique (les soirées du club, les lives de la
+   radio, les artistes), qui n'existe qu'à Minimum.
+
+   2. Une chose, un seul endroit. Pas de liste qui répète une autre
+      liste, pas de raccourci qui rouvre une fiche déjà accessible
+      ailleurs : c'est ce qui rend un Studio illisible.
+
+   Les horaires d'un film ne sont donc PAS une rubrique : ils se
+   règlent dans la fiche du film, où ils appartiennent.
+   ============================================================ */
+
+const aujourdhui = () => new Date().toISOString().slice(0, 10);
+
+/* Le jour à l'heure du cinéma, comme le site : à minuit passé, la
+   date UTC aurait encore un jour de retard. */
+const aujourdhuiLocal = (): string => {
+  const maintenant = new Date();
+  const mois = String(maintenant.getMonth() + 1).padStart(2, "0");
+  const jour = String(maintenant.getDate()).padStart(2, "0");
+  return `${maintenant.getFullYear()}-${mois}-${jour}`;
+};
+
+export const deskStructure: StructureResolver = (S) =>
+  S.list()
+    .title("Minimum")
+    .items([
+      /* ---------------- Films ----------------
+         Une seule liste : chaque ligne affiche déjà l'affiche, le
+         titre, l'état du film et sa réalisation. Quatre sous-listes
+         filtrées n'apprenaient rien de plus. */
+      S.listItem()
+        .id("films")
+        .title("Films")
+        .icon(PlayIcon)
+        .child(
+          S.documentTypeList("film")
+            .title("Films")
+            .defaultOrdering([{ field: "title", direction: "asc" }])
+        ),
+
+      /* ---------------- Films partagés ----------------
+         Juste sous « Films » : un film créé chez l'autre cinéma
+         arrive ici tout seul (minimum/banque). Cet écran montre où
+         en est cette arrivée ; on n'a pas à y passer pour que ça
+         marche. */
+      S.listItem()
+        .id("banque-de-films")
+        .title(`Films partagés (${AUTRE.nom})`)
+        .icon(InsertAboveIcon)
+        .child(S.component(FilmsPartages).id("banque-de-films").title(`Films partagés (${AUTRE.nom})`)),
+
+      /* ---------------- Agenda ----------------
+         Séparé en deux parce qu'il y en a beaucoup, et qu'on ne
+         travaille jamais sur les séances passées. */
+      S.listItem()
+        .id("agenda")
+        .title("Agenda")
+        .icon(CalendarIcon)
+        .child(
+          S.list()
+            .title("Agenda")
+            .items([
+              S.listItem()
+                .id("agenda-a-venir")
+                .title("Séances à venir")
+                .icon(CalendarIcon)
+                .child(
+                  S.documentTypeList("screening")
+                    .title("Séances à venir")
+                    .filter('_type == "screening" && date >= $debut')
+                    .params({ debut: aujourdhui() })
+                    .defaultOrdering([
+                      { field: "date", direction: "asc" },
+                      { field: "time", direction: "asc" },
+                    ])
+                ),
+              S.listItem()
+                .id("agenda-passees")
+                .title("Séances passées")
+                .icon(ArchiveIcon)
+                .child(
+                  S.documentTypeList("screening")
+                    .title("Séances passées")
+                    .filter('_type == "screening" && date < $debut')
+                    .params({ debut: aujourdhui() })
+                    .defaultOrdering([
+                      { field: "date", direction: "desc" },
+                      { field: "time", direction: "desc" },
+                    ])
+                ),
+              /* Les jours sans film, tels que l'agenda les annonce.
+                 Ils se posent depuis la grille de la Planification ;
+                 cette liste sert à les retrouver et à les corriger. */
+              S.listItem()
+                .id("agenda-sans-film")
+                .title("Vacances et projections privées")
+                .icon(RemoveCircleIcon)
+                .child(
+                  S.documentTypeList("sansFilm")
+                    .title("Vacances et projections privées")
+                    .filter('_type == "sansFilm" && date >= $debut')
+                    .params({ debut: aujourdhui() })
+                    .defaultOrdering([
+                      { field: "date", direction: "asc" },
+                      { field: "time", direction: "asc" },
+                    ])
+                ),
+            ])
+        ),
+
+      /* ---------------- Musique (propre à Minimum) ----------------
+         La page Musique du site : les soirées du club et les lives
+         YouTube de la radio. Même découpage que l'Agenda : ce qui
+         vient d'un côté, ce qui est passé de l'autre. Les artistes
+         ont leur fiche (photo, compte Instagram), reprise dans le
+         line-up d'une soirée et dans les posts. */
+      S.listItem()
+        .id("musique")
+        .title("Musique")
+        .icon(MoonIcon)
+        .child(
+          S.list()
+            .title("Musique")
+            .items([
+              S.listItem()
+                .id("musique-soirees-a-venir")
+                .title("Soirées à venir")
+                .icon(MoonIcon)
+                .child(
+                  S.documentTypeList("soiree")
+                    .title("Soirées à venir")
+                    .filter('_type == "soiree" && date >= $debut')
+                    .params({ debut: aujourdhui() })
+                    .defaultOrdering([{ field: "date", direction: "asc" }])
+                ),
+              S.listItem()
+                .id("musique-soirees-passees")
+                .title("Soirées passées")
+                .icon(ArchiveIcon)
+                .child(
+                  S.documentTypeList("soiree")
+                    .title("Soirées passées")
+                    .filter('_type == "soiree" && date < $debut')
+                    .params({ debut: aujourdhui() })
+                    .defaultOrdering([{ field: "date", direction: "desc" }])
+                ),
+              S.listItem()
+                .id("musique-lives")
+                .title("Lives de la radio")
+                .icon(VideoIcon)
+                .child(
+                  S.documentTypeList("emission")
+                    .title("Lives de la radio")
+                    .defaultOrdering([
+                      { field: "date", direction: "desc" },
+                      { field: "heure", direction: "desc" },
+                    ])
+                ),
+              S.listItem()
+                .id("musique-artistes")
+                .title("Artistes et DJ")
+                .icon(UserIcon)
+                .child(
+                  S.documentTypeList("artiste")
+                    .title("Artistes et DJ")
+                    .defaultOrdering([{ field: "nom", direction: "asc" }])
+                ),
+            ])
+        ),
+
+      /* ---------------- Événements ----------------
+         La rubrique montre tout ce que la page Événements du site
+         annonce, en deux listes :
+
+           - les événements saisis ici (cycles, brunchs…), du plus
+             récent au plus ancien ;
+           - les films qui s'y affichent d'eux-mêmes — ceux qui sortent
+             prochainement, les avant-premières, premières et
+             projections extraordinaires (dès que le statut est coché,
+             même sans jour encore), et
+             ceux qui passent en présence d'un invité —, par date de
+             sortie. Un clic ouvre la fiche du film ; rien à ressaisir.
+
+         Deux listes et non une seule : un événement et un film n'ont
+         pas la même date (« Premier jour » d'un côté, « Date de
+         sortie » de l'autre), et le Studio refuse de trier une liste
+         mélangée sur un champ que l'un des deux n'a pas — il affichait
+         une erreur et réessayait sans fin.
+
+         Le filtre des films reprend exactement celui du site
+         (getFilmsAnnonces dans assets/js/data.js) : le jour de sa
+         sortie, un film quitte la liste tout seul. */
+      S.listItem()
+        .id("evenements")
+        .title("Événements")
+        .icon(SparklesIcon)
+        .child(
+          S.list()
+            .id("evenements-rubrique")
+            .title("Événements")
+            .items([
+              S.listItem()
+                .id("evenements-saisis")
+                .title("Événements")
+                .icon(SparklesIcon)
+                .child(
+                  S.documentTypeList("evenement")
+                    .title("Événements")
+                    .defaultOrdering([{ field: "dateDebut", direction: "desc" }])
+                ),
+              S.listItem()
+                .id("evenements-films-annonces")
+                .title("Films annoncés")
+                .icon(PlayIcon)
+                .child(
+                  S.documentTypeList("film")
+                    .id("films-annonces")
+                    .title("Films annoncés")
+                    .apiVersion("2024-06-01")
+                    .filter(
+                      '_type == "film" && status != "passe" && (' +
+                        '(' + groqCoche("prochainement") + ' && !(defined(releaseDate) && releaseDate <= $today)) || ' +
+                        FILTRE_PROJECTION_A_VENIR + ' || ' +
+                        '(defined(presence) && presence != ""))'
+                    )
+                    .params({ today: aujourdhuiLocal() })
+                    .defaultOrdering([{ field: "releaseDate", direction: "asc" }])
+                ),
+            ])
+        ),
+
+      /* ---------------- Location ----------------
+         Les espaces qu'on peut louer, et l'adresse qui reçoit les
+         demandes envoyées depuis le site. Une seule fiche. */
+      S.listItem()
+        .id("location")
+        .title("Location")
+        .icon(HomeIcon)
+        .child(
+          S.document()
+            .schemaType("location")
+            .documentId("location")
+            .title("Location des espaces")
+        ),
+
+      /* ---------------- Histoire ----------------
+         La frise n'est plus dans le menu du site : on y entre par
+         une case de la page Infos. Elle se modifie ici, dans une
+         seule fiche — la phrase d'accueil et les étapes, dans
+         l'ordre où la page se lit. */
+      S.listItem()
+        .id("histoire")
+        .title("Histoire")
+        .icon(BookIcon)
+        .child(
+          S.document()
+            .schemaType("histoire")
+            .documentId("histoire")
+            .title("Histoire")
+        ),
+
+      /* ---------------- Membership ---------------- */
+      S.listItem()
+        .id("membership")
+        .title("Membership")
+        .icon(UsersIcon)
+        .child(
+          S.document()
+            .schemaType("abonnements")
+            .documentId("abonnements")
+            .title("Formules et paiement")
+        ),
+
+      S.divider(),
+
+      /* ---------------- Réglages ----------------
+         Adresse, horaires, téléphones, e-mails, tarifs, salles,
+         réseaux sociaux. Un seul endroit, atteint d'un seul
+         chemin. */
+      S.listItem()
+        .id("reglages")
+        .title("Réglages du cinéma")
+        .icon(CogIcon)
+        .child(
+          /* Une seule fiche, du type « siteSettings » comme à Zinéma. Son
+             identifiant est celui que lit la caisse du site
+             (api/_evenement.php) : reglagesMinimum. */
+          S.document()
+            .schemaType("siteSettings")
+            .documentId("reglagesMinimum")
+            .initialValueTemplate("siteSettings")
+            .title("Réglages du cinéma")
+        ),
+
+      S.listItem()
+        .id("billets")
+        .title("Billets vendus")
+        .icon(CreditCardIcon)
+        .child(
+          S.documentTypeList("commande")
+            .title("Billets vendus")
+            // Par date d'achat (creeLe), pas par _createdAt : le
+            // 18.11.2026, les commandes ont été recopiées dans le
+            // dossier privé, et leur _createdAt est devenu ce jour-là.
+            .defaultOrdering([{ field: "creeLe", direction: "desc" }])
+        ),
+    ]);
+
+/* Une fiche qui peut devenir un post (film, soirée, live, artiste, événement)
+   a un onglet « Instagram » à côté de son formulaire : le visuel et la
+   légende, prêts à sortir. L'outil « Posts », en haut du Studio, fait la même
+   chose pour tout le programme d'un coup. */
+export const defaultDocumentNode: DefaultDocumentNodeResolver = (S, { schemaType }) =>
+  TYPES_INSTAGRAM.includes(schemaType)
+    ? S.document().views([
+        S.view.form().title("Fiche"),
+        S.view.component(VueInstagram).title("Instagram").icon(ImageIcon),
+      ])
+    : S.document().views([S.view.form()]);

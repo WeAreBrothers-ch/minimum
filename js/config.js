@@ -2,15 +2,14 @@
 /* Minimum : les réglages du site. Rien de secret ici : ces valeurs sont
    visibles par tous les visiteurs, comme sur n’importe quel site. */
 
-/** Projet Sanity partagé avec Zinéma : le catalogue de films est commun. */
+/** Le projet Sanity de Minimum. Il est indépendant de celui de Zinéma :
+    rien n’est partagé, le catalogue de films y a été copié une fois
+    (26.11.2026). Le Studio est dans le dossier studio/. */
 export const SANITY = Object.freeze({
-  projet: "vle63mzm",
+  projet: "hvxsup1j",
   jeu: "production",
   version: "2024-06-01",
 });
-
-/** Le lieu, tel qu’il est noté sur les séances et les soirées dans Sanity. */
-export const LIEU = "minimum";
 
 /** La radio, ce sont des lives YouTube. L’identifiant de la chaîne
     (« UC… », dans l’adresse youtube.com/channel/UC…) : la page Radio montre

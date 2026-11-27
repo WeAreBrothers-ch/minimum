@@ -86,19 +86,47 @@
 }
 
 /* ---------- Au programme : soirées et lives, au même format ---------- */
-/* Deux par rangée sur téléphone, quatre sur ordinateur. Chaque affiche est
-   cernée d'un trait ; la fin de la dernière rangée reste du fond. */
+/* Deux par rangée sur téléphone, quatre sur ordinateur, chaque affiche
+   cernée d'un trait. Les prochaines dates sont en grand, sur deux colonnes :
+   autant qu'il en faut pour que la dernière rangée soit pleine (musique.js,
+   affichesEnGrand). Jamais de grand carré noir en fin de programme.
+
+   Toutes les rangées ont la hauteur d'une affiche (une colonne et demie),
+   calculée sur la largeur du programme : une rangée faite seulement de
+   grandes affiches a la même hauteur que les autres. */
+.programme {
+  container-type: inline-size;
+}
+
 .flyers {
+  --colonnes: 2;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
+  grid-auto-rows: calc((100cqi - (var(--colonnes) - 1) * var(--trait)) / var(--colonnes) * 1.5);
   gap: var(--trait);
   padding-bottom: var(--trait);
   background: var(--fond);
 }
 
 .flyers > li {
+  min-width: 0;
   outline: var(--trait) solid var(--encre);
   scroll-margin: var(--espace-4);
+}
+
+.flyers .flyer {
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+/* Une grande affiche : deux colonnes de large, le texte à sa mesure. */
+.flyers > .flyers__grand-tel {
+  grid-column: span 2;
+  --flyer-nom: 9cqi;
+  --flyer-quand: 6.5cqi;
+  --flyer-etiquette: 3cqi;
+  --flyer-marge: 3.5cqi;
+  --flyer-joint: 1.25cqi;
 }
 
 /* Arrivé sur un live depuis l'accueil ou l'agenda : il est cerné de rose. */
@@ -168,8 +196,61 @@
     grid-template-columns: 3fr 1fr;
   }
 
+  /* La case du direct a la hauteur du lecteur : le nom en grand en haut,
+     le jour et la chaîne calés en bas, pas de vide au milieu d'un texte
+     minuscule. */
+  .live__infos {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    container-type: inline-size;
+  }
+
+  .live__titre {
+    font-size: clamp(1.5rem, 13cqi, 3rem);
+    line-height: 0.95;
+    overflow-wrap: break-word;
+  }
+
+  .live__quand {
+    margin-top: auto;
+    font-weight: var(--graisse-nom);
+    text-transform: uppercase;
+    letter-spacing: var(--interlettre-capitales);
+  }
+
   .flyers {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    --colonnes: 4;
+  }
+
+  /* Sur quatre colonnes, ce ne sont pas les mêmes affiches qui passent en
+     grand : on remet d'abord celles du téléphone à leur taille. */
+  .flyers > .flyers__grand-tel {
+    grid-column: auto;
+    --flyer-nom: initial;
+    --flyer-quand: initial;
+    --flyer-etiquette: initial;
+    --flyer-marge: initial;
+    --flyer-joint: initial;
+  }
+
+  .flyers > .flyers__grand {
+    grid-column: span 2;
+    --flyer-nom: 9cqi;
+    --flyer-quand: 6.5cqi;
+    --flyer-etiquette: 3cqi;
+    --flyer-marge: 3.5cqi;
+    --flyer-joint: 1.25cqi;
+  }
+
+  /* Une seule date au programme : elle prend toute la rangée. */
+  .flyers > .flyers__seul {
+    grid-column: 1 / -1;
+    --flyer-nom: 6cqi;
+    --flyer-quand: 4.5cqi;
+    --flyer-etiquette: 2cqi;
+    --flyer-marge: 2.5cqi;
+    --flyer-joint: 1cqi;
   }
 
   .ligne-live {

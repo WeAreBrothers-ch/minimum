@@ -1,0 +1,346 @@
+/* Minimum : la fiche d'une soirée du club. C'est son flyer, ouvert
+   (revu le 27.11.2026 : « trop sobre, elle fait tâche »).
+
+   Les mêmes cases jointes d'un trait que la fiche d'un film, mais à
+   l'échelle d'une affiche de club : le nom en très grand sur le rose de la
+   musique, l'affiche sur la moitié de l'écran, les heures en rose comme sur
+   un flyer (js/flyer.js), le line-up en grandes lignes. Aucune case ne
+   reste vide : la dernière de chaque côté prend la place qui reste.
+
+   Deux dispositions sur ordinateur, selon l'affiche :
+
+     en hauteur (une affiche)              en largeur (une photo)
+     ┌──────────────┬──────────────┐       ┌─────────────────────────────┐
+     │              │ ← retour     │       │ ← retour                    │
+     │              ├──────────────┤       ├─────────────────────┬───────┤
+     │   AFFICHE    │ TITRE (rose) │       │ TITRE (rose)        │BILLETS│
+     │              ├──────────────┤       ├──────────────┬──────┴───────┤
+     │              │ BILLETS      │       │   AFFICHE    │ LINE-UP      │
+     │              ├────┬────┬────┤       ├────┬────┬────┤              │
+     │              │ 23H│ 04H│ 18 │       │ 23H│ 04H│ 18 │              │
+     │              ├────┴────┴────┤       ├────┴────┴────┤              │
+     │              │ LINE-UP      │       │ adresse ↗    │              │
+     └──────────────┴──────────────┘       └──────────────┴──────────────┘
+
+   Les sélecteurs portent « .detail.detail--soiree » : ils passent devant
+   ceux de detail-grille.css quel que soit l'ordre d'arrivée des feuilles
+   (la navigation sans rechargement les ajoute à la suite). */
+
+/* ---------- Téléphone : une colonne, le titre puis l'affiche ---------- */
+.detail.detail--soiree > .detail__retour { order: 1; }
+.detail.detail--soiree > .detail__tete { order: 2; }
+.detail.detail--soiree > .detail__affiche { order: 3; grid-column: 1 / -1; }
+.detail.detail--soiree > .detail__acheter { order: 4; }
+.detail.detail--soiree > .soiree__reperes { order: 5; }
+.detail.detail--soiree > .soiree__suite { order: 6; }
+
+/* ---------- Le titre : un flyer typographique, tout rose ---------- */
+.detail.detail--soiree > .detail__tete {
+  justify-content: space-between;
+  gap: var(--espace-4);
+  padding-block: var(--espace-4) var(--espace-3);
+  color: var(--texte-musique);
+  background: var(--pastille-musique);
+  container-type: inline-size;
+}
+
+.detail--soiree .page__titre {
+  max-width: 100%;
+  /* La taille suit la largeur de la case : le nom la remplit. Un mot plus
+     long que la case n'est jamais coupé : le titre rétrécit (soiree.js). */
+  font-size: clamp(2.75rem, 16cqi, 9rem);
+  line-height: 0.9;
+}
+
+.soiree__jour {
+  font-size: var(--taille-carte);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+/* ---------- La case Billets : le prix se lit de loin ---------- */
+.detail--soiree .detail__acheter-prix {
+  font-size: var(--taille-carte);
+  font-weight: var(--graisse-nom);
+  line-height: var(--interligne-titre);
+}
+
+/* ---------- Les repères : les heures d'un flyer, en rose ---------- */
+.soiree__reperes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--joint);
+  background: var(--encre);
+}
+
+.soiree__faits {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: var(--joint);
+  margin: 0;
+}
+
+.soiree__repere {
+  display: flex;
+  /* Sur téléphone : deux par rangée, le troisième sur toute la largeur. */
+  flex: 1 1 9.5rem;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--espace-3);
+  min-width: 0;
+  min-height: 6.5rem;
+  padding: var(--espace-3) var(--marge-case);
+  background: var(--fond);
+  container-type: inline-size;
+}
+
+.soiree__repere dt,
+.soiree__lieu-terme,
+.soiree__titre-suite {
+  font-size: 0.75rem;
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+/* Sur téléphone, la même taille dans les trois cases, quelle que soit leur
+   largeur ; sur ordinateur, les cases sont égales : la taille les remplit. */
+.soiree__repere dd {
+  font-size: 1.75rem;
+  font-weight: var(--graisse-nom);
+  line-height: 0.92;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  font-variant-numeric: tabular-nums;
+  color: var(--pastille-musique);
+}
+
+/* L'adresse : une case qu'on presse, elle ouvre le plan. */
+.soiree__lieu {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--espace-1) var(--espace-3);
+  min-height: 4.5rem;
+  padding: var(--espace-2) var(--marge-case);
+  text-decoration: none;
+  color: var(--encre);
+  background: var(--fond);
+  transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out);
+}
+
+.soiree__lieu-terme {
+  grid-column: 1 / -1;
+}
+
+.soiree__lieu-valeur {
+  font-weight: var(--graisse-nom);
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+.soiree__lieu:focus-visible {
+  outline: none;
+  color: var(--texte-musique);
+  background: var(--pastille-musique);
+}
+
+/* ---------- La suite : le texte, puis le line-up ---------- */
+.soiree__suite {
+  display: flex;
+  flex-direction: column;
+  /* Les heures et les noms se règlent sur la largeur de la case. */
+  container-type: inline-size;
+}
+
+.soiree__texte {
+  max-width: calc(var(--mesure) + var(--marge-case) * 2);
+  padding: var(--espace-4) var(--marge-case);
+  font-weight: var(--graisse-moyenne);
+}
+
+.soiree__titre-suite {
+  padding: var(--espace-2) var(--marge-case);
+  border-bottom: var(--trait) solid var(--encre);
+}
+
+.soiree__texte + .soiree__titre-suite {
+  border-top: var(--trait) solid var(--encre);
+}
+
+/* Une grande ligne par passage ; elles se partagent la hauteur de la case. */
+.soiree__passages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.soiree__passage {
+  display: grid;
+  flex: 1;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--espace-1) var(--espace-3);
+  min-height: 5.5rem;
+  padding: var(--espace-3) var(--marge-case);
+}
+
+.soiree__passage + .soiree__passage {
+  border-top: var(--trait) solid var(--encre);
+}
+
+.soiree__heure {
+  min-width: 5.5ch;
+  font-size: clamp(1.125rem, 4.6cqi, 2.25rem);
+  font-weight: var(--graisse-nom);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--pastille-musique);
+}
+
+.soiree__nom {
+  font-size: clamp(1.25rem, 6.4cqi, 2.75rem);
+  font-weight: var(--graisse-nom);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  overflow-wrap: break-word;
+}
+
+.soiree__passage .pastille {
+  grid-column: 2;
+  justify-self: start;
+  font-weight: var(--graisse-nom);
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .soiree__lieu:hover {
+    color: var(--texte-musique);
+    background: var(--pastille-musique);
+  }
+}
+
+/* ---------- Tablette : la précision au bout de la ligne ---------- */
+@media (min-width: 40rem) {
+  .soiree__passage {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .soiree__passage .pastille {
+    grid-column: auto;
+  }
+}
+
+/* ---------- Ordinateur ---------- */
+@media (min-width: 56rem) {
+  /* Affiche en hauteur : elle tient toute la moitié gauche. */
+  .detail.detail--soiree {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: auto auto auto auto 1fr;
+  }
+
+  .detail.detail--soiree > .detail__affiche {
+    grid-column: 1 / 3;
+    grid-row: 1 / -1;
+  }
+
+  .detail.detail--soiree > .detail__retour {
+    grid-column: 3 / -1;
+    grid-row: 1;
+  }
+
+  .detail.detail--soiree > .detail__tete {
+    grid-column: 3 / -1;
+    grid-row: 2;
+    min-height: 14rem;
+  }
+
+  /* La case Billets : une bande verte sous le titre, le mot à gauche,
+     le prix à droite. */
+  .detail.detail--soiree > .detail__acheter {
+    grid-column: 3 / -1;
+    grid-row: 3;
+    flex-direction: row;
+    align-items: baseline;
+    min-height: 5.5rem;
+    padding-block: var(--espace-3);
+  }
+
+  .detail.detail--soiree > .soiree__reperes {
+    grid-column: 3 / -1;
+    grid-row: 4;
+  }
+
+  .detail.detail--soiree > .soiree__suite {
+    grid-column: 3 / -1;
+    grid-row: 5;
+  }
+
+  /* Ni texte ni line-up : les repères descendent jusqu'en bas. */
+  .detail.detail--soiree:not(:has(> .soiree__suite)) > .soiree__reperes {
+    grid-row: 4 / -1;
+  }
+
+  .soiree__repere {
+    flex-basis: 7.5rem;
+    min-height: 8.5rem;
+  }
+
+  .soiree__repere dd {
+    font-size: clamp(1.625rem, 17cqi, 4.5rem);
+  }
+
+  /* Affiche en largeur : le titre sur toute la ligne, l'affiche dessous. */
+  .detail.detail--paysage {
+    grid-template-rows: auto auto auto 1fr;
+  }
+
+  .detail.detail--paysage > .detail__retour {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .detail.detail--paysage > .detail__tete {
+    grid-column: 1 / 4;
+    grid-row: 2;
+  }
+
+  .detail.detail--paysage > .detail__acheter {
+    grid-column: 4;
+    grid-row: 2;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-block: var(--espace-4);
+  }
+
+  .detail.detail--paysage > .detail__affiche {
+    grid-column: 1 / 3;
+    grid-row: 3;
+  }
+
+  .detail.detail--paysage > .soiree__reperes {
+    grid-column: 1 / 3;
+    grid-row: 4;
+  }
+
+  .detail.detail--paysage > .soiree__suite {
+    grid-column: 3 / -1;
+    grid-row: 3 / -1;
+  }
+
+  /* Ni texte ni line-up : l'affiche à gauche, les repères à droite. */
+  .detail.detail--paysage:not(:has(> .soiree__suite)) > .detail__affiche {
+    grid-row: 3 / -1;
+  }
+
+  .detail.detail--paysage:not(:has(> .soiree__suite)) > .soiree__reperes {
+    grid-column: 3 / -1;
+    grid-row: 3 / -1;
+  }
+}

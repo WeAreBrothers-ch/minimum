@@ -1,0 +1,1783 @@
+From 85e2a62f8e5f20cf03b54f877ffeff74571ef361 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 26 Nov 2026 21:40:43 +0000
+Subject: [PATCH] =?UTF-8?q?Films=20partag=C3=A9s=20avec=20Minimum=20:=20ar?=
+ =?UTF-8?q?riv=C3=A9e=20automatique=20et=20corrections=20(pr=C3=A9par?=
+ =?UTF-8?q?=C3=A9,=20non=20pouss=C3=A9)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ package.json                        |   2 +-
+ sanity.config.ts                    |   4 +
+ sanity/deskStructure.ts             |  14 +
+ sanity/partage/ArriveeDesFilms.tsx  |  81 ++++
+ sanity/partage/FilmsPartages.tsx    | 357 ++++++++++++++++
+ sanity/partage/NoteFilmPartage.tsx  |  25 ++
+ sanity/partage/arrivee.ts           |  49 +++
+ sanity/partage/journal-banque.ts    |  25 ++
+ sanity/partage/partage.ts           | 603 ++++++++++++++++++++++++++++
+ sanity/partage/reglages.ts          |  48 +++
+ sanity/schemaTypes/film.ts          |  31 +-
+ sanity/schemaTypes/index.ts         |   6 +-
+ verifications/actions-studio.mjs    |   2 +-
+ verifications/partage-des-films.mjs | 326 +++++++++++++++
+ 14 files changed, 1569 insertions(+), 4 deletions(-)
+ create mode 100644 sanity/partage/ArriveeDesFilms.tsx
+ create mode 100644 sanity/partage/FilmsPartages.tsx
+ create mode 100644 sanity/partage/NoteFilmPartage.tsx
+ create mode 100644 sanity/partage/arrivee.ts
+ create mode 100644 sanity/partage/journal-banque.ts
+ create mode 100644 sanity/partage/partage.ts
+ create mode 100644 sanity/partage/reglages.ts
+ create mode 100644 verifications/partage-des-films.mjs
+
+diff --git a/package.json b/package.json
+index 645e9c9..1cdff40 100644
+--- a/package.json
++++ b/package.json
+@@ -4,7 +4,7 @@
+   "private": true,
+   "scripts": {
+     "serve": "npx serve@latest .",
+-    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/ordre-des-seances.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/newsletter.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/impression.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/historique.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/repartition.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/accueil.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/reperes-film.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/projection.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/seances-speciales.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/evenements-newsletter.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/piqure.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/cases-sans-film.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/actions-studio.mjs",
++    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/ordre-des-seances.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/newsletter.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/impression.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/historique.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/repartition.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/accueil.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/reperes-film.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/projection.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/seances-speciales.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/evenements-newsletter.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/piqure.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/cases-sans-film.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/actions-studio.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON verifications/partage-des-films.mjs",
+     "studio:dev": "sanity dev",
+     "studio:deploy": "sanity deploy",
+     "typecheck": "tsc --noEmit -p tsconfig.json",
+diff --git a/sanity.config.ts b/sanity.config.ts
+index cef5826..630e104 100644
+--- a/sanity.config.ts
++++ b/sanity.config.ts
+@@ -3,6 +3,7 @@ import { structureTool } from "sanity/structure";
+ import { visionTool } from "@sanity/vision";
+ import { schemaTypes, typesNonCreables, typesUniques } from "./sanity/schemaTypes";
+ import { actionsRetirees } from "./sanity/actionsRetirees";
++import { StudioAvecArrivee } from "./sanity/partage/ArriveeDesFilms";
+ import { deskStructure } from "./sanity/deskStructure";
+ import { planification } from "./sanity/plugins/planification";
+ 
+@@ -31,6 +32,9 @@ export default defineConfig({
+     templates: (modeles) =>
+       modeles.filter((modele) => !typesNonCreables.includes(modele.schemaType)),
+   },
++  /* Les films de l'autre cinéma (Minimum) arrivent tout seuls dès que le
++     Studio est ouvert, et leurs corrections aussi : voir sanity/partage. */
++  studio: { components: { layout: StudioAvecArrivee } },
+   document: {
+     // Le bouton « + » ne propose que ce qui se crée vraiment à la main.
+     newDocumentOptions: (options) =>
+diff --git a/sanity/deskStructure.ts b/sanity/deskStructure.ts
+index 057af85..34c71ce 100644
+--- a/sanity/deskStructure.ts
++++ b/sanity/deskStructure.ts
+@@ -6,12 +6,15 @@ import {
+   CogIcon,
+   CreditCardIcon,
+   HomeIcon,
++  InsertAboveIcon,
+   PlayIcon,
+   RemoveCircleIcon,
+   SparklesIcon,
+   UsersIcon,
+ } from "@sanity/icons";
+ 
++import { FilmsPartages } from "./partage/FilmsPartages";
++import { AUTRE } from "./partage/reglages";
+ import { groqCoche } from "./plugins/planification/utils/etats-du-film";
+ import { FILTRE_PROJECTION_A_VENIR } from "./plugins/planification/utils/projection-de-la-fiche";
+ 
+@@ -61,6 +64,17 @@ export const deskStructure: StructureResolver = (S) =>
+             .defaultOrdering([{ field: "title", direction: "asc" }])
+         ),
+ 
++      /* ---------------- Films partagés ----------------
++         Juste sous « Films » : un film créé chez l'autre cinéma
++         arrive ici tout seul (sanity/partage). Cet écran montre où
++         en est cette arrivée ; on n'a pas à y passer pour que ça
++         marche. */
++      S.listItem()
++        .id("films-partages")
++        .title(`Films partagés (${AUTRE.nom})`)
++        .icon(InsertAboveIcon)
++        .child(S.component(FilmsPartages).id("films-partages").title(`Films partagés (${AUTRE.nom})`)),
++
+       /* ---------------- Agenda ----------------
+          Séparé en deux parce qu'il y en a beaucoup, et qu'on ne
+          travaille jamais sur les séances passées. */
+diff --git a/sanity/partage/ArriveeDesFilms.tsx b/sanity/partage/ArriveeDesFilms.tsx
+new file mode 100644
+index 0000000..f285b88
+--- /dev/null
++++ b/sanity/partage/ArriveeDesFilms.tsx
+@@ -0,0 +1,81 @@
++/**
++ * L'arrivée automatique des films de l'autre cinéma.
++ *
++ * Posée autour de tout le Studio (sanity.config.ts) : dès qu'on l'ouvre,
++ * puis toutes les cinq minutes, les films publiés chez l'autre et absents
++ * d'ici sont créés ici, fiche et affiche copiées, et les corrections faites
++ * là-bas sont reprises ici (si la fiche d'ici n'a pas été modifiée entre
++ * temps). Personne n'a rien à faire. Un mot s'affiche quand un film vient
++ * d'arriver ou d'être mis à jour.
++ *
++ * Rien n'est montré quand il n'y a rien de neuf, ni quand ça rate : l'écran
++ * « Films partagés » dit où on en est, et permet de relancer.
++ */
++import {useToast} from '@sanity/ui'
++import {useEffect} from 'react'
++import {type LayoutProps, useClient} from 'sanity'
++
++import {API_VERSION as VERSION_API} from '../plugins/planification/types'
++import {annonce, annonceMiseAJour, lancerArrivee} from './arrivee'
++import {ARRIVEE_AUTOMATIQUE, AUTRE, INTERVALLE_ARRIVEE} from './reglages'
++
++function ArriveeDesFilms(): null {
++  const client = useClient({apiVersion: VERSION_API})
++  const toast = useToast()
++
++  useEffect(() => {
++    if (!ARRIVEE_AUTOMATIQUE) return undefined
++    let arrete = false
++    let minuterie: ReturnType<typeof setTimeout> | undefined
++
++    const regarder = async () => {
++      let reessayer = true
++      try {
++        const bilan = await lancerArrivee(client)
++        if (arrete) return
++        if (bilan.arrives.length > 0) {
++          toast.push({
++            status: bilan.imagesManquantes ? 'warning' : 'success',
++            title: annonce(bilan),
++            description: bilan.imagesManquantes
++              ? 'La fiche est dans « Films », mais une image n’a pas suivi : ajoutez-la dans la fiche.'
++              : 'Fiche et affiche sont dans « Films », pas encore à l’affiche. La Planification le propose déjà.',
++            duration: 9000,
++          })
++        }
++        if (bilan.misesAJour.length > 0) {
++          toast.push({
++            status: 'info',
++            title: annonceMiseAJour(bilan),
++            description: `La fiche a été corrigée à ${AUTRE.nom} : la correction est reprise ici. Ce qui est propre à ce cinéma (à l’affiche ou non, séances) n’a pas bougé.`,
++            duration: 9000,
++          })
++        }
++        /* Rien n'a pu être écrit (compte qui ne peut que lire, par exemple) :
++           inutile d'insister toutes les cinq minutes. */
++        if (bilan.rates > 0 && bilan.arrives.length === 0 && bilan.misesAJour.length === 0) reessayer = false
++      } catch (cause) {
++        console.error('Films partagés : l’arrivée automatique a échoué.', cause)
++      }
++      if (!arrete && reessayer) minuterie = setTimeout(regarder, INTERVALLE_ARRIVEE)
++    }
++
++    void regarder()
++    return () => {
++      arrete = true
++      if (minuterie) clearTimeout(minuterie)
++    }
++  }, [client, toast])
++
++  return null
++}
++
++/** Le Studio tel quel, avec l'arrivée des films qui tourne derrière. */
++export function StudioAvecArrivee(props: LayoutProps) {
++  return (
++    <>
++      <ArriveeDesFilms />
++      {props.renderDefault(props)}
++    </>
++  )
++}
+diff --git a/sanity/partage/FilmsPartages.tsx b/sanity/partage/FilmsPartages.tsx
+new file mode 100644
+index 0000000..f4f284a
+--- /dev/null
++++ b/sanity/partage/FilmsPartages.tsx
+@@ -0,0 +1,357 @@
++/**
++ * Les films partagés : où en est l'arrivée des films de l'autre cinéma.
++ *
++ * Les films arrivent tout seuls, et les corrections aussi (ArriveeDesFilms) ;
++ * cet écran le montre. Une ligne par film de l'autre cinéma : il est ici (et
++ * mène à sa fiche), ou il a été retiré d'ici exprès (et peut être remis), ou
++ * il n'est pas encore arrivé (et peut être demandé tout de suite). Une fiche
++ * modifiée ici n'est jamais écrasée toute seule : la ligne le dit, et un
++ * bouton permet de reprendre celle de l'autre cinéma.
++ */
++import {AddIcon, CheckmarkIcon, EditIcon, SearchIcon, SyncIcon} from '@sanity/icons'
++import {Box, Button, Card, Flex, Spinner, Stack, Text, TextInput, useToast} from '@sanity/ui'
++import {useCallback, useEffect, useMemo, useState} from 'react'
++import {useClient} from 'sanity'
++import {IntentLink} from 'sanity/router'
++
++import {API_VERSION as VERSION_API} from '../plugins/planification/types'
++import {annonce, annonceMiseAJour, autreCinema, lancerArrivee} from './arrivee'
++import {
++  type Ecrivain,
++  type Etat,
++  type FilmDeLaBanque,
++  type FilmDIci,
++  REQUETE_BANQUE,
++  REQUETE_ICI,
++  REQUETE_JOURNAL,
++  comparer,
++  dejaIci,
++  faireVenir,
++  ficheLiee,
++  noterAuJournal,
++  reprendre,
++} from './partage'
++import {AUTRE, ICI, ID_JOURNAL} from './reglages'
++
++/** L'affiche en petit, pour la liste. */
++function vignette(url: string): string {
++  return `${url}?w=96&h=144&fit=crop&auto=format`
++}
++
++export function FilmsPartages() {
++  const client = useClient({apiVersion: VERSION_API})
++  const toast = useToast()
++  const [films, setFilms] = useState<FilmDeLaBanque[] | null>(null)
++  const [ici, setIci] = useState<FilmDIci[]>([])
++  const [journal, setJournal] = useState<string[]>([])
++  const [erreur, setErreur] = useState(false)
++  const [recherche, setRecherche] = useState('')
++  const [enCours, setEnCours] = useState<string | null>(null)
++  const [arrivee, setArrivee] = useState(false)
++
++  /** Relit les deux listes et le carnet. */
++  const lire = useCallback(async () => {
++    const [deLAutre, dIci, notes] = await Promise.all([
++      autreCinema.fetch<FilmDeLaBanque[]>(REQUETE_BANQUE),
++      client.fetch<FilmDIci[]>(REQUETE_ICI, {}, {perspective: 'published'}),
++      client.fetch<string[] | null>(REQUETE_JOURNAL, {id: ID_JOURNAL}, {perspective: 'raw'}),
++    ])
++    setFilms(deLAutre)
++    setIci(dIci)
++    setJournal(notes ?? [])
++  }, [client])
++
++  /** Fait arriver ce qui manque (ou attend l'arrivée déjà en route), puis relit. */
++  const synchroniser = useCallback(
++    async (annoncer: boolean) => {
++      setErreur(false)
++      setArrivee(true)
++      try {
++        const bilan = await lancerArrivee(client).catch((cause: unknown) => {
++          console.error('Films partagés : l’arrivée a échoué.', cause)
++          return null
++        })
++        await lire()
++        if (!annoncer) return
++        if (bilan === null || bilan.rates > 0) {
++          toast.push({
++            status: 'error',
++            title: 'Tous les films n’ont pas pu arriver',
++            description: 'Vérifiez la connexion et réessayez. Rien n’est créé à moitié.',
++          })
++        } else if (bilan.arrives.length > 0 || bilan.misesAJour.length > 0) {
++          if (bilan.arrives.length > 0) toast.push({status: 'success', title: annonce(bilan)})
++          if (bilan.misesAJour.length > 0) toast.push({status: 'success', title: annonceMiseAJour(bilan)})
++        } else {
++          toast.push({status: 'success', title: `Tout est à jour : rien de neuf à ${AUTRE.nom}`})
++        }
++      } catch (cause) {
++        console.error('Films partagés : la liste n’a pas pu être lue.', cause)
++        setErreur(true)
++      } finally {
++        setArrivee(false)
++      }
++    },
++    [client, lire, toast],
++  )
++
++  useEffect(() => {
++    void synchroniser(false)
++  }, [synchroniser])
++
++  const visibles = useMemo(() => {
++    const mots = recherche.trim().toLowerCase()
++    if (!films) return []
++    if (!mots) return films
++    return films.filter((film) =>
++      [film.title, film.director, film.originalTitle].some((champ) => String(champ ?? '').toLowerCase().includes(mots)),
++    )
++  }, [films, recherche])
++
++  /** Fait venir un film à la demande : pas encore arrivé, ou retiré puis regretté. */
++  const prendre = useCallback(
++    async (film: FilmDeLaBanque) => {
++      setEnCours(film._id)
++      try {
++        const {id, imagesManquantes} = await faireVenir(client as unknown as Ecrivain, film)
++        if (!journal.includes(film._id)) {
++          await noterAuJournal(client as unknown as Ecrivain, [film._id]).catch(() => undefined)
++          setJournal((avant) => [...avant, film._id])
++        }
++        setIci((avant) => [...avant, {_id: id, title: film.title, origineBanque: `${AUTRE.cle}:${film._id}`}])
++        await lire().catch(() => undefined)
++        toast.push({
++          status: imagesManquantes ? 'warning' : 'success',
++          title: `« ${film.title ?? 'Film'} » est dans ${ICI}`,
++          description: imagesManquantes
++            ? 'Sa fiche est copiée, mais une image n’a pas suivi : ajoutez-la dans la fiche.'
++            : 'Sa fiche et son affiche sont copiées. Il n’est pas encore à l’affiche : programmez-le dans la Planification.',
++        })
++      } catch (cause) {
++        console.error('Films partagés : le film n’a pas pu venir.', cause)
++        toast.push({
++          status: 'error',
++          title: 'Le film n’a pas pu être copié',
++          description: 'Vérifiez la connexion et réessayez. Rien n’a été créé à moitié.',
++        })
++      } finally {
++        setEnCours(null)
++      }
++    },
++    [client, journal, lire, toast],
++  )
++
++  /** Remplace la description de la fiche d'ici par celle de l'autre cinéma. */
++  const reprendreFiche = useCallback(
++    async (film: FilmDeLaBanque, fiche: FilmDIci, confirmer: boolean) => {
++      if (
++        confirmer &&
++        !window.confirm(
++          `Remplacer la fiche de ${ICI} par celle de ${AUTRE.nom} ?\n\nLe titre, le synopsis, l’affiche et les autres informations du film seront ceux de ${AUTRE.nom}. Ce qui est propre à ${ICI} (à l’affiche ou non, séances) ne change pas.`,
++        )
++      ) {
++        return
++      }
++      setEnCours(film._id)
++      try {
++        const {imagesManquantes} = await reprendre(client as unknown as Ecrivain, film, fiche)
++        await lire().catch(() => undefined)
++        toast.push({
++          status: imagesManquantes ? 'warning' : 'success',
++          title: `« ${film.title ?? 'Film'} » : fiche mise à jour d’après ${AUTRE.nom}`,
++          description: imagesManquantes ? 'Une image n’a pas suivi : l’ancienne est restée.' : undefined,
++        })
++      } catch (cause) {
++        console.error('Films partagés : la fiche n’a pas pu être reprise.', cause)
++        toast.push({status: 'error', title: 'La fiche n’a pas pu être mise à jour', description: 'Vérifiez la connexion et réessayez.'})
++      } finally {
++        setEnCours(null)
++      }
++    },
++    [client, lire, toast],
++  )
++
++  /** Où en est chaque fiche liée, pour la ligne d'état et pour les lignes. */
++  const etats = useMemo(() => {
++    const parFilm = new Map<string, {fiche: FilmDIci; etat: Etat}>()
++    for (const film of films ?? []) {
++      const fiche = ficheLiee(film, ici)
++      if (fiche) parFilm.set(film._id, {fiche, etat: comparer(film, fiche)})
++    }
++    return parFilm
++  }, [films, ici])
++
++  const aChoisir = useMemo(
++    () => [...etats.values()].filter(({etat}) => etat === 'differente' || etat === 'modifiee-ici').length,
++    [etats],
++  )
++
++  const manquants = useMemo(
++    () => (films ?? []).filter((film) => !dejaIci(film, ici) && !journal.includes(film._id)).length,
++    [films, ici, journal],
++  )
++
++  return (
++    <Box padding={4} style={{height: '100%', overflow: 'auto'}}>
++      <Stack space={4}>
++        <Stack space={3}>
++          <Text size={2} weight="semibold">
++            Films partagés avec {AUTRE.nom}
++          </Text>
++          <Text size={1} muted>
++            Un film créé à {AUTRE.nom} arrive ici tout seul, fiche et affiche comprises : rien à retaper, rien à
++            cliquer. Il est alors dans « Films » et dans la Planification, mais pas encore à l’affiche : c’est ici
++            qu’on décide de le montrer. Une fiche corrigée à {AUTRE.nom} est corrigée ici aussi, toute seule, tant
++            qu’elle n’a pas été modifiée à {ICI} entre-temps.
++          </Text>
++          {films !== null && !erreur && (
++            <Text size={1} weight="medium" data-etat-du-partage>
++              {arrivee
++                ? `Arrivée des films de ${AUTRE.nom} en cours…`
++                : manquants === 0
++                  ? `À jour : les ${films.length} films de ${AUTRE.nom} sont connus de ${ICI}.`
++                  : `${manquants} film${manquants > 1 ? 's' : ''} de ${AUTRE.nom} ${manquants > 1 ? 'ne sont' : 'n’est'} pas encore arrivé${manquants > 1 ? 's' : ''}.`}
++              {!arrivee && aChoisir > 0
++                ? ` ${aChoisir} fiche${aChoisir > 1 ? 's ne sont pas les mêmes' : ' n’est pas la même'} dans les deux cinémas : elle${aChoisir > 1 ? 's sont' : ' est'} laissée${aChoisir > 1 ? 's' : ''} telle${aChoisir > 1 ? 's' : ''} quelle${aChoisir > 1 ? 's' : ''}.`
++                : ''}
++            </Text>
++          )}
++        </Stack>
++
++        <Flex gap={2}>
++          <Box flex={1}>
++            <TextInput
++              icon={SearchIcon}
++              placeholder="Chercher un titre ou une réalisation"
++              value={recherche}
++              onChange={(evenement) => setRecherche(evenement.currentTarget.value)}
++            />
++          </Box>
++          <Button
++            icon={SyncIcon}
++            mode="ghost"
++            text="Synchroniser"
++            loading={arrivee}
++            disabled={arrivee}
++            onClick={() => void synchroniser(true)}
++          />
++        </Flex>
++
++        {erreur && (
++          <Card padding={4} tone="critical" border radius={2}>
++            <Flex align="center" justify="space-between" gap={3}>
++              <Text size={1}>Les films de {AUTRE.nom} n’ont pas pu être lus. Vérifiez la connexion.</Text>
++              <Button text="Réessayer" onClick={() => void synchroniser(true)} />
++            </Flex>
++          </Card>
++        )}
++        {!erreur && films === null && (
++          <Flex align="center" gap={3} padding={4}>
++            <Spinner muted />
++            <Text muted>Lecture des films de {AUTRE.nom}…</Text>
++          </Flex>
++        )}
++        {films !== null && visibles.length === 0 && (
++          <Text size={1} muted>
++            {films.length === 0 ? `${AUTRE.nom} n’a encore publié aucun film.` : 'Aucun film ne correspond à cette recherche.'}
++          </Text>
++        )}
++
++        <Stack space={2}>
++          {visibles.map((film) => {
++            const present = dejaIci(film, ici)
++            const retire = !present && journal.includes(film._id)
++            const lien = etats.get(film._id)
++            const etat = lien?.etat ?? null
++            const aReprendre = etat === 'a-reprendre'
++            const autreVersion = etat === 'differente' || etat === 'modifiee-ici'
++            return (
++              <Card key={film._id} border radius={2} padding={2} data-film-de-la-banque={film._id}>
++                <Flex align="center" gap={3}>
++                  <Box style={{width: 48, height: 72, background: '#e6e6e6', flexShrink: 0}}>
++                    {film.affiche?.url && (
++                      <img
++                        src={vignette(film.affiche.url)}
++                        alt=""
++                        width={48}
++                        height={72}
++                        loading="lazy"
++                        style={{display: 'block', width: 48, height: 72, objectFit: 'cover'}}
++                      />
++                    )}
++                  </Box>
++                  <Box flex={1}>
++                    <Stack space={2}>
++                      <Text size={1} weight="semibold">
++                        {film.title ?? 'Film sans titre'}
++                      </Text>
++                      <Text size={1} muted>
++                        {[film.director, film.year, film.duration ? `${film.duration} min` : null].filter(Boolean).join(' · ') ||
++                          'Fiche incomplète'}
++                      </Text>
++                    </Stack>
++                  </Box>
++                  {present ? (
++                    <Flex align="center" gap={2}>
++                      <Flex align="center" gap={1}>
++                        <Text size={1} muted>
++                          <CheckmarkIcon />
++                        </Text>
++                        <Text size={1} muted>
++                          {aReprendre
++                            ? `Corrigée à ${AUTRE.nom}`
++                            : etat === 'modifiee-ici'
++                              ? `Modifiée à ${ICI}`
++                              : etat === 'differente'
++                                ? 'Fiche différente'
++                                : `Dans ${ICI}`}
++                        </Text>
++                      </Flex>
++                      {lien && (aReprendre || autreVersion) && (
++                        <Button
++                          icon={SyncIcon}
++                          mode={aReprendre ? 'default' : 'ghost'}
++                          tone={aReprendre ? 'primary' : 'default'}
++                          fontSize={1}
++                          padding={2}
++                          text={aReprendre ? 'Mettre à jour' : `Reprendre la fiche de ${AUTRE.nom}`}
++                          loading={enCours === film._id}
++                          disabled={enCours !== null || arrivee}
++                          onClick={() => void reprendreFiche(film, lien.fiche, autreVersion)}
++                        />
++                      )}
++                      <Button
++                        as={IntentLink}
++                        {...{intent: 'edit', params: {id: present._id, type: 'film'}}}
++                        icon={EditIcon}
++                        mode="bleed"
++                        fontSize={1}
++                        padding={2}
++                        text="Ouvrir"
++                      />
++                    </Flex>
++                  ) : (
++                    <Flex align="center" gap={2}>
++                      <Text size={1} muted>
++                        {retire ? `Retiré de ${ICI}` : 'Pas encore arrivé'}
++                      </Text>
++                      <Button
++                        icon={AddIcon}
++                        mode={retire ? 'ghost' : 'default'}
++                        tone={retire ? 'default' : 'primary'}
++                        text={retire ? 'Remettre' : 'Faire venir'}
++                        loading={enCours === film._id}
++                        disabled={enCours !== null || arrivee}
++                        onClick={() => prendre(film)}
++                      />
++                    </Flex>
++                  )}
++                </Flex>
++              </Card>
++            )
++          })}
++        </Stack>
++      </Stack>
++    </Box>
++  )
++}
+diff --git a/sanity/partage/NoteFilmPartage.tsx b/sanity/partage/NoteFilmPartage.tsx
+new file mode 100644
+index 0000000..ed4fa58
+--- /dev/null
++++ b/sanity/partage/NoteFilmPartage.tsx
+@@ -0,0 +1,25 @@
++/**
++ * Dans la fiche d'un film arrivé de l'autre cinéma : une phrase qui le dit,
++ * à la place du champ (qu'on n'a jamais à remplir).
++ */
++import {Card, Stack, Text} from '@sanity/ui'
++
++import {AUTRE, ICI} from './reglages'
++
++export function NoteFilmPartage() {
++  return (
++    <Card padding={3} radius={2} border tone="primary">
++      <Stack space={3}>
++        <Text size={1} weight="semibold">
++          Cette fiche est arrivée de {AUTRE.nom}.
++        </Text>
++        <Text size={1}>
++          Elle a été copiée ici toute seule, avec son affiche. Le film n’est montré à {ICI} que si vous le décidez :
++          cochez « À l’affiche » ou « Prochainement » plus haut dans cette fiche. Il se programme déjà dans la
++          Planification. Une correction faite à {AUTRE.nom} arrive ici toute seule, tant que vous n’avez pas modifié
++          cette fiche entre-temps.
++        </Text>
++      </Stack>
++    </Card>
++  )
++}
+diff --git a/sanity/partage/arrivee.ts b/sanity/partage/arrivee.ts
+new file mode 100644
+index 0000000..4b9cab2
+--- /dev/null
++++ b/sanity/partage/arrivee.ts
+@@ -0,0 +1,49 @@
++/* L'arrivée des films, vue du Studio : le client qui lit l'autre cinéma, et
++   une seule arrivée à la fois (le Studio qui s'ouvre et l'écran « Films
++   partagés » peuvent la demander au même moment). */
++import { createClient } from "@sanity/client";
++
++import { type Bilan, type Ecrivain, arriveeDesFilms } from "./partage";
++import { AUTRE, VERSION_API_BANQUE } from "./reglages";
++
++/* L'autre cinéma, en lecture seule : ni jeton, ni identifiants. On n'y lit
++   que ce qui est publié, par l'API publique, comme son site. */
++export const autreCinema = createClient({
++  projectId: AUTRE.projet,
++  dataset: AUTRE.jeu,
++  apiVersion: VERSION_API_BANQUE,
++  useCdn: true,
++  withCredentials: false,
++  perspective: "published",
++});
++
++let enCours: Promise<Bilan> | null = null;
++
++/** Lance l'arrivée, ou rejoint celle qui est déjà en route. */
++export function lancerArrivee(client: unknown): Promise<Bilan> {
++  if (!enCours) {
++    enCours = arriveeDesFilms(client as Ecrivain, autreCinema).finally(() => {
++      enCours = null;
++    });
++  }
++  return enCours;
++}
++
++function enumerer(films: Bilan["arrives"]): string {
++  const titres = films.map((film) => `« ${film.titre} »`);
++  if (titres.length === 1) return titres[0] as string;
++  if (titres.length <= 3) return `${titres.slice(0, -1).join(", ")} et ${titres[titres.length - 1]}`;
++  return `${titres.length} films`;
++}
++
++/** La phrase qui annonce une arrivée : « « Titre » est arrivé de Zinéma ». */
++export function annonce(bilan: Bilan): string {
++  const plusieurs = bilan.arrives.length > 1;
++  return `${enumerer(bilan.arrives)} ${plusieurs ? "sont arrivés" : "est arrivé"} de ${AUTRE.nom}`;
++}
++
++/** La phrase qui annonce une correction reprise : « « Titre » : fiche mise à jour d'après Zinéma ». */
++export function annonceMiseAJour(bilan: Bilan): string {
++  const plusieurs = bilan.misesAJour.length > 1;
++  return `${enumerer(bilan.misesAJour)} : ${plusieurs ? "fiches mises" : "fiche mise"} à jour d’après ${AUTRE.nom}`;
++}
+diff --git a/sanity/partage/journal-banque.ts b/sanity/partage/journal-banque.ts
+new file mode 100644
+index 0000000..346ef9a
+--- /dev/null
++++ b/sanity/partage/journal-banque.ts
+@@ -0,0 +1,25 @@
++import { defineField, defineType } from "sanity";
++
++import { AUTRE, TYPE_JOURNAL } from "./reglages";
++
++/* Le carnet des films partagés : la liste des films de l'autre cinéma déjà
++   venus ici. Le Studio le tient seul (partage.ts) ; il sert
++   à ne pas faire revenir un film qu'on a supprimé ici. Personne ne le crée
++   ni ne le modifie à la main : il n'est dans aucun menu. */
++export const journalBanque = defineType({
++  name: TYPE_JOURNAL,
++  title: "Carnet des films partagés",
++  type: "document",
++  readOnly: true,
++  // Hors de la recherche du Studio.
++  __experimental_omnisearch_visibility: false,
++  fields: [
++    defineField({
++      name: "films",
++      title: `Films de ${AUTRE.nom} déjà venus ici`,
++      type: "array",
++      of: [{ type: "string" }],
++    }),
++  ],
++  preview: { prepare: () => ({ title: "Carnet des films partagés" }) },
++});
+diff --git a/sanity/partage/partage.ts b/sanity/partage/partage.ts
+new file mode 100644
+index 0000000..0ea6660
+--- /dev/null
++++ b/sanity/partage/partage.ts
+@@ -0,0 +1,603 @@
++/* Les films partagés : lire les films de l'autre cinéma, faire venir ici
++   ceux qui n'y sont pas encore, et reprendre ici les corrections faites
++   là-bas. Ce fichier ne dépend pas du Studio (ni React, ni formulaire) : il
++   se vérifie seul (verifications/partage-des-films.mjs).
++
++   Trois règles :
++   - rien n'est jamais écrit chez l'autre : on ne fait que le lire ;
++   - rien n'est jamais supprimé ici ;
++   - une fiche modifiée ICI n'est jamais écrasée toute seule. Une correction
++     de l'autre cinéma n'est reprise d'office que si la fiche d'ici n'a pas
++     bougé depuis la dernière fois ; sinon l'écran « Films partagés » le dit,
++     et c'est une personne qui décide. */
++
++import { AUTRE, ETAT_A_L_ARRIVEE, ID_JOURNAL, TYPE_IMAGE, TYPE_JOURNAL } from "./reglages";
++
++/** Une image d'un film, telle qu'on la lit (ici ou chez l'autre). */
++export interface ImageDeLaBanque {
++  /** L'identifiant du fichier : « image-<empreinte>-<largeur>x<hauteur>-<format> ». */
++  id?: string | null;
++  url: string | null;
++  nom: string | null;
++  alt: string | null;
++  hotspot: Record<string, unknown> | null;
++  crop: Record<string, unknown> | null;
++}
++
++/** Un film tel qu'on le lit, ici ou chez l'autre : ce qui le DÉCRIT. */
++export interface FilmDeLaBanque {
++  _id: string;
++  title: string | null;
++  director: string | null;
++  duration: number | null;
++  year: number | null;
++  country: string | null;
++  originalTitle: string | null;
++  language: string | null;
++  subtitles: string | null;
++  ageRating: string | null;
++  typeDeFilm: string | null;
++  synopsis: string | null;
++  trailerUrl: string | null;
++  presseUrl: string | null;
++  slug: string | null;
++  affiche: ImageDeLaBanque | null;
++  photos: ImageDeLaBanque[] | null;
++}
++
++/** Un film d'ici : sa description, et ce que le partage y a noté. */
++export interface FilmDIci extends Partial<Omit<FilmDeLaBanque, "_id">> {
++  _id: string;
++  /** « minimum:<identifiant> » : le film vient de l'autre cinéma. */
++  origineBanque?: string | null;
++  /** Où en étaient les deux fiches la dernière fois (voir lireRepere). */
++  banqueEmpreinte?: string | null;
++}
++
++/** Les champs qui décrivent un film : ceux qui se partagent. */
++const CHAMPS_TEXTE = [
++  "title",
++  "director",
++  "duration",
++  "year",
++  "country",
++  "originalTitle",
++  "language",
++  "subtitles",
++  "ageRating",
++  "typeDeFilm",
++  "synopsis",
++  "trailerUrl",
++  "presseUrl",
++] as const;
++
++const IMAGE = '{"id": asset._ref, "url": asset->url, "nom": asset->originalFilename, alt, hotspot, crop}';
++
++const DESCRIPTION = `_id, title, director, duration, year, country, originalTitle, language, subtitles, ageRating,
++    "typeDeFilm": coalesce(typeDeFilm, array::join(genres, " · ")),
++    synopsis, trailerUrl, presseUrl, "slug": slug.current,
++    "affiche": poster${IMAGE}, "photos": stillImages[defined(asset)]${IMAGE}`;
++
++const PUBLIES = `_type == "film" && !(_id in path("drafts.**")) && !(_id in path("versions.**"))`;
++
++/** Les films publiés de l'autre cinéma, du plus récemment ajouté au plus ancien. */
++export const REQUETE_BANQUE = `*[${PUBLIES}] | order(_createdAt desc){
++    ${DESCRIPTION}
++  }`;
++
++/** Les films d'ici, lus de la même façon, avec ce que le partage y a noté. */
++export const REQUETE_ICI = `*[${PUBLIES}]{
++    ${DESCRIPTION}, origineBanque, banqueEmpreinte
++  }`;
++
++/** La marque laissée sur un film venu de l'autre cinéma : « minimum:<identifiant> ». */
++export function origineDe(film: Pick<FilmDeLaBanque, "_id">): string {
++  return `${AUTRE.cle}:${film._id}`;
++}
++
++/** Un titre ramené à l'essentiel, pour comparer « MR. NOBODY » et « Mr. Nobody ». */
++function titreCompare(titre: string | null | undefined): string {
++  return String(titre ?? "")
++    .normalize("NFD")
++    .replace(/[̀-ͯ]/g, "")
++    .toLowerCase()
++    .replace(/[^a-z0-9]+/g, " ")
++    .trim();
++}
++
++/**
++ * Le film d'ici LIÉ à ce film de l'autre cinéma : celui qui porte sa marque,
++ * ou le même identifiant (un film arrive avec l'identifiant qu'il a chez
++ * l'autre). Seule une fiche liée reçoit les corrections de l'autre cinéma.
++ */
++export function ficheLiee(film: FilmDeLaBanque, filmsDIci: readonly FilmDIci[]): FilmDIci | null {
++  const origine = origineDe(film);
++  return (
++    filmsDIci.find((ici) => ici.origineBanque === origine) ?? filmsDIci.find((ici) => ici._id === film._id) ?? null
++  );
++}
++
++/**
++ * Le film d'ici qui correspond à ce film de l'autre cinéma, s'il y en a un :
++ * la fiche liée, ou une fiche du même titre (saisie à la main des deux
++ * côtés : elle empêche un doublon, mais reste indépendante).
++ */
++export function dejaIci(film: FilmDeLaBanque, filmsDIci: readonly FilmDIci[]): FilmDIci | null {
++  const titre = titreCompare(film.title);
++  return (
++    ficheLiee(film, filmsDIci) ??
++    (titre ? filmsDIci.find((ici) => titreCompare(ici.title) === titre) : undefined) ??
++    null
++  );
++}
++
++const propre = (valeur: string | null | undefined): string | undefined => {
++  const texte = typeof valeur === "string" ? valeur.trim() : "";
++  return texte || undefined;
++};
++
++/* ---------------- Comparer deux fiches ----------------
++   Chaque fiche liée garde un repère : l'empreinte de la fiche de l'autre
++   cinéma et celle de la fiche d'ici, telles qu'elles étaient la dernière
++   fois qu'on les a accordées. On sait ainsi QUI a changé depuis, sans
++   comparer les deux fiches entre elles (un même fichier d'image n'a pas
++   toujours le même identifiant dans les deux projets). */
++
++type Decrit = Partial<Omit<FilmDeLaBanque, "_id">>;
++
++/** Ce qu'une fiche dit du film, mis à plat pour être comparé. */
++function texteDe(film: Decrit): unknown[] {
++  return CHAMPS_TEXTE.map((champ) => {
++    const valeur = film[champ];
++    return typeof valeur === "string" ? (propre(valeur) ?? null) : (valeur ?? null);
++  });
++}
++
++/** Un code court pour un texte (cyrb53) : assez pour voir qu'une fiche a changé. */
++function code(texte: string): string {
++  let h1 = 0xdeadbeef;
++  let h2 = 0x41c6ce57;
++  for (let i = 0; i < texte.length; i += 1) {
++    const c = texte.charCodeAt(i);
++    h1 = Math.imul(h1 ^ c, 2654435761);
++    h2 = Math.imul(h2 ^ c, 1597334677);
++  }
++  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
++  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
++  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
++}
++
++/** L'empreinte d'une fiche : elle change dès qu'un champ partagé ou une image change. */
++export function empreinte(film: Decrit): string {
++  const images = [film.affiche ?? null, ...(film.photos ?? [])].map((image) =>
++    image ? [image.id ?? null, propre(image.alt) ?? null] : null
++  );
++  return code(JSON.stringify([texteDe(film), images, (film.photos ?? []).length]));
++}
++
++/** « image-<empreinte>-400x570-jpg » → « 400x570-jpg ». */
++function format(image: ImageDeLaBanque | null | undefined): string | null {
++  if (!image?.id) return null;
++  return image.id.match(/-(\d+x\d+-[a-z0-9]+)$/i)?.[1] ?? image.id;
++}
++
++/**
++ * Les deux fiches disent-elles la même chose ? Mêmes textes, mêmes images.
++ * « souple » : pour les films recopiés avant le partage, une image de mêmes
++ * dimensions compte pour la même (elle avait été réenregistrée, son
++ * identifiant diffère).
++ */
++export function memeFiche(autre: Decrit, ici: Decrit, souple: boolean): boolean {
++  if (JSON.stringify(texteDe(autre)) !== JSON.stringify(texteDe(ici))) return false;
++  const a = [autre.affiche ?? null, ...(autre.photos ?? [])];
++  const b = [ici.affiche ?? null, ...(ici.photos ?? [])];
++  if (a.length !== b.length) return false;
++  return a.every((image, rang) => {
++    const voisine = b[rang] ?? null;
++    if (!image || !voisine) return !image && !voisine;
++    if (image.id && image.id === voisine.id) return true;
++    return souple && format(image) !== null && format(image) === format(voisine);
++  });
++}
++
++/** Le repère d'une fiche liée : « <empreinte de l'autre>:<empreinte d'ici> ». */
++function lireRepere(valeur: string | null | undefined): { autre: string; ici: string } | null {
++  const [autre, ici, reste] = String(valeur ?? "").split(":");
++  return ici !== undefined && reste === undefined ? { autre: autre ?? "", ici } : null;
++}
++
++function repere(autre: string, ici: string): string {
++  return `${autre}:${ici}`;
++}
++
++/** Où en sont deux fiches liées. */
++export type Etat =
++  /** Rien n'a changé depuis la dernière fois. */
++  | "a-jour"
++  /** Elles disent la même chose, mais ce n'est pas encore noté. */
++  | "a-noter"
++  /** L'autre cinéma a corrigé sa fiche, celle d'ici n'a pas bougé : on reprend. */
++  | "a-reprendre"
++  /** La fiche d'ici a été modifiée, pas l'autre : on n'y touche pas. */
++  | "modifiee-ici"
++  /** Les deux ont changé (ou on ne sait pas laquelle) : une personne décide. */
++  | "differente";
++
++export function comparer(autre: FilmDeLaBanque, ici: FilmDIci): Etat {
++  const note = lireRepere(ici.banqueEmpreinte);
++  if (!note) return memeFiche(autre, ici, true) ? "a-noter" : "differente";
++  const autreAChange = empreinte(autre) !== note.autre;
++  const iciAChange = empreinte(ici) !== note.ici;
++  if (!autreAChange && !iciAChange) return "a-jour";
++  if (autreAChange && !iciAChange) return "a-reprendre";
++  if (!autreAChange) return "modifiee-ici";
++  /* Les deux ont changé… pour dire la même chose (l'autre cinéma a repris
++     notre correction) : c'est accordé. */
++  return memeFiche(autre, ici, false) ? "a-noter" : "differente";
++}
++
++/* ---------------- Écrire ici ---------------- */
++
++function image(lue: ImageDeLaBanque, assetId: string, cle?: string): Record<string, unknown> {
++  return {
++    _type: TYPE_IMAGE,
++    ...(cle ? { _key: cle } : {}),
++    asset: { _type: "reference", _ref: assetId },
++    ...(propre(lue.alt) ? { alt: propre(lue.alt) } : {}),
++    ...(lue.hotspot ? { hotspot: lue.hotspot } : {}),
++    ...(lue.crop ? { crop: lue.crop } : {}),
++  };
++}
++
++/** Les champs qui décrivent le film, tels qu'on les écrit ici (les vides : undefined). */
++function description(
++  film: FilmDeLaBanque,
++  afficheId: string | null,
++  photosIds: readonly (string | null)[]
++): Record<string, unknown> {
++  const photos = (film.photos ?? [])
++    .map((photo, rang) => (photosIds[rang] ? image(photo, photosIds[rang] as string, `photo${rang}`) : null))
++    .filter((photo): photo is Record<string, unknown> => photo !== null);
++  return {
++    title: propre(film.title),
++    director: propre(film.director),
++    duration: film.duration ?? undefined,
++    year: film.year ?? undefined,
++    country: propre(film.country),
++    originalTitle: propre(film.originalTitle),
++    language: propre(film.language),
++    subtitles: propre(film.subtitles),
++    ageRating: propre(film.ageRating),
++    typeDeFilm: propre(film.typeDeFilm),
++    synopsis: propre(film.synopsis),
++    trailerUrl: propre(film.trailerUrl),
++    presseUrl: propre(film.presseUrl),
++    poster: film.affiche && afficheId ? image(film.affiche, afficheId) : undefined,
++    stillImages: photos.length ? photos : undefined,
++  };
++}
++
++/** La fiche de l'autre cinéma telle qu'elle est ICI une fois écrite : avec les images qui ont suivi. */
++function telQuIci(film: FilmDeLaBanque, afficheId: string | null, photosIds: readonly (string | null)[]): Decrit {
++  return {
++    ...film,
++    affiche: film.affiche && afficheId ? { ...film.affiche, id: afficheId } : null,
++    photos: (film.photos ?? []).flatMap((photo, rang): ImageDeLaBanque[] => {
++      const id = photosIds[rang];
++      return id ? [{ ...photo, id }] : [];
++    }),
++  };
++}
++
++/**
++ * Le repère à noter après une écriture : la fiche de l'autre cinéma telle
++ * qu'on vient de la lire, et celle d'ici telle qu'on vient de l'écrire. Une
++ * image qui n'a pas suivi n'est pas retentée toute seule : l'annonce le dit,
++ * et on l'ajoute à la main.
++ */
++function repereApresEcriture(
++  film: FilmDeLaBanque,
++  afficheId: string | null,
++  photosIds: readonly (string | null)[]
++): string {
++  return repere(empreinte(film), empreinte(telQuIci(film, afficheId, photosIds)));
++}
++
++/**
++ * La fiche à créer ici à partir d'un film de l'autre cinéma.
++ *
++ * Ce qui décrit le FILM est repris : titre, réalisation, durée, année, pays,
++ * version, âge, type, synopsis, bande-annonce, presse, affiche, photos.
++ * Ce qui tient à un CINÉMA ne l'est pas : où en est le film chez l'autre,
++ * ses séances, sa date de sortie là-bas, son invité.
++ *
++ * La fiche garde l'identifiant du film chez l'autre : le même film a le
++ * même identifiant des deux côtés, et le créer deux fois est impossible.
++ * Elle arrive PAS à l'affiche (ETAT_A_L_ARRIVEE) : c'est ici qu'on décide
++ * de le montrer.
++ */
++export function ficheAPartirDe(
++  film: FilmDeLaBanque,
++  afficheId: string | null,
++  photosIds: readonly (string | null)[] = []
++): Record<string, unknown> {
++  const fiche: Record<string, unknown> = {
++    _id: film._id,
++    _type: "film",
++    ...description(film, afficheId, photosIds),
++    slug: propre(film.slug) ? { _type: "slug", current: propre(film.slug) } : undefined,
++    status: ETAT_A_L_ARRIVEE,
++    statuts: [ETAT_A_L_ARRIVEE],
++    origineBanque: origineDe(film),
++    banqueEmpreinte: repereApresEcriture(film, afficheId, photosIds),
++  };
++  for (const champ of Object.keys(fiche)) if (fiche[champ] === undefined) delete fiche[champ];
++  return fiche;
++}
++
++/** Ce qu'il faut pour lire : le client Sanity du Studio, ou celui de l'autre projet. */
++export interface Lecteur {
++  fetch: <T>(requete: string, parametres?: Record<string, unknown>, options?: Record<string, unknown>) => Promise<T>;
++}
++
++interface Retouche {
++  set: (valeurs: Record<string, unknown>) => Retouche;
++  unset: (champs: string[]) => Retouche;
++  setIfMissing: (valeurs: Record<string, unknown>) => Retouche;
++  insert: (ou: "after", chemin: string, elements: unknown[]) => Retouche;
++  commit: () => Promise<unknown>;
++}
++
++/** Ce qu'il faut pour écrire ici : le client Sanity du Studio le fournit. */
++export interface Ecrivain extends Lecteur {
++  assets: {
++    upload: (type: "image", corps: Blob, options: { filename?: string }) => Promise<{ _id: string }>;
++  };
++  createIfNotExists: (fiche: Record<string, unknown>) => Promise<{ _id: string }>;
++  patch: (id: string) => Retouche;
++}
++
++/** Va chercher une image de l'autre cinéma. Le navigateur la télécharge telle quelle. */
++export type Telechargeur = (url: string) => Promise<Blob>;
++
++const telechargerImage: Telechargeur = async (url) => {
++  const reponse = await fetch(url);
++  if (!reponse.ok) throw new Error(`Image illisible (${reponse.status}).`);
++  return reponse.blob();
++};
++
++/**
++ * Copie ici les images d'un film de l'autre cinéma. Une image déjà ici
++ * (`dejaLa`, même fichier) n'est pas renvoyée. Une image qui ne se laisse
++ * pas copier n'empêche pas le reste, et c'est compté.
++ */
++async function copierImages(
++  client: Ecrivain,
++  film: FilmDeLaBanque,
++  telecharger: Telechargeur,
++  dejaLa: ReadonlySet<string> = new Set()
++): Promise<{ afficheId: string | null; photosIds: (string | null)[]; imagesManquantes: number }> {
++  let imagesManquantes = 0;
++  const copier = async (lue: ImageDeLaBanque | null): Promise<string | null> => {
++    if (!lue?.url) return null;
++    if (lue.id && dejaLa.has(lue.id)) return lue.id;
++    try {
++      const fichier = await telecharger(lue.url);
++      const deposee = await client.assets.upload("image", fichier, { filename: lue.nom ?? undefined });
++      return deposee._id;
++    } catch (cause) {
++      console.error("Films partagés : une image n'a pas pu être copiée.", cause);
++      imagesManquantes += 1;
++      return null;
++    }
++  };
++  const afficheId = await copier(film.affiche);
++  const photosIds: (string | null)[] = [];
++  for (const photo of film.photos ?? []) photosIds.push(await copier(photo));
++  return { afficheId, photosIds, imagesManquantes };
++}
++
++/**
++ * Fait venir un film : copie son affiche et ses photos ici, puis crée sa
++ * fiche, publiée, si elle n'existe pas déjà. Rend l'identifiant de la fiche.
++ */
++export async function faireVenir(
++  client: Ecrivain,
++  film: FilmDeLaBanque,
++  telecharger: Telechargeur = telechargerImage
++): Promise<{ id: string; imagesManquantes: number }> {
++  const { afficheId, photosIds, imagesManquantes } = await copierImages(client, film, telecharger);
++  const creee = await client.createIfNotExists(ficheAPartirDe(film, afficheId, photosIds));
++  return { id: creee._id, imagesManquantes };
++}
++
++/** Le brouillon d'une fiche, s'il y en a un : il reçoit les mêmes corrections. */
++const REQUETE_BROUILLON = `*[_id == $id][0]._id`;
++
++/**
++ * Reprend ici la fiche de l'autre cinéma : ce qui DÉCRIT le film est
++ * remplacé (textes, affiche, photos) ; ce qui tient à ce cinéma (où en est
++ * le film, ses séances, sa date de sortie, son invité, l'adresse de sa
++ * page) ne bouge pas. Un champ vidé là-bas est vidé ici.
++ *
++ * Une image qui ne se laisse pas copier laisse l'ancienne en place.
++ */
++export async function reprendre(
++  client: Ecrivain,
++  film: FilmDeLaBanque,
++  ici: FilmDIci,
++  telecharger: Telechargeur = telechargerImage
++): Promise<{ id: string; imagesManquantes: number }> {
++  const dejaLa = new Set(
++    [ici.affiche ?? null, ...(ici.photos ?? [])].map((img) => img?.id).filter((id): id is string => Boolean(id))
++  );
++  const copie = await copierImages(client, film, telecharger, dejaLa);
++  /* L'affiche qui n'a pas suivi : on garde celle d'ici. */
++  const afficheId = copie.afficheId ?? (film.affiche ? (ici.affiche?.id ?? null) : null);
++  const champs = description(film, afficheId, copie.photosIds);
++  /* Des photos qui n'ont pas toutes suivi : on garde celles d'ici. */
++  const photosIncompletes = copie.photosIds.some((id) => id === null);
++  if (photosIncompletes) delete champs.stillImages;
++  const aEcrire: Record<string, unknown> = {};
++  const aVider: string[] = [];
++  for (const [champ, valeur] of Object.entries(champs)) {
++    if (valeur !== undefined) aEcrire[champ] = valeur;
++    else if (!(champ === "stillImages" && photosIncompletes)) aVider.push(champ);
++  }
++  /* Le repère : ce que la fiche d'ici dit maintenant. */
++  const maintenant: Decrit = {
++    ...telQuIci(film, afficheId, copie.photosIds),
++    ...(photosIncompletes ? { photos: ici.photos ?? [] } : {}),
++  };
++  aEcrire.banqueEmpreinte = repere(empreinte(film), empreinte(maintenant));
++  if (!ici.origineBanque) aEcrire.origineBanque = origineDe(film);
++
++  const ecrire = (id: string) => {
++    let retouche = client.patch(id).set(aEcrire);
++    if (aVider.length) retouche = retouche.unset(aVider);
++    return retouche.commit();
++  };
++  await ecrire(ici._id);
++  const brouillon = `drafts.${ici._id}`;
++  const existe = await client.fetch<string | null>(REQUETE_BROUILLON, { id: brouillon }, { perspective: "raw" });
++  if (existe) await ecrire(brouillon);
++  return { id: ici._id, imagesManquantes: copie.imagesManquantes };
++}
++
++/** Note sur une fiche d'ici que les deux fiches sont accordées. */
++export async function noterAccord(client: Ecrivain, film: FilmDeLaBanque, ici: FilmDIci): Promise<void> {
++  await client
++    .patch(ici._id)
++    .set({ banqueEmpreinte: repere(empreinte(film), empreinte(ici)) })
++    .commit();
++}
++
++/* ---------------- Le carnet ----------------
++   La liste des films de l'autre cinéma déjà venus ici (ou déjà là). Il ne
++   sert qu'à une chose : un film qu'on SUPPRIME ici ne doit pas revenir tout
++   seul cinq minutes plus tard. Un film noté au carnet et absent d'ici a
++   donc été retiré exprès : on ne le fait plus venir d'office. */
++
++/** Les identifiants notés au carnet. */
++export const REQUETE_JOURNAL = `*[_id == $id][0].films`;
++
++/** Note au carnet des films de l'autre cinéma. */
++export async function noterAuJournal(client: Ecrivain, ids: readonly string[]): Promise<void> {
++  if (ids.length === 0) return;
++  await client.createIfNotExists({ _id: ID_JOURNAL, _type: TYPE_JOURNAL, films: [] });
++  await client
++    .patch(ID_JOURNAL)
++    .setIfMissing({ films: [] })
++    .insert("after", "films[-1]", [...new Set(ids)])
++    .commit();
++}
++
++/** Ce qu'il y a à faire de chaque film de l'autre cinéma. */
++export interface Tri {
++  /** Pas ici, jamais venus : à faire venir. */
++  aFaireVenir: FilmDeLaBanque[];
++  /** Déjà ici, mais pas encore au carnet : à noter. */
++  aNoter: string[];
++  /** Au carnet mais plus ici : retirés exprès, on n'y touche pas. */
++  retires: FilmDeLaBanque[];
++}
++
++export function trier(
++  films: readonly FilmDeLaBanque[],
++  filmsDIci: readonly FilmDIci[],
++  journal: readonly string[] | null | undefined
++): Tri {
++  const notes = new Set(journal ?? []);
++  const tri: Tri = { aFaireVenir: [], aNoter: [], retires: [] };
++  for (const film of films) {
++    if (dejaIci(film, filmsDIci)) {
++      if (!notes.has(film._id)) tri.aNoter.push(film._id);
++    } else if (notes.has(film._id)) tri.retires.push(film);
++    else tri.aFaireVenir.push(film);
++  }
++  return tri;
++}
++
++/** Ce qu'une arrivée a donné. */
++export interface Bilan {
++  /** Les films arrivés à l'instant. */
++  arrives: { id: string; titre: string }[];
++  /** Les fiches d'ici mises à jour d'après celles de l'autre cinéma. */
++  misesAJour: { id: string; titre: string }[];
++  /** Ce qui n'a pas pu être écrit (connexion, droits). */
++  rates: number;
++  /** Les images qui n'ont pas suivi. */
++  imagesManquantes: number;
++}
++
++const titreDe = (film: FilmDeLaBanque): string => film.title?.trim() || "Film sans titre";
++
++/**
++ * L'arrivée des films : lit les films publiés de l'autre cinéma, crée ici
++ * ceux qui manquent, et reprend ici les fiches que l'autre cinéma a
++ * corrigées (si celle d'ici n'a pas bougé). Ne supprime rien, n'écrit rien
++ * chez l'autre.
++ *
++ * Ce qui rate (connexion coupée) n'est pas noté : ce sera retenté la fois
++ * suivante.
++ */
++export async function arriveeDesFilms(
++  client: Ecrivain,
++  autre: Lecteur,
++  telecharger: Telechargeur = telechargerImage
++): Promise<Bilan> {
++  const [lus, lusIci, journal] = await Promise.all([
++    autre.fetch<FilmDeLaBanque[]>(REQUETE_BANQUE),
++    client.fetch<FilmDIci[]>(REQUETE_ICI, {}, { perspective: "published" }),
++    client.fetch<string[] | null>(REQUETE_JOURNAL, { id: ID_JOURNAL }, { perspective: "raw" }),
++  ]);
++  const films = lus ?? [];
++  const filmsDIci = lusIci ?? [];
++  const { aFaireVenir, aNoter } = trier(films, filmsDIci, journal);
++  const bilan: Bilan = { arrives: [], misesAJour: [], rates: 0, imagesManquantes: 0 };
++  /* Un compte qui ne peut que lire : inutile d'essayer vingt fiches de suite. */
++  let ecrites = 0;
++  const peinePerdue = () => bilan.rates >= 3 && ecrites === 0;
++
++  for (const film of aFaireVenir) {
++    if (peinePerdue()) break;
++    try {
++      const { id, imagesManquantes } = await faireVenir(client, film, telecharger);
++      bilan.arrives.push({ id, titre: titreDe(film) });
++      bilan.imagesManquantes += imagesManquantes;
++      ecrites += 1;
++    } catch (cause) {
++      console.error(`Films partagés : « ${film.title ?? film._id} » n'a pas pu arriver.`, cause);
++      bilan.rates += 1;
++    }
++  }
++
++  for (const film of films) {
++    const ici = ficheLiee(film, filmsDIci);
++    if (!ici) continue;
++    const etat = comparer(film, ici);
++    if (etat !== "a-noter" && etat !== "a-reprendre") continue;
++    if (peinePerdue()) break;
++    try {
++      if (etat === "a-noter") await noterAccord(client, film, ici);
++      if (etat === "a-reprendre") {
++        const { imagesManquantes } = await reprendre(client, film, ici, telecharger);
++        bilan.misesAJour.push({ id: ici._id, titre: titreDe(film) });
++        bilan.imagesManquantes += imagesManquantes;
++      }
++      ecrites += 1;
++    } catch (cause) {
++      console.error(`Films partagés : « ${film.title ?? film._id} » n'a pas pu être mis à jour.`, cause);
++      bilan.rates += 1;
++    }
++  }
++
++  /* Le carnet qui ne se laisse pas écrire ne fait pas perdre l'arrivée : les
++     films sont là, ils seront notés la fois suivante. */
++  try {
++    await noterAuJournal(client, [...aNoter, ...bilan.arrives.map((film) => film.id)]);
++  } catch (cause) {
++    console.error("Films partagés : le carnet n'a pas pu être tenu à jour.", cause);
++  }
++  return bilan;
++}
+diff --git a/sanity/partage/reglages.ts b/sanity/partage/reglages.ts
+new file mode 100644
+index 0000000..ee5aa53
+--- /dev/null
++++ b/sanity/partage/reglages.ts
+@@ -0,0 +1,48 @@
++/* Les films partagés : les deux cinémas (Zinéma et Minimum) ont les mêmes
++   exploitants et passent souvent les mêmes films. Chacun garde son projet
++   Sanity, mais la liste des films est la même des deux côtés : un film créé
++   chez l'un ARRIVE TOUT SEUL chez l'autre, fiche et affiche copiées, rien à
++   retaper (demande d'Eliott, 26.11.2026).
++
++   Ce dossier est le même dans les deux Studios (à Minimum :
++   sanity/minimum/banque) : seules les valeurs de ce fichier changent d'un
++   cinéma à l'autre.
++
++   La lecture de l'autre projet se fait SANS jeton et sans identifiants :
++   on n'y lit que ce qui est publié, comme le fait son site public. Rien ne
++   peut y être écrit d'ici, même par erreur. */
++
++/** Le cinéma de ce Studio. */
++export const ICI = "Zinéma";
++
++/** L'autre cinéma, dont les films arrivent ici. */
++export const AUTRE = {
++  nom: "Minimum",
++  /** Son projet Sanity (public : son site l'écrit en clair). */
++  projet: "hvxsup1j",
++  jeu: "production",
++  /** Ce qui précède l'identifiant d'un film venu de là-bas : « minimum:… ». */
++  cle: "minimum",
++} as const;
++
++/** Le type des images de ce Studio (schemaTypes/objects). */
++export const TYPE_IMAGE = "imageZinema";
++
++/** Version de l'API pour lire l'autre projet. */
++export const VERSION_API_BANQUE = "2024-06-01";
++
++/** Les films de l'autre cinéma arrivent-ils tout seuls ? `false` : seulement
++    à la demande, depuis l'écran « Films partagés ». */
++export const ARRIVEE_AUTOMATIQUE = true;
++
++/** Tant que le Studio reste ouvert, on regarde à nouveau toutes les cinq minutes. */
++export const INTERVALLE_ARRIVEE = 5 * 60 * 1000;
++
++/** L'état d'un film qui arrive : PAS à l'affiche. Un film créé chez l'autre
++    ne doit pas se montrer au public d'ici sans qu'on l'ait décidé. */
++export const ETAT_A_L_ARRIVEE = "passe";
++
++/** Le carnet des films déjà venus de l'autre cinéma (journal-banque.ts).
++    Son identifiant a un point : il n'est pas lisible sans être connecté. */
++export const ID_JOURNAL = `banque.${AUTRE.cle}`;
++export const TYPE_JOURNAL = "journalBanque";
+diff --git a/sanity/schemaTypes/film.ts b/sanity/schemaTypes/film.ts
+index dd853ed..07e6c1f 100644
+--- a/sanity/schemaTypes/film.ts
++++ b/sanity/schemaTypes/film.ts
+@@ -15,6 +15,8 @@ import {
+   statutsDuJour,
+ } from "../plugins/planification/utils/etats-du-film";
+ import { listeDesSalles, SALLES } from "../salles";
++import { NoteFilmPartage } from "../partage/NoteFilmPartage";
++import { AUTRE } from "../partage/reglages";
+ 
+ /* ============================================================
+    Un film à l'affiche, à venir, ou terminé.
+@@ -416,6 +418,29 @@ export const film = defineType({
+         "Facultatif. Collez l'adresse de l'article : la fiche du film affiche alors une grande case « PRESSE », cliquable. Rien d'autre à remplir.",
+     }),
+ 
++    /* La marque d'un film arrivé de l'autre cinéma (sanity/partage) :
++       « minimum:<identifiant> ». Elle sert à reconnaître qu'il est déjà ici ;
++       personne n'a à la modifier. Quand elle est là, la fiche le dit en
++       une phrase (NoteFilmPartage). */
++    defineField({
++      name: "origineBanque",
++      title: "Fiche partagée",
++      type: "string",
++      readOnly: true,
++      hidden: ({ value }) => !value,
++      components: { input: NoteFilmPartage },
++    }),
++    /* Le repère du partage : où en étaient la fiche de l'autre cinéma et
++       celle-ci la dernière fois qu'elles ont été accordées. Il sert à
++       savoir laquelle a changé depuis ; personne n'a à le lire. */
++    defineField({
++      name: "banqueEmpreinte",
++      title: "Repère du partage",
++      type: "string",
++      readOnly: true,
++      hidden: true,
++    }),
++
+     /* ---------------- Encadrés repliables ---------------- */
+     defineField({
+       name: "slug",
+@@ -458,6 +483,7 @@ export const film = defineType({
+       projectionDate: "projectionDate",
+       projectionHeure: "projectionHeure",
+       presence: "presence",
++      origineBanque: "origineBanque",
+       media: "poster",
+     },
+     prepare({
+@@ -470,6 +496,7 @@ export const film = defineType({
+       projectionDate,
+       projectionHeure,
+       presence,
++      origineBanque,
+       media,
+     }) {
+       const etats: Record<string, string> = {
+@@ -477,7 +504,9 @@ export const film = defineType({
+         ...NOM_DE_LA_PROJECTION,
+         prochainement: "Prochainement",
+         cycle: "Cycle / ciné-club",
+-        passe: "Terminé",
++        /* Un film arrivé de l'autre cinéma n'a peut-être jamais été montré
++           ici : « Terminé » le ferait croire. */
++        passe: origineBanque ? `Pas à l'affiche (fiche de ${AUTRE.nom})` : "Terminé",
+       };
+       const sortie = typeof releaseDate === "string" && releaseDate ? releaseDate : null;
+       const projection = typeof projectionDate === "string" && projectionDate ? projectionDate : null;
+diff --git a/sanity/schemaTypes/index.ts b/sanity/schemaTypes/index.ts
+index b2eff33..80ed120 100644
+--- a/sanity/schemaTypes/index.ts
++++ b/sanity/schemaTypes/index.ts
+@@ -9,6 +9,7 @@ import { siteSettings } from "./siteSettings";
+ import { abonnements } from "./abonnements";
+ import { location } from "./location";
+ import { commande } from "./commande";
++import { journalBanque } from "../partage/journal-banque";
+ 
+ export const schemaTypes = [
+   // Brique réutilisée par toutes les images du site
+@@ -29,10 +30,13 @@ export const schemaTypes = [
+ 
+   // Billetterie : créé automatiquement par le serveur, jamais à la main
+   commande,
++
++  // Films partagés avec Minimum : le carnet que le Studio tient seul
++  journalBanque,
+ ];
+ 
+ /** Types dont il n'existe qu'une seule fiche : pas de bouton « créer ». */
+ export const typesUniques = ["siteSettings", "abonnements", "location", "histoire"];
+ 
+ /** Types que personne ne crée à la main depuis le Studio. */
+-export const typesNonCreables = [...typesUniques, "commande"];
++export const typesNonCreables = [...typesUniques, "commande", "journalBanque"];
+diff --git a/verifications/actions-studio.mjs b/verifications/actions-studio.mjs
+index 501392b..00551c5 100644
+--- a/verifications/actions-studio.mjs
++++ b/verifications/actions-studio.mjs
+@@ -75,7 +75,7 @@ verifier(
+ );
+ verifier(
+   "les commandes n'ont pas de bouton « + » (seul le serveur les crée)",
+-  /typesNonCreables = \[\.\.\.typesUniques, "commande"\]/.test(lire("../sanity/schemaTypes/index.ts")),
++  /typesNonCreables = \[\.\.\.typesUniques, "commande"[,\]]/.test(lire("../sanity/schemaTypes/index.ts")),
+   true,
+ );
+ verifier(
+diff --git a/verifications/partage-des-films.mjs b/verifications/partage-des-films.mjs
+new file mode 100644
+index 0000000..b19a101
+--- /dev/null
++++ b/verifications/partage-des-films.mjs
+@@ -0,0 +1,326 @@
++/* ============================================================
++   Les films partagés, vérifiés.
++
++   Un film créé chez l'autre cinéma arrive ici tout seul, et ses
++   corrections aussi. Sept promesses :
++
++     1. un film déjà ici est reconnu — par sa marque, par son
++        identifiant, ou par son titre — et n'arrive pas deux fois ;
++     2. seule la fiche du FILM est copiée : pas l'état du film chez
++        l'autre, ni sa date de sortie, ni son invité ; et il arrive
++        PAS à l'affiche ;
++     3. une image qui ne se laisse pas copier n'empêche pas la fiche
++        d'être créée, et c'est dit ;
++     4. un film supprimé ici ne revient pas tout seul ;
++     5. rien n'est jamais supprimé, et rien n'est écrit chez l'autre ;
++     6. une fiche corrigée chez l'autre est corrigée ici, si celle
++        d'ici n'a pas bougé : seule la description du film change,
++        pas ce qui tient à ce cinéma ;
++     7. une fiche modifiée ICI n'est jamais écrasée toute seule.
++
++   Rien n'est lu ni écrit dans Sanity ici : un faux client note ce
++   qu'on lui demande.
++
++   Pour lancer :  npm test
++   ============================================================ */
++import {build} from 'esbuild'
++
++async function chargerModule(chemin) {
++  const compile = await build({
++    entryPoints: [new URL(chemin, import.meta.url).pathname],
++    bundle: true,
++    format: 'esm',
++    platform: 'node',
++    write: false,
++    logLevel: 'silent',
++  })
++  return import(`data:text/javascript;base64,${Buffer.from(compile.outputFiles[0].text).toString('base64')}`)
++}
++
++const {arriveeDesFilms, comparer, dejaIci, empreinte, faireVenir, ficheAPartirDe, ficheLiee, memeFiche, origineDe, reprendre, trier} = await chargerModule('../sanity/partage/partage.ts')
++
++let echecs = 0
++let reussites = 0
++function verifier(intitule, obtenu, attendu) {
++  const ok = JSON.stringify(obtenu) === JSON.stringify(attendu)
++  if (ok) reussites += 1
++  else {
++    echecs += 1
++    console.error(`✗ ${intitule}\n    obtenu  : ${JSON.stringify(obtenu)}\n    attendu : ${JSON.stringify(attendu)}`)
++  }
++}
++
++const FILM = {
++  _id: 'abc',
++  title: '  LE GRAND BLEU ',
++  director: 'Luc Besson',
++  duration: 168,
++  year: 1988,
++  country: 'France',
++  originalTitle: null,
++  language: 'VF',
++  subtitles: '',
++  ageRating: '12/12 ans',
++  typeDeFilm: 'Fiction',
++  synopsis: 'Deux plongeurs.',
++  trailerUrl: 'https://exemple.ch/ba',
++  presseUrl: null,
++  slug: 'le-grand-bleu',
++  affiche: {id: 'image-aaa-400x570-jpg', url: 'https://cdn.exemple/affiche.jpg', nom: 'affiche.jpg', alt: 'Affiche', hotspot: {x: 0.5, y: 0.3}, crop: null},
++  photos: [{id: 'image-bbb-800x450-jpg', url: 'https://cdn.exemple/photo.jpg', nom: 'photo.jpg', alt: null, hotspot: null, crop: null}],
++  /* Ce qui tient au cinéma d'en face : ne doit PAS traverser. */
++  status: 'passe',
++  statuts: ['passe'],
++  releaseDate: '2026-01-01',
++  presence: 'le réalisateur',
++  projectionDate: '2026-02-02',
++}
++
++console.log('Reconnaître un film déjà ici')
++verifier('la marque « minimum:… »', origineDe(FILM), 'minimum:abc')
++verifier('par sa marque', dejaIci(FILM, [{_id: 'x', title: 'Autre titre', origineBanque: 'minimum:abc'}])?._id, 'x')
++verifier('par son identifiant (un film arrive avec celui qu’il a chez l’autre)', dejaIci(FILM, [{_id: 'abc', title: 'Autre'}])?._id, 'abc')
++verifier('par son titre, malgré la casse, les accents et la ponctuation', dejaIci({...FILM, title: 'Mr. Nobody Against Pûtin'}, [{_id: 'y', title: 'MR NOBODY AGAINST PUTIN'}])?._id, 'y')
++verifier('un autre film n’est pas pris pour lui', dejaIci(FILM, [{_id: 'z', title: 'Le Petit Bleu'}]), null)
++verifier('un film sans titre ne correspond à aucun film sans titre', dejaIci({...FILM, title: null}, [{_id: 'z', title: null}]), null)
++
++console.log('Ce qui est copié, et ce qui ne l’est pas')
++const fiche = ficheAPartirDe(FILM, 'image-affiche', ['image-photo'])
++verifier('le titre est repris, sans ses espaces', fiche.title, 'LE GRAND BLEU')
++verifier('la fiche du film est reprise', [fiche.director, fiche.duration, fiche.year, fiche.country, fiche.language, fiche.ageRating, fiche.typeDeFilm, fiche.synopsis, fiche.trailerUrl], ['Luc Besson', 168, 1988, 'France', 'VF', '12/12 ans', 'Fiction', 'Deux plongeurs.', 'https://exemple.ch/ba'])
++verifier('l’affiche est celle d’ici, avec sa description et son point d’intérêt', fiche.poster, {_type: 'imageZinema', asset: {_type: 'reference', _ref: 'image-affiche'}, alt: 'Affiche', hotspot: {x: 0.5, y: 0.3}})
++verifier('les photos suivent', fiche.stillImages, [{_type: 'imageZinema', _key: 'photo0', asset: {_type: 'reference', _ref: 'image-photo'}}])
++verifier('l’adresse de la page suit', fiche.slug, {_type: 'slug', current: 'le-grand-bleu'})
++verifier('un champ vide n’est pas écrit', ['subtitles' in fiche, 'originalTitle' in fiche, 'presseUrl' in fiche], [false, false, false])
++verifier('le film arrive PAS à l’affiche, quel que soit son état chez l’autre', [fiche.status, fiche.statuts], ['passe', ['passe']])
++verifier('la fiche garde l’identifiant du film chez l’autre', fiche._id, 'abc')
++verifier('ni date de sortie, ni invité, ni projection de l’autre cinéma', ['releaseDate' in fiche, 'presence' in fiche, 'projectionDate' in fiche], [false, false, false])
++verifier('la marque est posée', fiche.origineBanque, 'minimum:abc')
++verifier('sans affiche copiée, pas de champ affiche', 'poster' in ficheAPartirDe(FILM, null, []), false)
++
++verifier('la fiche porte son repère : celle de l’autre, et celle d’ici', /^[a-z0-9]+:[a-z0-9]+$/.test(fiche.banqueEmpreinte), true)
++
++console.log('Faire venir un film')
++/* Un faux projet Sanity : il garde ses fiches comme Sanity les garde, les rend comme le
++   partage les lit, et note tout ce qu'on lui demande d'écrire. Une image déposée garde
++   l'identifiant qu'elle a chez l'autre (le même fichier : la même empreinte). */
++const ID_IMAGE = {'https://cdn.exemple/affiche.jpg': 'image-aaa-400x570-jpg', 'https://cdn.exemple/photo.jpg': 'image-bbb-800x450-jpg', 'https://cdn.exemple/nouvelle.jpg': 'image-ccc-1000x1400-jpg'}
++function lu(doc) {
++  const image = (i) => (i?.asset ? {id: i.asset._ref, url: `https://ici/${i.asset._ref}`, nom: null, alt: i.alt ?? null, hotspot: i.hotspot ?? null, crop: i.crop ?? null} : null)
++  const {poster, stillImages, slug, _type, status, statuts, releaseDate, presence, ...reste} = doc
++  return {
++    title: null, director: null, duration: null, year: null, country: null, originalTitle: null, language: null, subtitles: null,
++    ageRating: null, typeDeFilm: null, synopsis: null, trailerUrl: null, presseUrl: null,
++    ...reste,
++    slug: slug?.current ?? null,
++    affiche: image(poster),
++    photos: stillImages ? stillImages.map(image) : null,
++  }
++}
++function fauxClient({films = [], carnet = null, refuserImage = false, refuserFiche = () => false, refuserCarnet = false, refuserRetouche = false} = {}) {
++  const fiches = new Map(films.map((film) => [film._id, {_type: 'film', ...film}]))
++  if (carnet) fiches.set('banque.minimum', {_id: 'banque.minimum', _type: 'journalBanque', films: [...carnet]})
++  const gestes = []
++  return {
++    gestes,
++    fiches,
++    carnet: () => fiches.get('banque.minimum')?.films ?? null,
++    fetch: async (requete, parametres) => {
++      if (parametres?.id && requete.includes('.films')) return fiches.get(parametres.id)?.films ?? null
++      if (parametres?.id) return fiches.has(parametres.id) ? parametres.id : null
++      return [...fiches.values()].filter((f) => f._type === 'film' && !f._id.startsWith('drafts.')).map(lu)
++    },
++    assets: {
++      upload: async (type, corps, options) => {
++        if (refuserImage) throw new Error('refus')
++        gestes.push(['upload', type, options.filename])
++        return {_id: ID_IMAGE[await corps.text()] ?? `image-${options.filename}`}
++      },
++    },
++    createIfNotExists: async (doc) => {
++      if (doc._type === 'film' && refuserFiche(doc)) throw new Error('refus')
++      if (doc._type !== 'film' && refuserCarnet) throw new Error('refus')
++      gestes.push(['createIfNotExists', doc])
++      if (!fiches.has(doc._id)) fiches.set(doc._id, doc)
++      return {_id: doc._id}
++    },
++    patch: (id) => {
++      const retouche = {
++        aEcrire: {}, aVider: [], aAjouter: null,
++        set: (valeurs) => (Object.assign(retouche.aEcrire, valeurs), retouche),
++        unset: (champs) => (retouche.aVider.push(...champs), retouche),
++        setIfMissing: () => retouche,
++        insert: (ou, chemin, elements) => ((retouche.aAjouter = elements), retouche),
++        commit: async () => {
++          if (id === 'banque.minimum' ? refuserCarnet : refuserRetouche) throw new Error('refus')
++          gestes.push(['patch', id, {set: Object.keys(retouche.aEcrire).sort(), unset: [...retouche.aVider].sort()}])
++          const fiche = fiches.get(id)
++          if (retouche.aAjouter) fiche.films.push(...retouche.aAjouter)
++          Object.assign(fiche, retouche.aEcrire)
++          for (const champ of retouche.aVider) delete fiche[champ]
++        },
++      }
++      return retouche
++    },
++  }
++}
++const telecharger = async (url) => new Blob([url])
++const sansBruit = async (action) => {
++  /* Un refus est noté dans la console du Studio : ici, on le fait taire. */
++  const noter = console.error
++  console.error = () => undefined
++  try {
++    return await action()
++  } finally {
++    console.error = noter
++  }
++}
++const ecritures = (client) => client.gestes.filter((g) => g[0] !== 'upload').length
++
++let client = fauxClient()
++let resultat = await faireVenir(client, FILM, telecharger)
++verifier('rend la fiche, sous l’identifiant du film, sans image manquante', resultat, {id: 'abc', imagesManquantes: 0})
++verifier('copie l’affiche, puis la photo, puis crée la fiche', client.gestes.map((ligne) => ligne[0]), ['upload', 'upload', 'createIfNotExists'])
++verifier('la fiche créée porte l’affiche copiée', client.gestes[2][1].poster.asset._ref, 'image-aaa-400x570-jpg')
++
++client = fauxClient({refuserImage: true})
++resultat = await sansBruit(() => faireVenir(client, FILM, telecharger))
++verifier('une image refusée n’empêche pas la fiche', [resultat.id, resultat.imagesManquantes], ['abc', 2])
++verifier('la fiche est alors créée sans affiche', 'poster' in client.gestes[0][1], false)
++
++client = fauxClient()
++resultat = await faireVenir(client, {...FILM, affiche: null, photos: null}, telecharger)
++verifier('un film sans affiche vient quand même', [resultat.id, client.gestes.map((l) => l[0])], ['abc', ['createIfNotExists']])
++
++client = fauxClient({films: [{_id: 'abc', title: 'Corrigé ici', status: 'a-laffiche'}]})
++await faireVenir(client, FILM, telecharger)
++verifier('une fiche qui existe déjà sous cet identifiant n’est pas écrasée', [client.fiches.get('abc').title, client.fiches.get('abc').status], ['Corrigé ici', 'a-laffiche'])
++
++console.log('Trier les films de l’autre cinéma')
++const A = {...FILM, _id: 'a', title: 'Film A'}
++const B = {...FILM, _id: 'b', title: 'Film B'}
++const C = {...FILM, _id: 'c', title: 'Film C'}
++const D = {...FILM, _id: 'd', title: 'Film D'}
++let tri = trier([A, B, C, D], [{_id: 'a', title: 'Film A'}, {_id: 'x', title: 'film b'}], ['a', 'c'])
++verifier('à faire venir : ni ici, ni au carnet', tri.aFaireVenir.map((f) => f._id), ['d'])
++verifier('à noter : ici, pas encore au carnet (même reconnu par son titre)', tri.aNoter, ['b'])
++verifier('retiré exprès : au carnet, plus ici', tri.retires.map((f) => f._id), ['c'])
++verifier('sans carnet, tout ce qui manque vient', trier([A, B], [], null).aFaireVenir.map((f) => f._id), ['a', 'b'])
++verifier('une fiche du même titre n’est pas une fiche liée', [dejaIci(B, [{_id: 'x', title: 'film b'}])?._id, ficheLiee(B, [{_id: 'x', title: 'film b'}])], ['x', null])
++
++console.log('L’arrivée des films')
++const autre = (films) => ({fetch: async () => films})
++
++client = fauxClient({films: [{_id: 'x', title: 'film a'}]})
++let bilan = await arriveeDesFilms(client, autre([A, B, C]), telecharger)
++verifier('les films qui manquent arrivent, pas les autres', [bilan.arrives, bilan.misesAJour, bilan.rates, bilan.imagesManquantes], [[{id: 'b', titre: 'Film B'}, {id: 'c', titre: 'Film C'}], [], 0, 0])
++verifier('ils sont ici, pas à l’affiche, avec leur marque', ['b', 'c'].map((id) => [client.fiches.get(id).status, client.fiches.get(id).origineBanque]), [['passe', 'minimum:b'], ['passe', 'minimum:c']])
++verifier('la fiche du même titre, saisie ici à part, n’a pas été touchée', client.fiches.get('x'), {_type: 'film', _id: 'x', title: 'film a'})
++verifier('le carnet note les trois', [...client.carnet()].sort(), ['a', 'b', 'c'])
++
++let avant = ecritures(client)
++bilan = await arriveeDesFilms(client, autre([A, B, C]), telecharger)
++verifier('une deuxième arrivée ne fait rien : rien de neuf', [bilan.arrives, bilan.misesAJour, ecritures(client) - avant], [[], [], 0])
++
++client.fiches.delete('b')
++bilan = await arriveeDesFilms(client, autre([A, B, C]), telecharger)
++verifier('un film supprimé ici ne revient pas tout seul', [bilan.arrives, client.fiches.has('b')], [[], false])
++await faireVenir(client, B, telecharger)
++verifier('mais il se remet à la demande', client.fiches.has('b'), true)
++
++bilan = await arriveeDesFilms(client, autre([A, B, C, D]), telecharger)
++verifier('un film créé ensuite chez l’autre arrive à son tour', bilan.arrives, [{id: 'd', titre: 'Film D'}])
++
++client = fauxClient({refuserFiche: (doc) => doc._id === 'b'})
++bilan = await sansBruit(() => arriveeDesFilms(client, autre([A, B]), telecharger))
++verifier('un film qui rate n’empêche pas les autres', [bilan.arrives.map((f) => f.id), bilan.rates], [['a'], 1])
++verifier('et n’est pas noté au carnet : il sera retenté', client.carnet(), ['a'])
++client = fauxClient({films: [...client.fiches.values()].filter((f) => f._type === 'film'), carnet: client.carnet()})
++bilan = await arriveeDesFilms(client, autre([A, B]), telecharger)
++verifier('la fois suivante, il arrive', bilan.arrives.map((f) => f.id), ['b'])
++
++client = fauxClient({refuserCarnet: true})
++bilan = await sansBruit(() => arriveeDesFilms(client, autre([A]), telecharger))
++verifier('un carnet qui ne s’écrit pas ne fait pas perdre l’arrivée', [bilan.arrives.map((f) => f.id), client.fiches.has('a')], [['a'], true])
++
++client = fauxClient({films: [{_id: 'a', title: 'Film A'}], carnet: ['a']})
++bilan = await arriveeDesFilms(client, autre([]), telecharger)
++verifier('l’autre cinéma illisible ou vide : rien ne bouge ici', [bilan.arrives, client.gestes.length, client.fiches.has('a')], [[], 0, true])
++
++client = fauxClient({refuserFiche: () => true})
++bilan = await sansBruit(() => arriveeDesFilms(client, autre([A, B, C, D, {...A, _id: 'e'}, {...A, _id: 'f'}]), telecharger))
++verifier('un compte qui ne peut que lire : on s’arrête au troisième refus', bilan.rates, 3)
++
++console.log('Une correction faite chez l’autre cinéma')
++/* Le film est arrivé ; ici, on l'a mis à l'affiche, daté, et on lui a donné un invité. */
++client = fauxClient()
++await arriveeDesFilms(client, autre([A]), telecharger)
++Object.assign(client.fiches.get('a'), {status: 'a-laffiche', statuts: ['a-laffiche'], releaseDate: '2026-12-02', presence: 'la réalisatrice'})
++let ici = (await client.fetch(''))[0]
++verifier('rien n’a changé depuis l’arrivée : à jour', comparer(A, ici), 'a-jour')
++verifier('mettre le film à l’affiche ici n’est pas une modification de sa fiche', empreinte(ici) === empreinte(lu({...client.fiches.get('a'), status: 'passe'})), true)
++
++const A2 = {...A, synopsis: 'Deux plongeurs, et la mer.', duration: 170, country: null, affiche: {...A.affiche, id: 'image-ccc-1000x1400-jpg', url: 'https://cdn.exemple/nouvelle.jpg'}}
++verifier('l’autre cinéma corrige sa fiche : à reprendre', comparer(A2, ici), 'a-reprendre')
++avant = ecritures(client)
++bilan = await arriveeDesFilms(client, autre([A2]), telecharger)
++let apres = client.fiches.get('a')
++verifier('la correction est reprise, et annoncée', [bilan.misesAJour, bilan.arrives, bilan.rates], [[{id: 'a', titre: 'Film A'}], [], 0])
++verifier('le synopsis, la durée et l’affiche sont ceux de l’autre cinéma', [apres.synopsis, apres.duration, apres.poster.asset._ref], ['Deux plongeurs, et la mer.', 170, 'image-ccc-1000x1400-jpg'])
++verifier('un champ vidé là-bas est vidé ici', 'country' in apres, false)
++verifier('ce qui tient à ce cinéma n’a pas bougé', [apres.status, apres.statuts, apres.releaseDate, apres.presence, apres.slug, apres.origineBanque], ['a-laffiche', ['a-laffiche'], '2026-12-02', 'la réalisatrice', {_type: 'slug', current: 'le-grand-bleu'}, 'minimum:a'])
++verifier('une seule écriture, sur la fiche (pas de brouillon ici)', client.gestes.slice(-1)[0].slice(0, 2), ['patch', 'a'])
++verifier('la photo, déjà ici, n’a pas été renvoyée ; la nouvelle affiche, oui', client.gestes.filter((g) => g[0] === 'upload').length, 3)
++avant = ecritures(client)
++bilan = await arriveeDesFilms(client, autre([A2]), telecharger)
++verifier('ensuite, plus rien à faire', [bilan.misesAJour, ecritures(client) - avant, comparer(A2, (await client.fetch(''))[0])], [[], 0, 'a-jour'])
++
++client.fiches.set('drafts.a', {...client.fiches.get('a'), _id: 'drafts.a', synopsis: 'Brouillon en cours'})
++const A3 = {...A2, director: 'L. Besson'}
++await arriveeDesFilms(client, autre([A3]), telecharger)
++verifier('un brouillon ouvert reçoit la même correction', [client.fiches.get('a').director, client.fiches.get('drafts.a').director, client.fiches.get('drafts.a').synopsis], ['L. Besson', 'L. Besson', 'Deux plongeurs, et la mer.'])
++client.fiches.delete('drafts.a')
++
++console.log('Une fiche modifiée ici n’est jamais écrasée toute seule')
++client.fiches.get('a').synopsis = 'Notre texte, écrit ici.'
++ici = (await client.fetch(''))[0]
++verifier('modifiée ici, pas chez l’autre : on n’y touche pas', comparer(A3, ici), 'modifiee-ici')
++const A4 = {...A3, year: 1989}
++verifier('modifiée des deux côtés : une personne décide', comparer(A4, ici), 'differente')
++avant = ecritures(client)
++bilan = await arriveeDesFilms(client, autre([A4]), telecharger)
++verifier('l’arrivée n’écrit rien dessus', [bilan.misesAJour, ecritures(client) - avant, client.fiches.get('a').synopsis, client.fiches.get('a').year], [[], 0, 'Notre texte, écrit ici.', 1988])
++await reprendre(client, A4, ici, telecharger)
++verifier('à la demande, la fiche de l’autre cinéma est reprise', [client.fiches.get('a').synopsis, client.fiches.get('a').year, comparer(A4, (await client.fetch(''))[0])], ['Deux plongeurs, et la mer.', 1989, 'a-jour'])
++
++/* Dans l'autre sens, plus tard : l'autre cinéma reprend NOTRE correction. Les deux fiches ont changé, pour dire la même chose. */
++client.fiches.get('a').synopsis = 'Corrigé ici.'
++const A5 = {...A4, synopsis: 'Corrigé ici.'}
++ici = (await client.fetch(''))[0]
++verifier('l’autre cinéma a repris notre correction : c’est accordé, sans rien réécrire', comparer(A5, ici), 'a-noter')
++await arriveeDesFilms(client, autre([A5]), telecharger)
++verifier('et c’est noté', [comparer(A5, (await client.fetch(''))[0]), client.fiches.get('a').synopsis], ['a-jour', 'Corrigé ici.'])
++
++console.log('Les films recopiés avant le partage (sans repère)')
++const copie = {_id: 'a', title: 'Film A', director: 'Luc Besson', duration: 168, year: 1988, country: 'France', language: 'VF', ageRating: '12/12 ans', typeDeFilm: 'Fiction', synopsis: 'Deux plongeurs.', trailerUrl: 'https://exemple.ch/ba', slug: {_type: 'slug', current: 'le-grand-bleu'},
++  poster: {_type: 'imageZinema', asset: {_ref: 'image-zzz-400x570-jpg'}, alt: 'Affiche'}, stillImages: [{_type: 'imageZinema', asset: {_ref: 'image-yyy-800x450-jpg'}}], status: 'passe'}
++verifier('mêmes textes, images de mêmes dimensions réenregistrées : la même fiche', [memeFiche(A, lu(copie), true), memeFiche(A, lu(copie), false), comparer(A, lu(copie))], [true, false, 'a-noter'])
++client = fauxClient({films: [copie], carnet: ['a']})
++bilan = await arriveeDesFilms(client, autre([A]), telecharger)
++verifier('elle reçoit son repère, sans rien changer d’autre', [bilan.misesAJour, client.gestes.map((g) => [g[0], g[1], g[2]?.set]), client.fiches.get('a').poster.asset._ref], [[], [['patch', 'a', ['banqueEmpreinte']]], 'image-zzz-400x570-jpg'])
++bilan = await arriveeDesFilms(client, autre([{...A, synopsis: 'Corrigé là-bas.'}]), telecharger)
++verifier('et reçoit ensuite les corrections de l’autre cinéma', [bilan.misesAJour.map((f) => f.id), client.fiches.get('a').synopsis], [['a'], 'Corrigé là-bas.'])
++verifier('une fiche réécrite ici avant le partage : différente, laissée telle quelle', comparer(A, lu({...copie, synopsis: 'Le texte du site.', poster: {asset: {_ref: 'image-site-607x865-jpg'}}})), 'differente')
++
++console.log('Quand ça rate')
++client = fauxClient({refuserImage: true})
++client.fiches.set('a', {...ficheAPartirDe(A, 'image-aaa-400x570-jpg', ['image-bbb-800x450-jpg'])})
++bilan = await sansBruit(() => arriveeDesFilms(client, autre([A2]), telecharger))
++verifier('une affiche qui ne se laisse pas copier : le texte est repris, l’ancienne affiche reste', [bilan.misesAJour.length, bilan.imagesManquantes, client.fiches.get('a').synopsis, client.fiches.get('a').poster.asset._ref], [1, 1, 'Deux plongeurs, et la mer.', 'image-aaa-400x570-jpg'])
++client = fauxClient({refuserRetouche: true})
++client.fiches.set('a', {...ficheAPartirDe(A, 'image-aaa-400x570-jpg', ['image-bbb-800x450-jpg'])})
++bilan = await sansBruit(() => arriveeDesFilms(client, autre([A2]), telecharger))
++verifier('une écriture refusée : rien n’est annoncé, la fiche est intacte', [bilan.misesAJour, bilan.rates, client.fiches.get('a').synopsis], [[], 1, 'Deux plongeurs.'])
++
++console.log(`${reussites} vérification(s) réussie(s), ${echecs} échec(s).`)
++process.exit(echecs > 0 ? 1 : 0)
+-- 
+2.43.0
+

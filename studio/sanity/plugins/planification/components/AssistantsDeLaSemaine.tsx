@@ -1,0 +1,73 @@
+/**
+ * Les assistants ouverts depuis la barre de la semaine : programmer un
+ * film, dupliquer la semaine, la remplir au hasard ou la vider, sortir
+ * la newsletter, la piqûre de rappel ou la feuille à imprimer. Un seul
+ * est ouvert à la fois.
+ */
+import {DialogImpression} from '../impression/DialogImpression'
+import {DialogNewsletter} from '../newsletter/DialogNewsletter'
+import {DialogPiqure} from '../newsletter/piqure/DialogPiqure'
+import type {CaseSansFilm, FilmPlanning, SeancePlanning} from '../types'
+import type {DialogOuvert} from './BarreSemaine'
+import {DialogDupliquerSemaine} from './DialogDupliquerSemaine'
+import {DialogGenererSemaine} from './DialogGenererSemaine'
+import {DialogProgrammerFilm} from './DialogProgrammerFilm'
+import {DialogViderSemaine} from './DialogViderSemaine'
+
+interface Props {
+  ouvert: DialogOuvert
+  debutSemaine: string
+  films: FilmPlanning[]
+  seances: SeancePlanning[]
+  casesSansFilm: CaseSansFilm[]
+  onFermer: () => void
+  /** Après une création : remettre les soirées d'aplomb et relire la semaine. */
+  onCree: () => void
+}
+
+export function AssistantsDeLaSemaine({
+  ouvert,
+  debutSemaine,
+  films,
+  seances,
+  casesSansFilm,
+  onFermer,
+  onCree,
+}: Props): React.JSX.Element | null {
+  switch (ouvert) {
+    case 'programmer':
+      return (
+        <DialogProgrammerFilm films={films} debutSemaine={debutSemaine} onFermer={onFermer} onCree={onCree} />
+      )
+    case 'dupliquer':
+      return (
+        <DialogDupliquerSemaine
+          debutSemaine={debutSemaine}
+          seancesSemaine={seances}
+          onFermer={onFermer}
+          onCree={onCree}
+        />
+      )
+    case 'generer':
+      return (
+        <DialogGenererSemaine
+          films={films}
+          debutSemaine={debutSemaine}
+          seancesSemaine={seances}
+          casesSansFilm={casesSansFilm}
+          onFermer={onFermer}
+          onCree={onCree}
+        />
+      )
+    case 'newsletter':
+      return <DialogNewsletter debutSemaine={debutSemaine} onFermer={onFermer} />
+    case 'piqure':
+      return <DialogPiqure debutSemaine={debutSemaine} onFermer={onFermer} />
+    case 'vider':
+      return <DialogViderSemaine debutSemaine={debutSemaine} onFermer={onFermer} onFait={onCree} />
+    case 'impression':
+      return <DialogImpression debutSemaine={debutSemaine} onFermer={onFermer} />
+    default:
+      return null
+  }
+}

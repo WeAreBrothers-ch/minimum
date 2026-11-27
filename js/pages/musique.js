@@ -7,7 +7,9 @@
      grand, et à côté ce qu’il montre et le lien vers la chaîne.
    - Au programme : soirées et lives ensemble, dans l’ordre des dates, au
      même format d’affiche (js/flyer.js). Une soirée mène à sa fiche
-     (line-up, billets), un live à la chaîne YouTube.
+     (line-up, billets), un live à la chaîne YouTube. Les prochaines dates
+     sont en grand : autant qu’il en faut pour que la dernière rangée soit
+     pleine, jamais de grand carré noir (revu le 27.11.2026).
    - À revoir : les lives passés dont la vidéo est en ligne ; un toucher sur
      la ligne la met dans le lecteur, en haut.
 
@@ -128,30 +130,54 @@ function lecteurHTML(ecran) {
 }
 
 /**
+ * Combien d’affiches passent en grand (deux colonnes de large) pour que la
+ * dernière rangée soit pleine : jamais de grand carré vide en fin de
+ * programme. Ce sont les premières, donc les prochaines dates.
+ * Neuf dates sur quatre colonnes : trois en grand, et trois rangées pleines.
+ * @param {number} nombre    Le nombre d’affiches.
+ * @param {number} colonnes  Deux sur téléphone, quatre sur ordinateur.
+ * @returns {number}
+ */
+export function affichesEnGrand(nombre, colonnes) {
+  return Math.min(nombre, (colonnes - (nombre % colonnes)) % colonnes);
+}
+
+/**
  * Au programme : soirées et lives, dans l’ordre des dates, au même format.
+ * Les prochaines dates sont en grand, autant qu’il en faut pour que la
+ * dernière rangée soit pleine (affichesEnGrand).
  * @param {Soiree[]} soirees
  * @param {Emission[]} lives
  * @param {string} racine
  * @returns {string}
  */
 function programmeHTML(soirees, lives, racine) {
-  /** @type {Array<{ cle: string, id: string, html: (prioritaire: boolean) => string }>} */
+  /** @type {Array<{ cle: string, id: string, html: (prioritaire: boolean, tailles: string) => string }>} */
   const cases = [];
   const chaineYT = lienChaine();
   for (const s of soirees) {
     const lien = `${racine}soiree/?id=${encodeURIComponent(s.id)}`;
-    cases.push({ cle: s.date + s.heure, id: s.id, html: (prioritaire) => flyerSoireeHTML(s, racine, { lien, prioritaire }) });
+    cases.push({ cle: s.date + s.heure, id: s.id, html: (prioritaire, tailles) => flyerSoireeHTML(s, racine, { lien, prioritaire, tailles }) });
   }
   for (const e of lives) {
     const lien = chaineYT ?? `#${e.id}`;
-    cases.push({ cle: e.date + e.heure, id: e.id, html: (prioritaire) => flyerHTML(e, racine, { lien, prioritaire }) });
+    cases.push({ cle: e.date + e.heure, id: e.id, html: (prioritaire, tailles) => flyerHTML(e, racine, { lien, prioritaire, tailles }) });
   }
   if (cases.length === 0) return `<p class="page__vide">Aucune date annoncée pour l’instant.</p>`;
   cases.sort((a, b) => a.cle.localeCompare(b.cle));
+  const grandesTelephone = affichesEnGrand(cases.length, 2);
+  const grandesOrdinateur = affichesEnGrand(cases.length, 4);
   return (
-    `<section aria-labelledby="au-programme"><h2 class="rubrique" id="au-programme">Au programme</h2>` +
+    `<section class="programme" aria-labelledby="au-programme"><h2 class="rubrique" id="au-programme">Au programme</h2>` +
     `<ul class="flyers">${cases
-      .map((c, i) => `<li id="${echapper(c.id)}">${c.html(i < 4)}</li>`)
+      .map((c, i) => {
+        const classes = [];
+        if (i < grandesTelephone) classes.push("flyers__grand-tel");
+        if (i < grandesOrdinateur) classes.push("flyers__grand");
+        if (cases.length === 1) classes.push("flyers__seul");
+        const tailles = `(min-width: 56rem) ${i < grandesOrdinateur ? "50vw" : "25vw"}, ${i < grandesTelephone ? "100vw" : "50vw"}`;
+        return `<li id="${echapper(c.id)}"${classes.length ? ` class="${classes.join(" ")}"` : ""}>${c.html(i < 4, tailles)}</li>`;
+      })
       .join("")}</ul></section>`
   );
 }
