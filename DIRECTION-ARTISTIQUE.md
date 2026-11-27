@@ -92,7 +92,7 @@ l'accueil, case du titre de chaque page, agenda, pied de page.
 | Rouge (`--rouge`, #a72920, le rouge feu RAL 3000 de la salle) | Cinéma | blanc, 7:1 |
 | Rose (`--rose`, #f48fbf) | Musique (l'ancienne « Nuit » : les soirées du club) et Radio, qui en fait partie | noir, 9,5:1 |
 | Jaune (`--jaune`, #f6d82b) | Agenda | noir, 14,8:1 |
-| Grenat (`--grenat`, #6b1222) | Infos (et la case MERCI) | blanc, 12:1 |
+| Grenat (`--grenat`, #6b1222) | Infos | blanc, 12:1 |
 | Vert (#3cab64) | L'argent, inchangé | noir, 7,2:1 |
 | Orange | Un problème, inchangé | noir |
 
@@ -328,21 +328,19 @@ Minimum. La parenté se voit en regardant de près, pas au premier coup d'œil.
 - **Navigation sans rechargement** : la page suivante apporte ses feuilles de
   style (`js/navigation.js`), sans quoi une page avec sa propre feuille (Infos)
   s'affichait sans style quand on y arrivait depuis une autre page.
-- **La page Infos est un mur de briques** (revu le 19.11.2026, `css/infos.css`) :
-  chaque information est une brique serrée, jointe d'un trait, de largeur
-  variable ; d'une rangée à l'autre, les joints verticaux ne tombent pas au même
-  endroit, et chaque rangée est pleine. Une brique a toujours la même forme :
-  l'intitulé en capitales grasses, bien lisible (16 à 20 px, un peu moins dans
-  une brique étroite, jamais coupé), la valeur en grand (les prix surlignés du
-  vert de l'argent), au besoin une ligne de détail. Six colonnes sur téléphone,
-  douze sur ordinateur. Le plan, les téléphones et l'e-mail sont des briques
-  qu'on presse (noires au survol).
-- **Les remerciements défilent dans un bandeau** : une grande case rouge rubis
-  (RAL 3003, texte blanc) « MERCI » (sur téléphone, toute la largeur, au-dessus du bandeau ; sur
-  ordinateur, un quart de la ligne), puis les noms en grand, chacun dans sa case,
-  séparés d'un trait noir (pas de carrés de couleur). On le fait défiler à
-  la main (doigt, pavé, ou en tirant à la souris) et il revient sans fin
-  (`js/pages/infos.js`) ; il ne bouge jamais tout seul.
+- **La page Infos, rangée comme l'agenda** (revue le 27.11.2026 : « trop
+  brouillon, trop de couleurs mélangées » ; remplace le mur de briques et le
+  bandeau MERCI du 19.11.2026, `css/infos.css`). Noir et blanc : seule la
+  case du titre garde le grenat. Une rubrique par bloc (Adresse, Contact,
+  Tarifs, Billets, Soutenir et louer, Merci, Crédits), son nom en titre (dans
+  une colonne à gauche sur ordinateur), puis une ligne par information : ce
+  que c'est à gauche, en capitales, avec au besoin une ligne grise dessous ;
+  la valeur à droite (un prix, un numéro). Plus de vert sur les prix, plus
+  de case rouge. La photo de la salle est en noir et blanc, comme les
+  portraits des flyers. Le plan, les téléphones et l'e-mail sont des lignes
+  qu'on presse (la valeur se souligne au survol). Les remerciements sont les
+  noms à la suite, en grand, séparés d'une barre ; la page n'a plus de code
+  propre.
 
 ### Le bureau de la radio (page Radio, demande d'Eliott, 18.11.2026)
 La page Radio reprend le **principe** de soso radio (R2), un faux bureau

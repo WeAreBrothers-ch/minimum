@@ -18,7 +18,7 @@ const PAGES = {
   "cinema/index.html": "js/pages/cinema.js",
   "musique/index.html": "js/pages/musique.js",
   "agenda/index.html": "js/pages/agenda.js",
-  "infos/index.html": "js/pages/infos.js",
+  "infos/index.html": null,
   "film/index.html": "js/pages/film.js",
   "soiree/index.html": "js/pages/soiree.js",
   "billet/index.html": "js/pages/billet.js",

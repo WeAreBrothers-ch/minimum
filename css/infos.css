@@ -1,266 +1,182 @@
-/* Minimum : la page Infos, un mur de briques. Chaque information est une
-   brique (une case) : son intitulé en petites capitales, sa valeur en
-   grand, et au besoin une ligne de détail. Les briques sont serrées, jointes
-   d'un trait, de largeurs différentes : d'une rangée à l'autre, les joints
-   verticaux ne tombent pas au même endroit, comme dans un mur. Chaque
-   rangée est pleine : jamais de trou.
+/* Minimum : la page Infos (revue le 27.11.2026 : « trop brouillon, trop de
+   couleurs mélangées »). Rangée comme l'agenda, en noir et blanc : une
+   rubrique par bloc (Adresse, Contact, Tarifs, Billets, Soutenir, Merci,
+   Crédits), son nom en titre (à gauche sur ordinateur), puis une ligne par
+   information : ce que c'est à gauche, la valeur à droite (un prix, un
+   numéro). Plus de briques de largeurs différentes, plus de vert sur les
+   prix, plus de case rouge : seule la case du titre garde le grenat des
+   infos. La photo de la salle est en noir et blanc, comme les portraits des
+   flyers. */
 
-   Une grille de six colonnes sur téléphone, de douze sur ordinateur ; la
-   largeur de chaque brique est fixée dans la page (brique--m3 : trois
-   sixièmes sur téléphone ; brique--o5 : cinq douzièmes sur ordinateur).
-   Les remerciements défilent dans un bandeau, à la main, sans fin
-   (js/pages/infos.js). */
-
-.briques {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: var(--joint);
-  background: var(--encre);
+.info {
   border-bottom: var(--trait) solid var(--encre);
 }
 
-/* ---------- Une brique ---------- */
-.brique {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espace-1);
-  min-width: 0;
-  min-height: 6.5rem;
-  margin: 0;
-  padding: var(--espace-3) var(--marge);
-  color: var(--encre);
-  background: var(--fond);
-  /* L'intitulé et la valeur se règlent aussi sur la largeur de la brique :
-     dans une brique étroite (AG culturel, sur un petit téléphone), aucun
-     mot ne déborde. */
-  container-type: inline-size;
+.info:last-child {
+  border-bottom: 0;
 }
 
-.brique--m2 { grid-column: span 2; }
-.brique--m3 { grid-column: span 3; }
-.brique--m4 { grid-column: span 4; }
-.brique--m6 { grid-column: span 6; }
+/* Le nom de la rubrique. */
+.info__terme {
+  padding: var(--espace-3) var(--marge);
+  font-size: var(--taille-texte);
+  font-weight: var(--graisse-nom);
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: var(--interlettre-capitales);
+  border-bottom: var(--trait) solid var(--encre);
+}
 
-/* L'intitulé : le titre de la brique, en capitales grasses, bien lisible. */
-.brique__terme {
-  margin-bottom: var(--espace-1);
-  font-size: min(clamp(1rem, 0.85rem + 0.5vw, 1.25rem), 12cqi);
+.info__contenu > li + li,
+.info__photo + .info__ligne {
+  border-top: var(--trait) solid var(--encre);
+}
+
+/* Une ligne : ce que c'est, et sa valeur à droite. */
+.info__ligne {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--espace-3);
+  min-height: 4.25rem;
+  padding: var(--espace-3) var(--marge);
+  color: var(--encre);
+  text-decoration: none;
+}
+
+.info__texte {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 1.0625rem;
   font-weight: var(--graisse-nom);
   line-height: 1.15;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
 }
 
-.brique__valeur {
-  font-size: min(clamp(1.0625rem, 0.85rem + 0.9vw, 1.5rem), 14cqi);
+.info__sous {
+  max-width: var(--mesure);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.35;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--gris-filtre);
+}
+
+.info__valeur {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.0625rem;
   font-weight: var(--graisse-nom);
-  line-height: 1.1;
+  line-height: 1.15;
+  text-align: right;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
 }
 
-.brique__valeur--grand {
-  font-size: clamp(1.375rem, 1rem + 1.8vw, 2.5rem);
-  line-height: 1.02;
+.info__grand {
+  font-size: clamp(1.375rem, 1rem + 1.8vw, 2.25rem);
+  line-height: 1.05;
+}
+
+.info__chiffres {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 /* L'adresse e-mail garde ses minuscules ; elle peut passer à la ligne
-   après l'arobase, jamais au milieu d'un mot. */
-.brique__valeur--minuscules {
+   après l'arobase. */
+.info__minuscules {
   text-transform: none;
   letter-spacing: 0;
 }
 
-.brique__chiffres {
-  font-variant-numeric: tabular-nums;
-}
-
-/* Un prix : surligné du vert de l'argent, comme partout sur le site. */
-.brique__prix {
-  padding-inline: 0.15em;
-  margin-inline: -0.15em;
-  background: var(--pastille-argent);
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-}
-
-.brique__texte {
-  max-width: var(--mesure);
-  font-weight: var(--graisse-moyenne);
-  line-height: 1.4;
-}
-
-.brique__detail {
-  max-width: var(--mesure);
-  font-size: var(--taille-petite);
-  line-height: 1.4;
-}
-
-.brique__detail a {
-  font-weight: var(--graisse-moyenne);
-}
-
-/* La photo de la salle : elle remplit sa brique, au format 3:2. */
-.brique--photo {
-  position: relative;
-  aspect-ratio: 3 / 2;
-  min-height: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-.brique--photo img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Une brique qu'on presse (plan, téléphones, e-mail) : toute la brique
-   est le lien ; elle se remplit de noir au survol. */
-.brique--lien {
-  text-decoration: none;
-  transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out);
-}
-
-.page .brique--lien:hover {
-  text-decoration: none;
-}
-
-.brique--lien:focus-visible {
-  outline: none;
-  color: var(--fond);
-  background: var(--encre);
-}
-
-.brique--lien .fleche {
-  margin-inline-start: 0.25em;
-}
-
-/* ---------- Les remerciements : un bandeau qu'on fait défiler ---------- */
-/* Une grande case rouge rubis « MERCI », puis les noms en grand, chacun dans sa
-   case, séparés d'un trait noir comme les briques. Sur téléphone, MERCI
-   occupe toute la largeur, au-dessus du bandeau ; sur ordinateur, il est sur
-   la même ligne, dans une case d'un quart. On fait défiler les noms au
-   doigt, au pavé ou en tirant à la souris ; la liste revient sans fin. */
-.merci {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  background: var(--encre);
-  gap: var(--joint);
-}
-
-.merci__titre {
-  display: flex;
-  flex: none;
-  align-items: center;
-  padding: var(--espace-3) var(--marge);
-  font-size: clamp(3rem, 21vw, 6rem);
-  font-weight: var(--graisse-nom);
-  line-height: 0.9;
-  text-transform: uppercase;
-  letter-spacing: var(--interlettre-capitales);
-  /* Le rouge le plus foncé des trois, le rubis (RAL 3003), texte blanc. */
-  color: var(--texte-infos);
-  background: var(--pastille-infos);
-}
-
-.merci__defile {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  background: var(--fond);
-  cursor: grab;
-  touch-action: pan-x pan-y;
-}
-
-.merci__defile::-webkit-scrollbar {
-  display: none;
-}
-
-.merci__defile[data-tire="true"] {
-  cursor: grabbing;
-  user-select: none;
-}
-
-.merci__defile:focus-visible {
+.info__ligne--lien:focus-visible {
   outline: var(--trait) solid var(--encre);
   outline-offset: calc(var(--trait) * -3);
 }
 
-.merci__piste {
-  display: flex;
-  width: max-content;
+@media (hover: hover) and (pointer: fine) {
+  .page .info__ligne--lien:hover {
+    text-decoration: none;
+  }
+
+  .info__ligne--lien:hover .info__valeur {
+    text-decoration: underline;
+    text-decoration-thickness: var(--trait);
+    text-underline-offset: 0.2em;
+  }
 }
 
-.merci__liste {
-  display: flex;
-  flex: none;
+/* La photo de la salle, en noir et blanc. */
+.info__photo {
+  aspect-ratio: 3 / 2;
+  margin: 0;
+  overflow: hidden;
+  border-bottom: var(--trait) solid var(--encre);
 }
 
-.merci__liste li {
+.info__photo + .info__ligne {
+  border-top: 0;
+}
+
+.info__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+}
+
+/* ---------- Merci : les noms, à la suite ---------- */
+.merci {
   display: flex;
-  align-items: center;
-  min-height: 5.5rem;
-  padding-inline: var(--espace-4);
-  font-size: clamp(1.375rem, 1rem + 1.6vw, 2.25rem);
+  flex-wrap: wrap;
+  gap: 0.35em 0;
+  padding: var(--espace-3) var(--marge) var(--espace-4);
+  font-size: clamp(1.125rem, 0.95rem + 0.8vw, 1.625rem);
   font-weight: var(--graisse-nom);
-  line-height: 1;
+  line-height: 1.15;
   text-transform: uppercase;
   letter-spacing: var(--interlettre-capitales);
-  white-space: nowrap;
-  border-right: var(--trait) solid var(--encre);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .brique--lien:hover {
-    color: var(--fond);
-    background: var(--encre);
-  }
+.merci li:not(:last-child)::after {
+  content: "/";
+  margin-inline: 0.45em;
+  font-weight: var(--graisse-moyenne);
+  color: var(--gris-filtre);
 }
 
-/* ---------- Ordinateur : douze colonnes ---------- */
+/* ---------- Ordinateur : le nom de la rubrique à gauche ---------- */
 @media (min-width: 56rem) {
-  .briques {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
+  .info {
+    display: grid;
+    grid-template-columns: 18rem minmax(0, 1fr);
   }
 
-  .brique {
-    min-height: 8.5rem;
-    padding-block: var(--espace-4);
+  .info__terme {
+    font-size: 1.5rem;
+    border-bottom: 0;
   }
 
-  .brique--photo {
-    min-height: 0;
-    padding: 0;
+  .info__contenu {
+    border-left: var(--trait) solid var(--encre);
   }
 
-  .brique--o2 { grid-column: span 2; }
-  .brique--o3 { grid-column: span 3; }
-  .brique--o4 { grid-column: span 4; }
-  .brique--o5 { grid-column: span 5; }
-  .brique--o6 { grid-column: span 6; }
-  .brique--o7 { grid-column: span 7; }
-
-  /* Ordinateur : MERCI sur la même ligne, dans une case d'un quart. */
-  .merci {
-    flex-direction: row;
+  .info__ligne {
+    gap: var(--espace-4);
+    min-height: 4.75rem;
   }
 
-  .merci__titre {
-    flex: 0 0 calc((100% - 3 * var(--joint)) / 4);
-    padding-block: 0;
-    font-size: clamp(3rem, 1.5rem + 3vw, 5.5rem);
+  .info__texte,
+  .info__valeur {
+    font-size: 1.1875rem;
   }
 
-  .merci__liste li {
-    min-height: 8.5rem;
+  /* La photo : la moitié de la largeur, à sa taille d'origine ou presque. */
+  .info__photo {
+    max-width: 40rem;
+    border-right: var(--trait) solid var(--encre);
   }
 }
